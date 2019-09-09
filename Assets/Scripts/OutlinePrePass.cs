@@ -5,12 +5,12 @@ using UnityEngine;
 [ExecuteAlways]
 public class OutlinePrePass : MonoBehaviour
 {
-    private static RenderTexture prepass;
-    private static RenderTexture blurred;
+    public RenderTexture prepass;
+    public RenderTexture blurred;
     private Material blurMat;
     private Camera cam;
 
-    private void OnEnable()
+    private void Awake()
     {
         prepass = new RenderTexture(Screen.width, Screen.height, 24);
         prepass.antiAliasing = QualitySettings.antiAliasing;
@@ -18,6 +18,7 @@ public class OutlinePrePass : MonoBehaviour
 
         cam = GetComponent<Camera>();
         cam.targetTexture = prepass;
+		
         Shader outlineShader = Shader.Find("Unlit/OutlineReplace");
         Shader.SetGlobalColor("_OutlineColor", new Color(71f / 225f, 63f / 225f, 52f / 225f, 1));
         cam.SetReplacementShader(outlineShader, "OutlineTarget");

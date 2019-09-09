@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class OutlineComposite : MonoBehaviour
 {
+    [Range (0, 10)]
     [SerializeField]
-    Material mat;
+	private float Intensity = 2;
 
-    [ImageEffectOpaque]
-    void OnRenderImage(RenderTexture src, RenderTexture dest)
-    {
-        Graphics.Blit(src, dest, mat);
+	private Material compositeMat;
+
+	void OnEnable()
+	{
+		compositeMat = new Material(Shader.Find("Unlit/OutlineComposite"));
     }
+
+	void OnRenderImage(RenderTexture src, RenderTexture dst)
+	{
+		compositeMat.SetFloat("_Intensity", Intensity);
+        Graphics.Blit(src, dst, compositeMat, 0);
+	}
 }

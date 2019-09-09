@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteAlways]
-public class ContourRenderer : MonoBehaviour
+public class OutlineComposite : MonoBehaviour
 {
     [SerializeField]
     Material mat;

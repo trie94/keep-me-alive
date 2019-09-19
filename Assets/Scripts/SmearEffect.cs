@@ -11,15 +11,17 @@ public class SmearEffect : MonoBehaviour
 
     Material _smearMat = null;
     Renderer rend;
+    Vector3 _prevPosition;
+
     public Material smearMat
     {
         get
         {
             if (!_smearMat)
-                _smearMat = rend.material;
+                _smearMat = rend.sharedMaterial;
 
             if (!_smearMat.HasProperty("_PrevPosition"))
-                _smearMat.shader = Shader.Find("Custom/Smear");
+                _smearMat.shader = Shader.Find("Unlit/Cell");
 
             return _smearMat;
         }
@@ -28,14 +30,19 @@ public class SmearEffect : MonoBehaviour
     void Awake()
     {
         rend = GetComponent<Renderer>();
+        _prevPosition = transform.position;
     }
 
     void LateUpdate()
     {
+        Vector3 velocity = (transform.position - _prevPosition) / Time.deltaTime;
+        smearMat.SetVector("_Velocity", velocity);
+
         if (_recentPositions.Count > _frameLag)
             smearMat.SetVector("_PrevPosition", _recentPositions.Dequeue());
 
         smearMat.SetVector("_Position", transform.position);
         _recentPositions.Enqueue(transform.position);
+        _prevPosition = transform.position;
     }
 }

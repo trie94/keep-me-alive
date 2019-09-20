@@ -69,14 +69,20 @@
 
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
                 float3 localOffset = _Position.xyz - worldPos.xyz;
+                
+                float3 normalizedVelocity;
+                if (length(_Velocity) == 0) {
+                    normalizedVelocity = float3(0, 0, 0);
+                    } else {
+                    normalizedVelocity = normalize(_Velocity);
+                }
 
-                float dirDot = abs(dot(normalize(_Velocity), normalize(localOffset)) + _Offset);
+                float dirDot = abs(dot(normalizedVelocity, normalize(localOffset)) + _Offset);
                 o.squish = dirDot;
 
                 fixed3 smearOffset = _Velocity.xyz * (dirDot + snoise(worldPos.xyz * _NoiseFreq) * _NoiseScale) * _NoiseHeight;
 
-                // worldPos.xyz -= smearOffset;
-                if (smearOffset.x >= 0) worldPos.xyz -= smearOffset;
+                worldPos.xyz -= smearOffset;
                 o.smearVal = smearOffset;
 
                 o.vertex = UnityWorldToClipPos(worldPos);

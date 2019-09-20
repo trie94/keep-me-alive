@@ -10,12 +10,12 @@ public class CameraBehavior : MonoBehaviour
 
     void Start()
     {
-        offset = target.position - this.transform.position;
+        offset = this.transform.position - target.position;
     }
 
     void LateUpdate()
     {
         this.transform.position = target.transform.position + offset;
-        this.transform.LookAt(target);
+        // this.transform.LookAt(target);
     }
 }

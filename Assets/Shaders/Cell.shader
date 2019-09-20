@@ -43,6 +43,7 @@
                 float4 vertex : SV_POSITION;
                 float3 worldNormal : NORMAL;
                 float squish : TEXCOORD1;
+                float3 smearVal : TEXCOORD3;
                 SHADOW_COORDS(2)
             };
 
@@ -67,16 +68,17 @@
                 TRANSFER_SHADOW(o);
 
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
-                // float3 worldOffset = _Position.xyz - _PrevPosition.xyz;
-                float3 localOffset = worldPos.xyz - _Position.xyz;
+                float3 localOffset = _Position.xyz - worldPos.xyz;
 
                 float dirDot = abs(dot(normalize(_Velocity), normalize(localOffset)) + _Offset);
-                // fixed3 unitVec = fixed3(1, 1, 1) * _NoiseHeight;
                 o.squish = dirDot;
 
                 fixed3 smearOffset = _Velocity.xyz * (dirDot + snoise(worldPos.xyz * _NoiseFreq) * _NoiseScale) * _NoiseHeight;
-                worldPos.xyz -= smearOffset;
-                
+
+                // worldPos.xyz -= smearOffset;
+                if (smearOffset.x >= 0) worldPos.xyz -= smearOffset;
+                o.smearVal = smearOffset;
+
                 o.vertex = UnityWorldToClipPos(worldPos);
                 return o;
             }
@@ -92,9 +94,9 @@
 
                 col.rgb = face.rgb * face.a + col * (1-face.a);
                 col = col * lighting * attenuation;
-                // col.a = 0.8;
+                col.a = 1;
                 return col;
-                // return fixed4(i.squish * 0.5 + 0.5, 0,0,1);
+                // return fixed4(i.squish, 0, 0, 1);
             }
             ENDCG
         }

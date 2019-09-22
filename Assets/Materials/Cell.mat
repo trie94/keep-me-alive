@@ -74,8 +74,8 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _NoiseFreq: 0.692
-    - _NoiseHeight: 0.105
-    - _NoiseScale: 1.18
+    - _NoiseHeight: 0.205
+    - _NoiseScale: 1.41
     - _OcclusionStrength: 1
     - _Offset: 0.662
     - _Parallax: 0.02
@@ -88,5 +88,5 @@ Material:
     m_Colors:
     - _Color: {r: 0.990566, g: 0.990566, b: 0.990566, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Position: {r: -5.2699194, g: -9.802662, b: 1.6235356, a: 0}
-    - _PrevPosition: {r: -5.2306333, g: -9.817979, b: 1.7541382, a: 0}
+    - _Position: {r: 0.059082054, g: 5.761511, b: -7.0029144, a: 0}
+    - _PrevPosition: {r: 0.1280985, g: 5.753785, b: -6.9995956, a: 0}

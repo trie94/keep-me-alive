@@ -30,14 +30,14 @@ public class CellController : MonoBehaviour
 
     [Range(1f, 10f)]
     public float neighborRadius = 1.5f;
-    [Range(0f, 3f)]
+    [Range(0f, 5f)]
     public float avoidanceRadius = 0.5f;
-    [Range(1f, 100f)]
+    [Range(0.1f, 10f)]
     public float velocityMultiplier = 10f;
-    [Range(1f, 100f)]
+    [Range(0.1f, 10f)]
     public float maxSpeed = 5f;
     private float squareMaxSpeed;
-    public static float squareAvoidanceRadius;
+    public float squareAvoidanceRadius;
     private float squareNeighborRadius;
     void Start()
     {

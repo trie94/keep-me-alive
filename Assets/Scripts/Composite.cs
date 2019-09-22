@@ -16,12 +16,10 @@ public class Composite : CellBehavior
             return Vector3.zero;
         }
 
-        float sum = 0f;
         Vector3 move = Vector3.zero;
         for (int i = 0; i < behaviors.Length; i++)
         {
             Vector3 partialMove = behaviors[i].CalculateMove(cell, context) * weights[i];
-            sum += weights[i];
 
             if (partialMove != Vector3.zero)
             {
@@ -32,11 +30,9 @@ public class Composite : CellBehavior
                 }
 
                 move += partialMove;
-
             }
         }
 
-        // if (sum != 0f) move /= sum;
         return move;
     }
 }

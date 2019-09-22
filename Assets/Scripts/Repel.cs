@@ -5,12 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/Repel")]
 public class Repel : CellBehavior
 {
-    // private Vector3 currentVelocity;
-
     public override Vector3 CalculateMove(Cell cell, List<Transform> context)
     {
-        if (context.Count == 0)
-            return Vector3.zero;
+        if (context.Count == 0) return Vector3.zero;
 
         Vector3 move = Vector3.zero;
         int nAvoid = 0;
@@ -18,19 +15,13 @@ public class Repel : CellBehavior
         for (int i = 0; i < context.Count; i++)
         {
             var curr = context[i];
-            if (Vector3.SqrMagnitude(curr.position - cell.transform.position) < CellController.squareAvoidanceRadius)
+            if (Vector3.SqrMagnitude(curr.position - cell.transform.position) < CellController.Instance.squareAvoidanceRadius)
             {
                 nAvoid++;
                 move += (cell.transform.position - curr.position);
             }
         }
-        if (nAvoid > 0)
-        {
-            // move.Normalize();
-            move /= nAvoid;
-        }
-
-        // move = Vector3.SmoothDamp(cell.transform.up, move, ref currentVelocity, 0.85f);
+        if (nAvoid > 0) move /= nAvoid;
 
         return move;
     }

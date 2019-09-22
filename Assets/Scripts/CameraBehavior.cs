@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class CameraBehavior : MonoBehaviour
 {
-    [SerializeField]
-    Transform target;
     Vector3 offset;
 
     void Start()
     {
-        offset = this.transform.position - target.position;
+        offset = this.transform.position - Vector3.zero;
     }
 
     void LateUpdate()
     {
-        this.transform.position = target.transform.position + offset;
-        // this.transform.LookAt(target);
+        Vector3 targetPos = Vector3.zero;
+        for (int i=0; i<CellController.Instance.cells.Count; i++)
+        {
+            targetPos += CellController.Instance.cells[i].transform.position;
+        }
+        targetPos /= CellController.Instance.cells.Count;
+        this.transform.position = targetPos + offset;
+        this.transform.LookAt(targetPos);
     }
 }

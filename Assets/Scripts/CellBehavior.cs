@@ -2,16 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CellBehavior : MonoBehaviour
+public abstract class CellBehavior : ScriptableObject
 {
-    Transform cam;
-    void Start()
-    {
-        cam = Camera.main.transform;
-    }
-
-    void Update()
-    {
-        this.transform.LookAt(cam);
-    }
+    public abstract Vector3 CalculateMove(Cell cell, List<Transform> context);
 }

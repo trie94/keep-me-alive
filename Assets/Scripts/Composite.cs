@@ -5,7 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/Composite")]
 public class Composite : CellBehavior
 {
-    private Vector3 currentVelocity;
     public CellBehavior[] behaviors;
     public float[] weights;
 
@@ -17,13 +16,12 @@ public class Composite : CellBehavior
             return Vector3.zero;
         }
 
-        //set up move
+        float sum = 0f;
         Vector3 move = Vector3.zero;
-
-        //iterate through behaviors
         for (int i = 0; i < behaviors.Length; i++)
         {
             Vector3 partialMove = behaviors[i].CalculateMove(cell, context) * weights[i];
+            sum += weights[i];
 
             if (partialMove != Vector3.zero)
             {
@@ -37,7 +35,8 @@ public class Composite : CellBehavior
 
             }
         }
-        move = Vector3.SmoothDamp(cell.transform.forward, move, ref currentVelocity, 0.5f);
+
+        // if (sum != 0f) move /= sum;
         return move;
     }
 }

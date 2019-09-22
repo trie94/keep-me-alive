@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/Repel")]
 public class Repel : CellBehavior
 {
+    // private Vector3 currentVelocity;
+
     public override Vector3 CalculateMove(Cell cell, List<Transform> context)
     {
         if (context.Count == 0)
@@ -22,7 +24,13 @@ public class Repel : CellBehavior
                 move += (cell.transform.position - curr.position);
             }
         }
-        if (nAvoid > 0) move /= nAvoid;
+        if (nAvoid > 0)
+        {
+            // move.Normalize();
+            move /= nAvoid;
+        }
+
+        // move = Vector3.SmoothDamp(cell.transform.up, move, ref currentVelocity, 0.85f);
 
         return move;
     }

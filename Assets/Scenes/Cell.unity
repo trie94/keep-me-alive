@@ -5093,13 +5093,23 @@ MonoBehaviour:
   behavior: {fileID: 11400000, guid: 999163c59ff684ecebe74ef6b2a6849d, type: 2}
   cellPrefab: {fileID: -4208318263012966945, guid: 4841a12e463e0459789f040b49a0a508,
     type: 3}
-  cellNum: 10
-  cells: []
-  density: 0.3
+  cellNum: 200
+  cells:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  density: 0.05
   neighborRadius: 4
-  avoidanceRadius: 2
-  driveFactor: 1
-  maxSpeed: 5
+  avoidanceRadius: 3
+  velocityMultiplier: 2
+  maxSpeed: 2.5
 --- !u!4 &1356003340
 Transform:
   m_ObjectHideFlags: 0

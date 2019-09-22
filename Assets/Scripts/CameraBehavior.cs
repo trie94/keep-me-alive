@@ -19,7 +19,8 @@ public class CameraBehavior : MonoBehaviour
             targetPos += CellController.Instance.cells[i].transform.position;
         }
         targetPos /= CellController.Instance.cells.Count;
-        this.transform.position = targetPos + offset;
+        // this.transform.position = targetPos + offset;
+        this.transform.position = CellController.Instance.cells[0].transform.position;
         this.transform.LookAt(targetPos);
     }
 }

@@ -33,7 +33,7 @@ public class CellController : MonoBehaviour
     [Range(0f, 3f)]
     public float avoidanceRadius = 0.5f;
     [Range(1f, 100f)]
-    public float driveFactor = 10f;
+    public float velocityMultiplier = 10f;
     [Range(1f, 100f)]
     public float maxSpeed = 5f;
     private float squareMaxSpeed;
@@ -51,17 +51,18 @@ public class CellController : MonoBehaviour
 
     void Update()
     {
-        for (int i=0; i<cells.Count; i++)
+        squareMaxSpeed = maxSpeed * maxSpeed;
+        squareNeighborRadius = neighborRadius * neighborRadius;
+        squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
+
+        for (int i = 0; i < cells.Count; i++)
         {
             Cell cell = cells[i];
             List<Transform> context = getNeighbors(cell);
-            Vector3 targetPos = behavior.CalculateMove(cell, context);
-            targetPos *= driveFactor;
-            if (targetPos.sqrMagnitude > squareMaxSpeed)
-            {
-                targetPos = targetPos.normalized * maxSpeed;
-            }
-            cell.Move(targetPos);
+            Vector3 velocity = behavior.CalculateMove(cell, context);
+            velocity *= velocityMultiplier;
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+            cell.Move(velocity);
         }
     }
 
@@ -83,10 +84,10 @@ public class CellController : MonoBehaviour
         List<Transform> context = new List<Transform>();
         Collider[] contextColliders = Physics.OverlapSphere(cell.transform.position, neighborRadius);
 
-        for (int i=0; i<contextColliders.Length; i++)
+        for (int i = 0; i < contextColliders.Length; i++)
         {
             var curr = contextColliders[i];
-            if (curr!= cell.CellCollider)
+            if (curr != cell.CellCollider)
             {
                 context.Add(curr.transform);
             }

@@ -10,6 +10,7 @@ public class Cell : MonoBehaviour
     {
         get { return cellCollider; }
     }
+    private Vector3 vel;
 
     private void Awake()
     {
@@ -18,7 +19,20 @@ public class Cell : MonoBehaviour
 
     public void Move(Vector3 velocity)
     {
-        if (velocity != Vector3.zero) transform.forward += velocity;
-        transform.position += velocity * Time.deltaTime;
+        // vel += force * Time.deltaTime;
+        // vel = Vector3.ClampMagnitude(force, CellController.Instance.maxSpeed);
+        if (velocity != Vector3.zero)
+        {
+            // vel = Vector3.Lerp(vel, velocity, 0.2f);
+            vel = velocity;
+        }
+        transform.position += vel * Time.deltaTime;
+        transform.up = vel;
+    }
+
+    void OnDrawGizmos()
+    {
+        // Debug.Log("gizmo");
+        Gizmos.DrawLine(transform.position, transform.position + vel);
     }
 }

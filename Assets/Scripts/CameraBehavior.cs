@@ -21,7 +21,9 @@ public class CameraBehavior : MonoBehaviour
         }
         targetPos /= CellController.Instance.cells.Count;
         // this.transform.position = targetPos + offset;
-        this.transform.position = CellController.Instance.cells[0].transform.position;
-        this.transform.LookAt(targetPos);
+        transform.position = CellController.Instance.cells[0].transform.position;
+        var targetRotation = Quaternion.LookRotation(targetPos - transform.position, Vector3.up);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 0.5f);
     }
 }

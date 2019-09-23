@@ -18,8 +18,20 @@
     {
         Tags { "RenderType"="Transparent" "Queue" = "Transparent" /*"OutlineTarget"="True"*/}
         Blend SrcAlpha OneMinusSrcAlpha
+        // Cull Off
         LOD 100
 
+        // Pass
+        // {
+        //     ZWrite On
+        //     ColorMask 0
+        // }
+
+        GrabPass
+        {
+            "_BackgroundTexture"
+        }
+        
         Pass
         {
             CGPROGRAM
@@ -43,12 +55,14 @@
                 float4 vertex : SV_POSITION;
                 float3 worldNormal : NORMAL;
                 float squish : TEXCOORD1;
-                float3 smearVal : TEXCOORD3;
-                SHADOW_COORDS(2)
+                float3 smearVal : TEXCOORD2;
+                float4 worldPos : TEXCOORD3;
+                SHADOW_COORDS(4)
             };
 
             sampler2D _Face;
             sampler2D _Ramp;
+            sampler2D _BackgroundTexture;
             fixed4 _Color;
 
             float4 _PrevPosition;
@@ -69,6 +83,7 @@
 
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
                 float3 localOffset = _Position.xyz - worldPos.xyz;
+                o.worldPos = worldPos;
                 
                 float3 normalizedVelocity;
                 if (length(_Velocity) == 0) {
@@ -86,6 +101,7 @@
                 o.smearVal = smearOffset;
 
                 o.vertex = UnityWorldToClipPos(worldPos);
+
                 return o;
             }
 
@@ -98,11 +114,17 @@
                 fixed4 col = _Color;
                 fixed4 face = tex2D(_Face, i.uv);
 
+                float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
+                viewDistance = clamp(viewDistance/15, 0, 1);
+
                 col.rgb = face.rgb * face.a + col * (1-face.a);
                 col = col * lighting * attenuation;
-                col.a = 1;
+
+                fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
+                col.rgb = lerp(col.rgb, background.rgb, viewDistance);
+
                 return col;
-                // return fixed4(i.squish, 0, 0, 1);
+                // return fixed4(viewDistance, 0, 0, 1);
             }
             ENDCG
         }

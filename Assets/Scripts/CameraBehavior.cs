@@ -9,6 +9,7 @@ public class CameraBehavior : MonoBehaviour
     void Start()
     {
         offset = this.transform.position - Vector3.zero;
+        RenderSettings.fogColor = Camera.main.backgroundColor;
     }
 
     void LateUpdate()

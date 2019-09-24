@@ -11,28 +11,31 @@ public class Cell : MonoBehaviour
         get { return cellCollider; }
     }
     private Vector3 vel;
+    private Renderer rend;
 
     private void Awake()
     {
         cellCollider = GetComponent<Collider>();
+        rend = GetComponent<Renderer>();
     }
 
     public void Move(Vector3 velocity)
     {
-        // vel += force * Time.deltaTime;
-        // vel = Vector3.ClampMagnitude(force, CellController.Instance.maxSpeed);
         if (velocity != Vector3.zero)
         {
-            // vel = Vector3.Lerp(vel, velocity, 0.2f);
             vel = velocity;
         }
         transform.position += vel * Time.deltaTime;
         transform.up = vel;
     }
 
+    public void AssignFace(Texture2D texture)
+    {
+        rend.material.SetTexture("_Face", texture);
+    }
+
     void OnDrawGizmos()
     {
-        // Debug.Log("gizmo");
         Gizmos.DrawLine(transform.position, transform.position + vel);
     }
 }

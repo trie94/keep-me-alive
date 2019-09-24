@@ -58,7 +58,7 @@ public class CellController : MonoBehaviour
         for (int i = 0; i < cells.Count; i++)
         {
             Cell cell = cells[i];
-            List<Transform> context = getNeighbors(cell);
+            List<Transform> context = GetNeighbors(cell);
             Vector3 velocity = behavior.CalculateMove(cell, context);
             velocity *= velocityMultiplier;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
@@ -79,7 +79,7 @@ public class CellController : MonoBehaviour
         }
     }
 
-    private List<Transform> getNeighbors(Cell cell)
+    private List<Transform> GetNeighbors(Cell cell)
     {
         List<Transform> context = new List<Transform>();
         Collider[] contextColliders = Physics.OverlapSphere(cell.transform.position, neighborRadius);

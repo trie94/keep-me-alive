@@ -12,11 +12,20 @@ public class Cell : MonoBehaviour
     }
     private Vector3 vel;
     private Renderer rend;
+    private int faceID;
+    [SerializeField]
+    private float timeInterval;
+    private float tick = 0f;
+    private int frameIndex = 0;
+    private Texture2D[] currEmotion;
+    public float emotionPickInterval;
 
     private void Awake()
     {
         cellCollider = GetComponent<Collider>();
         rend = GetComponent<Renderer>();
+        faceID = Shader.PropertyToID("_Face");
+        emotionPickInterval = Random.Range(5f, 10f);
     }
 
     public void Move(Vector3 velocity)
@@ -26,12 +35,28 @@ public class Cell : MonoBehaviour
             vel = velocity;
         }
         transform.position += vel * Time.deltaTime;
-        transform.up = vel;
+        transform.right = vel;
     }
 
-    public void AssignFace(Texture2D texture)
+    public void PlayEmotionAnim(Texture2D[] anim)
     {
-        rend.material.SetTexture("_Face", texture);
+        if (anim == null) return;
+
+        if (currEmotion != anim)
+        {
+            frameIndex = 0;
+            emotionPickInterval = Random.Range(5f, 10f);
+        }
+
+        // play anim
+        if (tick > timeInterval)
+        {
+            rend.material.SetTexture(faceID, anim[frameIndex]);
+            frameIndex = (frameIndex + 1) % anim.Length;
+            tick = 0;
+        }
+        tick += Time.deltaTime;
+        currEmotion = anim;
     }
 
     void OnDrawGizmos()

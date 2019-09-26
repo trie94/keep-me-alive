@@ -17,8 +17,11 @@ public class CellController : MonoBehaviour
         }
     }
 
+    #region Behavior
+
     [SerializeField]
     private CellBehavior behavior;
+
     [SerializeField]
     private Cell cellPrefab;
     [SerializeField]
@@ -39,6 +42,13 @@ public class CellController : MonoBehaviour
     private float squareMaxSpeed;
     public float squareAvoidanceRadius;
     private float squareNeighborRadius;
+    #endregion
+    #region Emotion
+    [SerializeField]
+    private CellEmotion emotion;
+    private int emotionIndex;
+    #endregion
+
     void Start()
     {
         instance = this;
@@ -46,6 +56,7 @@ public class CellController : MonoBehaviour
         squareNeighborRadius = neighborRadius * neighborRadius;
         squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
         cells = new List<Cell>();
+        emotion.InitEmotions();
         InitCells();
     }
 
@@ -63,6 +74,7 @@ public class CellController : MonoBehaviour
             velocity *= velocityMultiplier;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
             cell.Move(velocity);
+            cell.PlayEmotionAnim(emotion.GetEmotion(cell.emotionPickInterval));
         }
     }
 

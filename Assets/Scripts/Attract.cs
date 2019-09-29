@@ -19,7 +19,7 @@ public class Attract : CellBehavior
         move /= context.Count;
         move -= cell.transform.position;
 
-        move = Vector3.SmoothDamp(cell.transform.right, move, ref currentVelocity, 0.5f);
+        move = Vector3.SmoothDamp(cell.transform.up, move, ref currentVelocity, 0.5f);
 
         return move;
     }

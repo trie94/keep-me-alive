@@ -16,14 +16,14 @@ public class CellController : MonoBehaviour
             return instance;
         }
     }
+    [SerializeField]
+    private Cell[] cellPrefabs;
 
     #region Behavior
 
     [SerializeField]
     private CellBehavior behavior;
 
-    [SerializeField]
-    private Cell cellPrefab;
     [SerializeField]
     private int cellNum = 3;
     public List<Cell> cells;
@@ -80,10 +80,12 @@ public class CellController : MonoBehaviour
 
     private void InitCells()
     {
+        int typeIndex = 0;
         for (int i = 0; i < cellNum; i++)
         {
+            typeIndex = (i % 5 == 0) ? 0 : 1;
             Cell cell = Instantiate(
-                cellPrefab,
+                cellPrefabs[typeIndex],
                 Random.insideUnitSphere * cellNum * density,
                 Random.rotation);
 

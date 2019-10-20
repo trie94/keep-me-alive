@@ -16,16 +16,9 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue" = "Transparent" /*"OutlineTarget"="True"*/}
+        Tags { "RenderType"="Transparent" "Queue" = "Transparent" }
         Blend SrcAlpha OneMinusSrcAlpha
-        // Cull Off
         LOD 100
-
-        // Pass
-        // {
-        //     ZWrite On
-        //     ColorMask 0
-        // }
 
         GrabPass
         {
@@ -54,10 +47,9 @@
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
                 float3 worldNormal : NORMAL;
-                float squish : TEXCOORD1;
-                float3 smearVal : TEXCOORD2;
-                float4 worldPos : TEXCOORD3;
-                SHADOW_COORDS(4)
+                float3 smearVal : TEXCOORD1;
+                float4 worldPos : TEXCOORD2;
+                SHADOW_COORDS(3)
             };
 
             sampler2D _Face;
@@ -93,13 +85,11 @@
                 }
 
                 float dirDot = abs(dot(normalizedVelocity, normalize(localOffset)) + _Offset);
-                o.squish = dirDot;
 
                 fixed3 smearOffset = _Velocity.xyz * (dirDot + snoise(worldPos.xyz * _NoiseFreq) * _NoiseScale) * _NoiseHeight;
 
                 worldPos.xyz -= smearOffset;
                 o.smearVal = smearOffset;
-
                 o.vertex = UnityWorldToClipPos(worldPos);
 
                 return o;
@@ -124,7 +114,6 @@
                 col.rgb = lerp(col.rgb, background.rgb, viewDistance);
 
                 return col;
-                // return fixed4(viewDistance, 0, 0, 1);
             }
             ENDCG
         }

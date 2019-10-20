@@ -84,6 +84,8 @@ public class CellController : MonoBehaviour
         for (int i = 0; i < cellNum; i++)
         {
             typeIndex = (i % 5 == 0) ? 0 : 1;
+            typeIndex = (i % 7 == 0) ? 2 : typeIndex;
+
             Cell cell = Instantiate(
                 cellPrefabs[typeIndex],
                 Random.insideUnitSphere * cellNum * density,

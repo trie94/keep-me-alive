@@ -11,7 +11,7 @@ public abstract class Cell : MonoBehaviour
         get { return cellCollider; }
     }
     private Vector3 vel;
-    private Renderer rend;
+    protected Renderer rend;
     private int faceID;
     [SerializeField]
     private float timeInterval;

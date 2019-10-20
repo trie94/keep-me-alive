@@ -2,12 +2,13 @@
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _Color ("Color", color) = (1,0,0,1)
         _Ramp ("Toon Ramp (RGB)", 2D) = "white" {}
 
         _Length ("Limb Length", Range(2, 5)) = 3
         _Thickness ("Limb Thickness", Range(0.1, 2)) = 0.5
-        _YOffset ("Height Offset", Range(-1, 2)) = 0.5
+
+        _YOffset ("Height Offset", Range(-1, 2)) = 2
         _Speed ("Limb Speed", Range(0.1, 2)) = 0.5
         _NoiseFreq ("Noise Frequency", Range(0.1, 2)) = 1
         _NoiseIntensity ("Noise Intensity", Range(0.001, 2)) = 1
@@ -49,15 +50,16 @@
                 SHADOW_COORDS(4)
             };
 
-            sampler2D _MainTex;
             sampler2D _Ramp;
             sampler2D _BackgroundTexture;
 
-            fixed _Length;
-            fixed _Thickness;
+            uniform fixed _Length;
+            uniform fixed _Thickness;
+
+            fixed4 _Color;
 
             float _YOffset;
-            float _Speed;
+            uniform float _Speed;
             float _NoiseFreq;
             float _NoiseIntensity;
 
@@ -94,7 +96,7 @@
                 float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
                 viewDistance = clamp(viewDistance/15, 0, 1);
                 fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
-                fixed4 col = tex2D(_MainTex, i.uv);
+                fixed4 col = _Color;
                 col.rgb = lerp(col.rgb, background.rgb, viewDistance);
 
                 return col * lighting;

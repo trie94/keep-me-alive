@@ -56,7 +56,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Ramp:
-        m_Texture: {fileID: 2800000, guid: fd1f736f9ffe74973911f74f3c8a69ce, type: 3}
+        m_Texture: {fileID: 2800000, guid: 80502255b291a42a8b21f6aeefdc97de, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -67,7 +67,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Length: 2.32
+    - _Length: 2.58
     - _Metallic: 0
     - _Mode: 0
     - _NoiseFreq: 0.59
@@ -78,7 +78,7 @@ Material:
     - _SpecularHighlights: 1
     - _Speed: 1.66
     - _SrcBlend: 1
-    - _Thickness: 0.42
+    - _Thickness: 1.09
     - _UVSec: 0
     - _YOffset: 0
     - _ZWrite: 1

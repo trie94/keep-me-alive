@@ -6,14 +6,16 @@ public class CameraBehavior : MonoBehaviour
 {
     Vector3 offset;
 
-    void Start()
+    private void Start()
     {
         offset = this.transform.position - Vector3.zero;
         RenderSettings.fogColor = Camera.main.backgroundColor;
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
+        if (CellController.Instance.cells == null || CellController.Instance.cells.Count <= 0) return;
+
         Vector3 targetPos = Vector3.zero;
         for (int i=0; i<CellController.Instance.cells.Count; i++)
         {

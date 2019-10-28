@@ -27,6 +27,7 @@ public class CellController : MonoBehaviour
     [SerializeField]
     private int cellNum = 3;
     public List<Cell> cells;
+    public static HashSet<Collider> obstacles;
 
     [Range(0.01f, 3f)]
     public float density = 0.1f;
@@ -49,18 +50,23 @@ public class CellController : MonoBehaviour
     private int emotionIndex;
     #endregion
 
-    void Start()
+    private void Awake()
     {
         instance = this;
         squareMaxSpeed = maxSpeed * maxSpeed;
         squareNeighborRadius = neighborRadius * neighborRadius;
         squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
         cells = new List<Cell>();
+        obstacles = new HashSet<Collider>();
+    }
+
+    private void Start()
+    {
         emotion.InitEmotions();
         InitCells();
     }
 
-    void Update()
+    private void Update()
     {
         squareMaxSpeed = maxSpeed * maxSpeed;
         squareNeighborRadius = neighborRadius * neighborRadius;
@@ -103,11 +109,18 @@ public class CellController : MonoBehaviour
         for (int i = 0; i < contextColliders.Length; i++)
         {
             var curr = contextColliders[i];
-            if (curr != cell.CellCollider)
+            // should be not self, and not obstacle
+            if (curr != cell.CellCollider && !obstacles.Contains(curr))
             {
                 context.Add(curr.transform);
             }
         }
         return context;
+    }
+
+    public void RegisterObstacles(Collider obstacle)
+    {
+        obstacles.Add(obstacle);
+        Debug.Log("register: " + obstacle);
     }
 }

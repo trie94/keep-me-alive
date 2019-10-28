@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class CellBehavior : ScriptableObject
 {
-    public abstract Vector3 CalculateMove(Cell cell, List<Transform> context);
+    public abstract Vector3 CalculateMove(Cell cell, List<Transform> neighbors);
 }

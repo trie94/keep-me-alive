@@ -14,7 +14,8 @@ public class Attract : CellBehavior
         Vector3 move = Vector3.zero;
         for (int i = 0; i < context.Count; i++)
         {
-            move += context[i].position;
+            var curr = context[i];
+            move += curr.position;
         }
         move /= context.Count;
         move -= cell.transform.position;

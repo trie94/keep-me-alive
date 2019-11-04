@@ -18,6 +18,8 @@ public class CellController : MonoBehaviour
     }
     [SerializeField]
     private Cell[] cellPrefabs;
+    [SerializeField]
+    private GameObject spawn;
 
     #region Behavior
 
@@ -94,7 +96,8 @@ public class CellController : MonoBehaviour
 
             Cell cell = Instantiate(
                 cellPrefabs[typeIndex],
-                Random.insideUnitSphere * cellNum * density,
+                // Random.insideUnitSphere * cellNum * density,
+                spawn.transform.position,
                 Random.rotation);
 
             cells.Add(cell);

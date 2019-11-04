@@ -6,10 +6,16 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent-1" }
         LOD 100
         Blend SrcAlpha OneMinusSrcAlpha
         Cull Back
+        
+        Pass
+        {
+            ZWrite On
+            ColorMask 0
+        }
 
         Pass
         {

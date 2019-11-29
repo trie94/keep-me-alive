@@ -9,15 +9,15 @@ public class PathEditor : Editor
     private void OnSceneGUI()
     {
         Path path = target as Path;
-        if (path == null || path.nodes == null || path.segments == null) return;
+        if (path == null || path.segments == null) return;
 
-        for (int i = 0; i < path.segments.Length; i++)
+        for (int i = 0; i < path.segments.Count; i++)
         {
             Segment currSeg = path.segments[i];
             Node segmentStart = currSeg.n0;
             Node segmentEnd = currSeg.n1;
 
-            Vector3 p0 = segmentStart.position;
+            Vector3 p0 = segmentStart.transform.position;
 
             for (int j = 1; j <= lineSteps; j++)
             {

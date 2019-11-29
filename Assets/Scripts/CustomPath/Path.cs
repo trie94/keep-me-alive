@@ -2,53 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum NodeType
-{
-    Main, Sub
-}
-
 [System.Serializable]
-public struct Node
-{
-    public NodeType type;
-    public Vector3 position;
-    public Vector3 direction;
-    public float forward;
-    public float backward;
-
-    public Node (NodeType type, Vector3 position, Vector3 direction, float forward, float backward)
-    {
-        this.type = type;
-        this.position = position;
-        this.direction = direction;
-        this.forward = forward;
-        this.backward = backward;
-    }
-}
-
-[System.Serializable]
-public struct Segment
+public class Segment
 {
     public Node n0;
     public Node n1;
     public float weight;
-
-    public Segment(Node n0, Node n1, float weight)
-    {
-        this.n0 = n0;
-        this.n1 = n1;
-        this.weight = weight;
-    }
 }
 
 [ExecuteInEditMode]
 public class Path : MonoBehaviour
 {
-    public Transform[] endpoints;
-    public Node[] nodes;
-    public Segment[] segments;
-    private const float MAIN_WEIGHT = 0.7f;
-    private const float SUB_WEIGHT = 0.2f;
+    public List<Segment> segments = new List<Segment>();
+
+    private const float HIGH = 0.7f;
+    private const float MID = 0.4f;
+    private const float LOW = 0.2f;
 
     private static Path instance;
     public static Path Instance
@@ -63,36 +32,39 @@ public class Path : MonoBehaviour
         }
     }
 
-    private void Awake()
+    private void Start()
     {
-        BuildNodes();
+        CalculateWeight();
     }
 
-    private void BuildNodes()
+    private void CalculateWeight()
     {
-        nodes = new Node[endpoints.Length];
-        segments = new Segment[endpoints.Length];
-
-        for (int i=0; i<endpoints.Length; i++)
+        for (int i = 0; i < segments.Count; i++)
         {
-            Transform currPoint = endpoints[i];
-            Node node = new Node(
-                NodeType.Main, currPoint.position, currPoint.forward, 0.5f, 0.5f
-            );
-            nodes[i] = node;
+            var currSeg = segments[i];
+            currSeg.weight
+                   = GetWeight(currSeg.n0.weight) + GetWeight(currSeg.n1.weight);
         }
+    }
 
-        for (int i=0; i<nodes.Length; i++)
+    private float GetWeight(NodeWeight weight)
+    {
+        switch(weight)
         {
-            Segment segment = new Segment(
-                nodes[i], nodes[(i+1)%nodes.Length], MAIN_WEIGHT
-                );
-            segments[i] = segment;
+            case NodeWeight.High:
+                return HIGH;
+            case NodeWeight.Mid:
+                return MID;
+            case NodeWeight.Low:
+                return LOW;
+            default:
+                return 0f;
         }
     }
 
     public Vector3 GetPoint(Segment s, float t)
     {
-        return s.n0.position + (s.n1.position-s.n0.position) * t;
+        return s.n0.transform.position
+                + (s.n1.transform.position-s.n0.transform.position) * t;
     }
 }

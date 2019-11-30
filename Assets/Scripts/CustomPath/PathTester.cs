@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PathTester : MonoBehaviour
 {
-    private int lineSteps = 10;
     private float progress = 0f;
     private float duration = 10f;
     private float speed;
@@ -15,6 +12,8 @@ public class PathTester : MonoBehaviour
         speed = Random.Range(0.5f, 2f);
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
+        // initial position
+        transform.position = Path.Instance.GetPoint(currSeg, progress);
     }
 
     private void Update()
@@ -22,20 +21,20 @@ public class PathTester : MonoBehaviour
         if (Path.Instance == null || Path.Instance.segments == null) return;
 
         progress += Time.deltaTime / duration * speed;
-        if (progress > 1f)
+        if (progress >= 1f)
         {
             progress = 0f;
             currSeg = GetNextSegment();
         }
 
-        for (int j = 1; j <= lineSteps; j++)
-        {
-            Vector3 target = Path.Instance.GetPoint(currSeg, progress);
-            Vector3 lookDir = target - transform.position;
+        Vector3 target = Path.Instance.GetPoint(currSeg, progress);
+        Vector3 lookDir = target - transform.position;
 
-            transform.position = target;
+        if (lookDir != Vector3.zero)
+        {
             transform.rotation = Quaternion.LookRotation(lookDir, Vector3.up);
         }
+        transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
     }
 
     private Segment GetNextSegment()

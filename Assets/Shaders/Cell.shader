@@ -53,6 +53,7 @@
             };
 
             sampler2D _Face;
+            float4 _Face_ST;
             sampler2D _Ramp;
             sampler2D _BackgroundTexture;
             fixed4 _Color;
@@ -69,7 +70,7 @@
             v2f vert (appdata v)
             {
                 v2f o;
-                o.uv = v.uv;
+                o.uv = TRANSFORM_TEX(v.uv, _Face);
                 o.worldNormal = mul((float3x3)unity_ObjectToWorld, v.normal);
                 TRANSFER_SHADOW(o);
 

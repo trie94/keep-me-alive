@@ -20,6 +20,7 @@ public class Node : MonoBehaviour
     private void Awake()
     {
         GetSegments();
+        ColorWeight();
     }
 
     private void GetSegments()
@@ -33,6 +34,34 @@ public class Node : MonoBehaviour
             {
                 nextSegments.Add(segment);
             }
+        }
+    }
+
+    private void ColorWeight()
+    {
+        Renderer rend = GetComponent<Renderer>();
+        if (CellControllerPathTestVersion.Instance.isDebugMode)
+        {
+            rend.material.SetFloat("_Weight", GetWeigthOpac(weight));
+            rend.material.SetFloat("_Opacity", 1f);
+        }
+        else
+        {
+            rend.material.SetFloat("_Opacity", 0f);
+        }
+    }
+
+    private float GetWeigthOpac(NodeWeight nodeWeight)
+    {
+        switch(nodeWeight)
+        {
+            case NodeWeight.High:
+                return 1f;
+            case NodeWeight.Mid:
+                return 0.5f;
+            case NodeWeight.Low:
+            default:
+                return 0f;
         }
     }
 }

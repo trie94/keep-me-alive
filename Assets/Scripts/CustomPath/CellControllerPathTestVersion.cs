@@ -9,6 +9,8 @@ public class CellControllerPathTestVersion : MonoBehaviour
     [SerializeField]
     private int cellNum = 10;
     private GameObject[] cells;
+    public bool isDebugMode = true;
+    public GameObject player;
 
     private static CellControllerPathTestVersion instance;
     public static CellControllerPathTestVersion Instance
@@ -37,5 +39,6 @@ public class CellControllerPathTestVersion : MonoBehaviour
             GameObject cell = Instantiate(cellPrefab);
             cells[i] = cell;
         }
+        player = cells[0];
     }
 }

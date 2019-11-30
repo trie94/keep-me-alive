@@ -15,9 +15,9 @@ public class Path : MonoBehaviour
 {
     public List<Segment> segments = new List<Segment>();
 
-    private const float HIGH = 0.7f;
-    private const float MID = 0.4f;
-    private const float LOW = 0.2f;
+    private const float HIGH = 10f;
+    private const float MID = 5f;
+    private const float LOW = 1f;
 
     private static Path instance;
     public static Path Instance

@@ -5,11 +5,12 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/Repel")]
 public class Repel : CellBehavior
 {
-    public override Vector3 CalculateMove(Cell cell, List<Transform> neighbors)
+    private Vector3 currentVelocity;
+    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
     {
         if (neighbors.Count == 0) return Vector3.zero;
 
-        Vector3 move = Vector3.zero;
+        Vector3 velocity = Vector3.zero;
         int nAvoid = 0;
         for (int i = 0; i < neighbors.Count; i++)
         {
@@ -17,11 +18,14 @@ public class Repel : CellBehavior
             if (Vector3.SqrMagnitude(curr.position - cell.transform.position) < CellController.Instance.squareAvoidanceRadius)
             {
                 nAvoid++;
-                move += (cell.transform.position - curr.position);
+                velocity += (cell.transform.position - curr.position);
             }
         }
-        if (nAvoid > 0) move /= nAvoid;
+        if (nAvoid > 0) velocity /= nAvoid;
 
-        return move;
+        // since repel causes jittery movement, we need to smooth out here
+        // and add more weight when composite all the velocity
+        velocity = Vector3.SmoothDamp(cell.transform.up, velocity, ref currentVelocity, 0.5f);
+        return velocity;
     }
 }

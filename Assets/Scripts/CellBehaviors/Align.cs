@@ -7,19 +7,19 @@ public class Align : CellBehavior
 {
     public float agentSmoothTime = 0.5f;
 
-    public override Vector3 CalculateMove(Cell cell, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
     {
         if (neighbors.Count == 0)
             return cell.transform.up;
 
         //add all points together and average
-        Vector3 move = Vector3.zero;
+        Vector3 velocity = Vector3.zero;
         for (int i=0; i<neighbors.Count; i++)
         {
             var curr = neighbors[i];
-            move += curr.transform.up;
+            velocity += curr.transform.up;
         }
-        move /= neighbors.Count;
-        return move;
+        velocity /= neighbors.Count;
+        return velocity;
     }
 }

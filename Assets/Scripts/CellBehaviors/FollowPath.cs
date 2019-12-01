@@ -5,14 +5,13 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/FollowPath")]
 public class FollowPath : CellBehavior
 {
-    public float distThreshold = 2f;
-    private float timeout = 10f;
-    public override Vector3 CalculateMove(Cell cell, List<Transform> context)
+    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
     {
         cell.progress += Time.deltaTime * cell.speed;
+        if (cell.currSeg.n0 == null || cell.currSeg.n1 == null) return Vector3.zero;
         float distSqrt = (cell.currSeg.n1.transform.position - cell.transform.position).sqrMagnitude;
 
-        if (distSqrt <= 1f)
+        if (distSqrt <= 1.5f)
         {
             cell.progress = 0f;
             cell.currSeg = GetNextSegment(cell);

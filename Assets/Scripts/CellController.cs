@@ -78,8 +78,9 @@ public class CellController : MonoBehaviour
         for (int i = 0; i < cells.Count; i++)
         {
             Cell cell = cells[i];
-            List<Transform> context = GetNeighbors(cell);
-            Vector3 velocity = behavior.CalculateMove(cell, context);
+            List<Transform> neighbors = GetNeighbors(cell);
+            if (neighbors == null) Debug.Log("neighbors are null?");
+            Vector3 velocity = behavior.CalculateVelocity(cell, neighbors);
             velocity *= velocityMultiplier;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
             cell.Move(velocity);
@@ -108,7 +109,7 @@ public class CellController : MonoBehaviour
     private List<Transform> GetNeighbors(Cell cell)
     {
         if (cell == null) return null;
-        List<Transform> context = new List<Transform>();
+        List<Transform> neighbors = new List<Transform>();
         Collider[] contextColliders = Physics.OverlapSphere(cell.transform.position, neighborRadius);
 
         for (int i = 0; i < contextColliders.Length; i++)
@@ -117,10 +118,10 @@ public class CellController : MonoBehaviour
             // should be not self, and not obstacle
             if (curr != cell.CellCollider && !obstacles.Contains(curr))
             {
-                context.Add(curr.transform);
+                neighbors.Add(curr.transform);
             }
         }
-        return context;
+        return neighbors;
     }
 
     public void RegisterObstacles(Collider obstacle)

@@ -91,7 +91,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.9
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &9026372904065540676
 MonoBehaviour:
@@ -105,8 +105,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 206b4a6ec970d42ce9d8557ad01535c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currVelocity: {x: 0, y: 0, z: 0}
   timeInterval: 0
   emotionPickInterval: 0
+  progress: 0
+  speed: 0
+  currSeg:
+    n0: {fileID: 0}
+    n1: {fileID: 0}
+    weight: 0
   limbPrefab: {fileID: 7946225896251300908, guid: 21c7d9a0fce1942178eb7f584ca9a80e,
     type: 3}
   maxLimbNum: 8

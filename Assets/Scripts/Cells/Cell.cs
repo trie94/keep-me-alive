@@ -10,7 +10,7 @@ public abstract class Cell : MonoBehaviour
     {
         get { return cellCollider; }
     }
-    private Vector3 vel;
+    public Vector3 currVelocity;
     protected Renderer rend;
     private int faceID;
     [SerializeField]
@@ -38,17 +38,14 @@ public abstract class Cell : MonoBehaviour
         // set initial position
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
-        transform.position = Path.Instance.GetPoint(currSeg, progress);
+        transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
     }
 
     public virtual void Move(Vector3 velocity)
     {
-        if (velocity != Vector3.zero)
-        {
-            vel = velocity;
-        }
-        transform.position += vel * Time.deltaTime;
-        transform.up = vel;
+        if (velocity != Vector3.zero) currVelocity = velocity;
+        transform.position += currVelocity * Time.deltaTime;
+        transform.up = currVelocity;
     }
 
     public virtual void PlayEmotionAnim(Texture2D[] anim)

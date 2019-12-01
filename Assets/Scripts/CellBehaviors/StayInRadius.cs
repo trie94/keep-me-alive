@@ -8,7 +8,7 @@ public class StayInRadius : CellBehavior
     public Vector3 center;
     public float radius = 15f;
 
-    public override Vector3 CalculateMove(Cell cell, List<Transform> context)
+    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
     {
         Vector3 centerOffset = center - cell.transform.position;
         float t = centerOffset.magnitude / radius;

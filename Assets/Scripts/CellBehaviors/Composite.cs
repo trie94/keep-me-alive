@@ -8,7 +8,7 @@ public class Composite : CellBehavior
     public CellBehavior[] behaviors;
     public float[] weights;
 
-    public override Vector3 CalculateMove(Cell cell, List<Transform> context)
+    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
     {
         if (weights.Length != behaviors.Length)
         {
@@ -16,24 +16,24 @@ public class Composite : CellBehavior
             return Vector3.zero;
         }
 
-        Vector3 move = Vector3.zero;
+        Vector3 velocity = Vector3.zero;
         for (int i = 0; i < behaviors.Length; i++)
         {
-            Vector3 partialMove = behaviors[i].CalculateMove(cell, context) * weights[i];
+            Vector3 partialVelocity = behaviors[i].CalculateVelocity(cell, neighbors) * weights[i];
 
-            if (partialMove != Vector3.zero)
+            if (partialVelocity != Vector3.zero)
             {
-                if (partialMove.sqrMagnitude > weights[i] * weights[i])
+                if (partialVelocity.sqrMagnitude > weights[i] * weights[i])
                 {
-                    partialMove.Normalize();
-                    partialMove *= weights[i];
+                    partialVelocity.Normalize();
+                    partialVelocity *= weights[i];
                 }
 
-                move += partialMove;
+                velocity += partialVelocity;
             }
         }
 
-        return move;
+        return velocity;
     }
 
     public override void DrawGizmos(Cell cell, List<Transform> context)

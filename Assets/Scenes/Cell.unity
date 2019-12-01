@@ -5472,7 +5472,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1111143776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5487,7 +5487,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 338385197157699535, guid: 531d2690c4cfe46dd9608ba5fe7f82ad,
     type: 3}
-  cellNum: 20
+  cellNum: 10
   isDebugMode: 1
   player: {fileID: 0}
 --- !u!4 &1111143777
@@ -5633,7 +5633,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1356003339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5651,8 +5651,8 @@ MonoBehaviour:
   - {fileID: 896347195976248771, guid: b64094b229bac4ff1ad32c1a73988375, type: 3}
   - {fileID: 9026372904065540676, guid: f68cda0e8b6d042dfac2634d4234f6fd, type: 3}
   spawn: {fileID: 1551207289}
-  behavior: {fileID: 11400000, guid: 999163c59ff684ecebe74ef6b2a6849d, type: 2}
-  cellNum: 50
+  behavior: {fileID: 11400000, guid: f14bed46c8d2e44df92c1a54e2fa7d32, type: 2}
+  cellNum: 20
   cells:
   - {fileID: 0}
   - {fileID: 0}
@@ -5761,6 +5761,7 @@ MonoBehaviour:
   maxSpeed: 1.19
   squareAvoidanceRadius: 9
   emotion: {fileID: 11400000, guid: 71463cb99e88b42c99359c6e391baa92, type: 2}
+  debugMode: 1
 --- !u!4 &1356003340
 Transform:
   m_ObjectHideFlags: 0

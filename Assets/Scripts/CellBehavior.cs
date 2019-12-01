@@ -5,4 +5,5 @@ using UnityEngine;
 public abstract class CellBehavior : ScriptableObject
 {
     public abstract Vector3 CalculateMove(Cell cell, List<Transform> neighbors);
+    public virtual void DrawGizmos(Cell cell, List<Transform> context){}
 }

@@ -20,12 +20,25 @@ public abstract class Cell : MonoBehaviour
     private Texture2D[] currEmotion;
     public float emotionPickInterval;
 
+    public float progress = 0f;
+    public float speed;
+    public Segment currSeg;
+
     public virtual void Awake()
     {
         cellCollider = GetComponent<Collider>();
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
         emotionPickInterval = Random.Range(5f, 10f);
+        speed = Random.Range(0.5f, 2f);
+    }
+
+    public virtual void Start()
+    {
+        // set initial position
+        int segIndex = Random.Range(0, Path.Instance.segments.Count);
+        currSeg = Path.Instance.segments[segIndex];
+        transform.position = Path.Instance.GetPoint(currSeg, progress);
     }
 
     public virtual void Move(Vector3 velocity)
@@ -59,8 +72,8 @@ public abstract class Cell : MonoBehaviour
         currEmotion = anim;
     }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(transform.position, transform.position + vel);
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.DrawLine(transform.position, transform.position + vel);
+    //}
 }

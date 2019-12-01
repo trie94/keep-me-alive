@@ -64,7 +64,6 @@ public class Path : MonoBehaviour
 
     public Vector3 GetPoint(Segment s, float t)
     {
-        return s.n0.transform.position
-                + (s.n1.transform.position-s.n0.transform.position) * t;
+        return Vector3.Lerp(s.n0.transform.position, s.n1.transform.position, t);
     }
 }

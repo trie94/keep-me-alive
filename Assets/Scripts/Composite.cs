@@ -35,4 +35,12 @@ public class Composite : CellBehavior
 
         return move;
     }
+
+    public override void DrawGizmos(Cell cell, List<Transform> context)
+    {
+        for (int i = 0; i < behaviors.Length; i++)
+        {
+            behaviors[i].DrawGizmos(cell, context);
+        }
+    }
 }

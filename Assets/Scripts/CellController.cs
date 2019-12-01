@@ -51,6 +51,7 @@ public class CellController : MonoBehaviour
     private CellEmotion emotion;
     private int emotionIndex;
     #endregion
+    public bool debugMode = true;
 
     private void Awake()
     {
@@ -106,6 +107,7 @@ public class CellController : MonoBehaviour
 
     private List<Transform> GetNeighbors(Cell cell)
     {
+        if (cell == null) return null;
         List<Transform> context = new List<Transform>();
         Collider[] contextColliders = Physics.OverlapSphere(cell.transform.position, neighborRadius);
 
@@ -125,5 +127,16 @@ public class CellController : MonoBehaviour
     {
         obstacles.Add(obstacle);
         Debug.Log("register: " + obstacle);
+    }
+
+    private void OnDrawGizmos()
+    {
+        for (int i = 0; i < cells.Count; i++)
+        {
+            Cell cell = cells[i];
+            List<Transform> context = GetNeighbors(cell);
+            if (context == null || cell == null) return;
+            behavior.DrawGizmos(cell, context);
+        }
     }
 }

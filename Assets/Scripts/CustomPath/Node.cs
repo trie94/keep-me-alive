@@ -40,7 +40,8 @@ public class Node : MonoBehaviour
     private void ColorWeight()
     {
         Renderer rend = GetComponent<Renderer>();
-        if (CellControllerPathTestVersion.Instance.isDebugMode)
+        if (CellController.Instance && CellController.Instance.debugMode
+            || CellControllerPathTestVersion.Instance && CellControllerPathTestVersion.Instance.isDebugMode)
         {
             rend.material.SetFloat("_Weight", GetWeigthOpac(weight));
             rend.material.SetFloat("_Opacity", 1f);

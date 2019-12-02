@@ -5,12 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/Align")]
 public class Align : CellBehavior
 {
-    public float agentSmoothTime = 0.5f;
-
     public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
     {
-        if (neighbors.Count == 0)
-            return cell.transform.up;
+        if (neighbors == null || neighbors.Count == 0) return cell.transform.up;
 
         //add all points together and average
         Vector3 velocity = Vector3.zero;
@@ -19,6 +16,7 @@ public class Align : CellBehavior
             var curr = neighbors[i];
             velocity += curr.transform.up;
         }
+
         velocity /= neighbors.Count;
         return velocity;
     }

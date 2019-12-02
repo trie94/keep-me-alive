@@ -8,7 +8,7 @@ public class Repel : CellBehavior
     private Vector3 currentVelocity;
     public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
     {
-        if (neighbors.Count == 0) return Vector3.zero;
+        if (neighbors == null || neighbors.Count == 0) return Vector3.zero;
 
         Vector3 velocity = Vector3.zero;
         int nAvoid = 0;

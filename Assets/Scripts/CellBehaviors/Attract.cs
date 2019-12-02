@@ -7,8 +7,7 @@ public class Attract : CellBehavior
 {
     public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
     {
-        if (neighbors.Count == 0)
-            return Vector3.zero;
+        if (neighbors == null || neighbors.Count == 0) return Vector3.zero;
 
         Vector3 velocity = Vector3.zero;
         for (int i = 0; i < neighbors.Count; i++)

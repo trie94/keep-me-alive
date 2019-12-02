@@ -10,7 +10,8 @@ public abstract class Cell : MonoBehaviour
     {
         get { return cellCollider; }
     }
-    public Vector3 currVelocity;
+
+    #region Emotion
     protected Renderer rend;
     private int faceID;
     [SerializeField]
@@ -19,10 +20,14 @@ public abstract class Cell : MonoBehaviour
     private int frameIndex = 0;
     private Texture2D[] currEmotion;
     public float emotionPickInterval;
+    #endregion
 
+    #region Movement
+    public Vector3 currVelocity;
     public float progress = 0f;
     public float speed;
     public Segment currSeg;
+    #endregion
 
     public virtual void Awake()
     {
@@ -39,6 +44,7 @@ public abstract class Cell : MonoBehaviour
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
+        transform.rotation = Random.rotation;
     }
 
     public virtual void Move(Vector3 velocity)

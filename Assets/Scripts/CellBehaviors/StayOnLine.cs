@@ -8,6 +8,7 @@ using UnityEngine;
 */
 public class StayOnLine : CellBehavior
 {
+    private Vector3 debugVelocity;
     public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
     {
         if (cell.currSeg.n0 == null || cell.currSeg.n1 == null) return Vector3.zero;
@@ -18,6 +19,7 @@ public class StayOnLine : CellBehavior
         Vector3 cellToClosestPointOnLine = 
             (cellToStartPoint - Vector3.Dot(cellToStartPoint, segDir) * segDir);
 
+        debugVelocity = cellToClosestPointOnLine;
         float dist = cellToClosestPointOnLine.magnitude;
         return cellToClosestPointOnLine * dist;
     }
@@ -25,14 +27,9 @@ public class StayOnLine : CellBehavior
     public override void DrawGizmos(Cell cell, List<Transform> context)
     {
         Gizmos.color = Color.red;
-        Vector3 cellToStartPoint = cell.currSeg.n0.transform.position
-                                       - cell.transform.position;
-        Vector3 segDir = (cell.currSeg.n1.transform.position
-                          - cell.currSeg.n0.transform.position).normalized;
-        Vector3 cellToClosestPointOnLine =
-            (cellToStartPoint - Vector3.Dot(cellToStartPoint, segDir) * segDir);
-
-        float dist = cellToClosestPointOnLine.magnitude;
-        Gizmos.DrawLine(cell.transform.position, cell.transform.position+cellToClosestPointOnLine);
+        if (debugVelocity != Vector3.zero)
+        {
+            Gizmos.DrawLine(cell.transform.position, cell.transform.position+debugVelocity);
+        }
     }
 }

@@ -13,17 +13,20 @@ public class CellEmotion : ScriptableObject
     public Texture2D[] neutral;
     public Texture2D[] happy;
     public Texture2D[] sad;
-    public Texture2D[] surprise;
+    public Texture2D[] surprised;
 
     public Texture2D[] MapEnumWithTexture(Emotions emotion)
     {
-        // TODO: this will be returning correct array
         switch(emotion)
         {
             case Emotions.Neutral:
+                return neutral;
             case Emotions.Happy:
+                return happy;
             case Emotions.Sad:
+                return sad;
             case Emotions.Surprised:
+                return surprised;
             default:
                 return neutral;
         }

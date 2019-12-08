@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: Emotions
   m_EditorClassIdentifier: 
   neutral:
-  - {fileID: 2800000, guid: 795bbbb2dede948a6ac72c26417add01, type: 3}
-  - {fileID: 2800000, guid: 84a449e06253e41ec87b1caadda1b716, type: 3}
-  - {fileID: 2800000, guid: 55848441a03714bad8efaa8e27f5feeb, type: 3}
+  - {fileID: 2800000, guid: 66a1b183f119b4e5cabae7c3f1801c2b, type: 3}
+  - {fileID: 2800000, guid: 38b699b891dac4628ae12c3548d2f382, type: 3}
+  - {fileID: 2800000, guid: 5fee933aa56d7496eb87a6984d477f81, type: 3}
+  - {fileID: 2800000, guid: 66dfb8051ed8546018ffa20a157e9161, type: 3}
+  - {fileID: 2800000, guid: 5918830e50e044972b3ba7475feff26f, type: 3}
+  happy: []
+  sad: []
   surprise:
   - {fileID: 2800000, guid: 6176ed9838e1d44e6b2e4947455c0907, type: 3}
   - {fileID: 2800000, guid: 19df5ff91ea9c431f8494a4bc58c2cd5, type: 3}

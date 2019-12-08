@@ -2,32 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Emotions
+{
+    Neutral, Happy, Sad, Surprised    
+}
+
 [CreateAssetMenu(menuName = "Cell/Emotion")]
 public class CellEmotion : ScriptableObject
 {
-    public List<Texture2D[]> emotions;
     public Texture2D[] neutral;
+    public Texture2D[] happy;
+    public Texture2D[] sad;
     public Texture2D[] surprise;
-    private float tick = 0;
-    private int randomIndex = 0;
 
-    public void InitEmotions()
+    public Texture2D[] MapEnumWithTexture(Emotions emotion)
     {
-        emotions = new List<Texture2D[]>();
-        emotions.Add(neutral);
-        emotions.Add(surprise);
-    }
-
-    // TODO: make it different between cells
-    public Texture2D[] GetEmotion(float pickTime)
-    {
-        if (tick > pickTime)
+        // TODO: this will be returning correct array
+        switch(emotion)
         {
-            tick = 0;
-            randomIndex = Random.Range(0, emotions.Count);
-            return emotions[randomIndex];
+            case Emotions.Neutral:
+            case Emotions.Happy:
+            case Emotions.Sad:
+            case Emotions.Surprised:
+            default:
+                return neutral;
         }
-        tick += Time.deltaTime;
-        return emotions[randomIndex];
     }
 }

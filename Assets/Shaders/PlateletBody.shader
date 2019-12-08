@@ -48,6 +48,7 @@
             };
 
             sampler2D _Face;
+            float4 _Face_ST;
             sampler2D _Ramp;
             sampler2D _BackgroundTexture;
 
@@ -74,7 +75,7 @@
 
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex);
-                o.uv = v.uv;
+                o.uv = TRANSFORM_TEX(v.uv, _Face);
 
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
                 float ramp = saturate(dot(lightDir, worldNormal));

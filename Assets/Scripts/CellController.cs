@@ -42,6 +42,10 @@ public class CellController : MonoBehaviour
     private float squareNeighborRadius;
     #endregion
 
+    #region Emotion
+    public CellEmotion emotions;
+    #endregion
+
     public bool debugMode = true;
 
     private void Awake()

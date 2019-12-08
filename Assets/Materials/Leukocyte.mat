@@ -40,9 +40,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Face:
-        m_Texture: {fileID: 2800000, guid: 5c8248e62514a484793fa6e95c4b3173, type: 3}
+        m_Texture: {fileID: 2800000, guid: 66a1b183f119b4e5cabae7c3f1801c2b, type: 3}
         m_Scale: {x: 1, y: 1}
-        m_Offset: {x: -0.22, y: 0}
+        m_Offset: {x: -0.25, y: -0.12}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -88,5 +88,5 @@ Material:
     m_Colors:
     - _Color: {r: 0.990566, g: 0.990566, b: 0.990566, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Position: {r: 6.8533077, g: 2.7964048, b: -3.3056428, a: 0}
+    - _Position: {r: -5.8115034, g: -0.12117209, b: -3.1166208, a: 0}
     - _PrevPosition: {r: 1.530159, g: 1.8519078, b: 5.990162, a: 0}

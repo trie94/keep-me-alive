@@ -18,8 +18,10 @@ public abstract class Cell : MonoBehaviour
     private float timeInterval;
     private float tick = 0f;
     private int frameIndex = 0;
-    private Texture2D[] currEmotion;
-    public float emotionPickInterval;
+    private Emotions currEmotion = Emotions.Neutral;
+    private Texture2D[] currEmotionTextures;
+    private float emotionPickInterval;
+    private float pickTick = 0f;
     #endregion
 
     #region Movement
@@ -45,6 +47,17 @@ public abstract class Cell : MonoBehaviour
         currSeg = Path.Instance.segments[segIndex];
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
         transform.rotation = Random.rotation;
+        PickNextEmotionAndReset();
+    }
+
+    public virtual void Update()
+    {
+        if (pickTick > emotionPickInterval)
+        {
+            PickNextEmotionAndReset();
+        }
+        pickTick += Time.deltaTime;
+        PlayFaceAnim();
     }
 
     public virtual void Move(Vector3 velocity)
@@ -54,25 +67,32 @@ public abstract class Cell : MonoBehaviour
         transform.up = currVelocity;
     }
 
-    public virtual void PlayEmotionAnim(Texture2D[] anim)
+    private void PlayFaceAnim()
     {
-        if (anim == null) return;
-
-        if (currEmotion != anim)
-        {
-            frameIndex = 0;
-            emotionPickInterval = Random.Range(5f, 10f);
-        }
-
-        // play anim
         if (tick > timeInterval)
         {
-            rend.material.SetTexture(faceID, anim[frameIndex]);
-            frameIndex = (frameIndex + 1) % anim.Length;
+            rend.material.SetTexture(faceID, currEmotionTextures[frameIndex]);
+            frameIndex = (frameIndex + 1) % currEmotionTextures.Length;
             tick = 0;
         }
         tick += Time.deltaTime;
-        currEmotion = anim;
+    }
+
+    private void PickNextEmotionAndReset()
+    {
+        var emotions = System.Enum.GetValues(typeof(Emotions));
+        var nextEmotion = (Emotions)emotions.GetValue(Random.Range(0, emotions.Length));
+
+        while (currEmotion == nextEmotion)
+        {
+            nextEmotion = (Emotions)emotions.GetValue(Random.Range(0, emotions.Length));
+        }
+
+        frameIndex = 0;
+        pickTick = 0f;
+        emotionPickInterval = Random.Range(5f, 10f);
+        currEmotion = nextEmotion;
+        currEmotionTextures = CellController.Instance.emotions.MapEnumWithTexture(currEmotion);
     }
 
     //private void OnDrawGizmos()

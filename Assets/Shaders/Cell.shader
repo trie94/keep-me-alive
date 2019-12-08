@@ -99,7 +99,7 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
-                float ramp = saturate(dot(i.worldNormal, lightDir));
+                float ramp = saturate(dot(normalize(i.worldNormal), lightDir));
                 float4 lighting = float4(tex2D(_Ramp, float2(ramp, 0.5)).rgb, 1.0);
                 float attenuation = SHADOW_ATTENUATION(i);
                 fixed4 col = _Color;

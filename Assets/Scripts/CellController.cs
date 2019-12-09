@@ -98,11 +98,8 @@ public class CellController : MonoBehaviour
         for (int i = 0; i < contextColliders.Length; i++)
         {
             var curr = contextColliders[i];
-            // should be not self, and not obstacle
-            if (curr != cell.CellCollider && !obstacles.Contains(curr))
-            {
-                neighbors.Add(curr.transform);
-            }
+            if (curr.tag != "Cell" || curr == cell.CellCollider) continue;
+            neighbors.Add(curr.transform);
         }
         return neighbors;
     }

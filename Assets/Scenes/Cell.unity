@@ -5285,6 +5285,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1356003340}
   - component: {fileID: 1356003339}
+  - component: {fileID: 1356003341}
   m_Layer: 0
   m_Name: Game Controller
   m_TagString: Untagged
@@ -5417,7 +5418,7 @@ MonoBehaviour:
   maxSpeed: 1.19
   squareAvoidanceRadius: 9
   emotions: {fileID: 11400000, guid: 71463cb99e88b42c99359c6e391baa92, type: 2}
-  debugMode: 1
+  debugMode: 0
 --- !u!4 &1356003340
 Transform:
   m_ObjectHideFlags: 0
@@ -5432,6 +5433,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1356003341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356003338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aa2c1ba64382447c830157a916745c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oxygenBehavior: {fileID: 11400000, guid: b3c4ee9e88e8d4572ade6a95e499cb4b, type: 2}
+  oxygenPrefab: {fileID: 3244267922048944490, guid: 904117857346345868710b311aebe1bb,
+    type: 3}
+  initialOxygenNumber: 20
+  oxygens: []
+  neighborRadius: 1.5
+  avoidanceRadius: 0.5
+  velocityMultiplier: 10
+  maxSpeed: 5
+  squareAvoidanceRadius: 0
 --- !u!21 &1486204305
 Material:
   serializedVersion: 6

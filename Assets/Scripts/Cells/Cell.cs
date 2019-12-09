@@ -13,14 +13,14 @@ public abstract class Cell : MonoBehaviour
 
     #region Emotion
     protected Renderer rend;
-    private int faceID;
+    protected int faceID;
     [SerializeField]
     private float timeInterval;
     private float tick = 0f;
     private int frameIndex = 0;
     private Emotions currEmotion = Emotions.Neutral;
     private Texture2D[] currEmotionTextures;
-    private float emotionPickInterval;
+    protected float emotionPickInterval;
     private float pickTick = 0f;
     #endregion
 
@@ -63,7 +63,7 @@ public abstract class Cell : MonoBehaviour
     public virtual void Move(Vector3 velocity)
     {
         if (velocity != Vector3.zero) currVelocity = velocity;
-        transform.position += currVelocity * Time.deltaTime;
+        transform.position += currVelocity * Time.deltaTime * speed;
         transform.up = currVelocity;
     }
 
@@ -78,7 +78,7 @@ public abstract class Cell : MonoBehaviour
         tick += Time.deltaTime;
     }
 
-    private void PickNextEmotionAndReset()
+    protected void PickNextEmotionAndReset()
     {
         var emotions = System.Enum.GetValues(typeof(Emotions));
         var nextEmotion = (Emotions)emotions.GetValue(Random.Range(0, emotions.Length));

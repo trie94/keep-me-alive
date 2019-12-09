@@ -81,7 +81,7 @@
 
                 fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
                 float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance/10, 0, 1);
+                viewDistance = clamp(viewDistance/10, 0, 0.75);
                 col.rgb = lerp(col.rgb, background.rgb, viewDistance);
                 col.a = 0.8;
                 return col;

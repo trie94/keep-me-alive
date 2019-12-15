@@ -53,7 +53,7 @@
             {
                 fixed4 col = _MainColor;
                 col.r = _Weight;
-                col.a = _Opacity;
+                // col.a = _Opacity;
                 return col;
             }
             ENDCG

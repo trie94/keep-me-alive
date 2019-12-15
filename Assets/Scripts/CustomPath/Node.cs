@@ -9,9 +9,16 @@ public enum NodeWeight
 }
 
 [System.Serializable]
+public enum NodeType
+{
+    Vein, OxygenEntrance, OxyenExit, HeartEntrance, HeartExit
+}
+
+[System.Serializable]
 public class Node : MonoBehaviour
 {
     public NodeWeight weight;
+    public NodeType type;
     public Vector3 direction;
     public float forward = 0.5f;
     public float backward = 0.5f;

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 9026372904065540676}
   m_Layer: 0
   m_Name: platelet
-  m_TagString: Untagged
+  m_TagString: Cell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -105,15 +105,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 206b4a6ec970d42ce9d8557ad01535c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currVelocity: {x: 0, y: 0, z: 0}
   timeInterval: 0
-  emotionPickInterval: 0
+  currVelocity: {x: 0, y: 0, z: 0}
   progress: 0
   speed: 0
   currSeg:
     n0: {fileID: 0}
     n1: {fileID: 0}
     weight: 0
+  cellState: 0
+  oxygenCapacity: 3
+  currOxygen: 0
   limbPrefab: {fileID: 7946225896251300908, guid: 21c7d9a0fce1942178eb7f584ca9a80e,
     type: 3}
   maxLimbNum: 8

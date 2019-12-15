@@ -21,8 +21,10 @@ public class CellController : MonoBehaviour
     private Cell[] cellPrefabs;
 
     #region Behavior
+    // the behavior order should match with the cell state.
+    // inVein, EnterOxygen, ExitOxygen, EnterHeart, ExitHeart
     [SerializeField]
-    private CellBehavior behavior;
+    private CellBehavior[] behaviors;
 
     [SerializeField]
     private int cellNum = 3;
@@ -44,6 +46,11 @@ public class CellController : MonoBehaviour
 
     #region Emotion
     public CellEmotion emotions;
+    #endregion
+
+    #region
+    public Transform oxygenExitNode;
+    public Transform heardExitNode;
     #endregion
 
     public bool debugMode = true;
@@ -69,7 +76,7 @@ public class CellController : MonoBehaviour
         {
             Cell cell = cells[i];
             List<Transform> neighbors = GetNeighbors(cell);
-            Vector3 velocity = behavior.CalculateVelocity(cell, neighbors);
+            Vector3 velocity = behaviors[(int)cell.cellState].CalculateVelocity(cell, neighbors);
             velocity *= velocityMultiplier;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
             cell.Move(velocity);
@@ -98,7 +105,12 @@ public class CellController : MonoBehaviour
         for (int i = 0; i < contextColliders.Length; i++)
         {
             var curr = contextColliders[i];
-            if (curr.tag != "Cell" || curr == cell.CellCollider) continue;
+            // skip self
+            if (curr == cell.CellCollider) continue;
+            // we don't want to deal with oxygen when the cell is in vein
+            if (cell.cellState == CellState.InVein
+                && curr.tag == "Oxygen") continue;
+            // for other cases, we will handle this in the behavior
             neighbors.Add(curr.transform);
         }
         return neighbors;
@@ -117,7 +129,7 @@ public class CellController : MonoBehaviour
             Cell cell = cells[i];
             List<Transform> context = GetNeighbors(cell);
             if (context == null || cell == null) return;
-            behavior.DrawGizmos(cell, context);
+            behaviors[0].DrawGizmos(cell, context);
         }
     }
 }

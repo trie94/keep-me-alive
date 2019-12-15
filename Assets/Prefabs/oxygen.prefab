@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3244267922048944490}
   m_Layer: 0
   m_Name: oxygen
-  m_TagString: Untagged
+  m_TagString: Oxygen
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -105,3 +105,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c9ac27385154f7dbcc78bab1fb6c89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeInterval: 0
+  currVelocity: {x: 0, y: 0, z: 0}
+  progress: 0
+  speed: 0
+  currSeg:
+    n0: {fileID: 0}
+    n1: {fileID: 0}
+    weight: 0
+  cellState: 0
+  oxygenCapacity: 3
+  currOxygen: 0
+  master: {fileID: 0}

@@ -20,10 +20,14 @@ public class OxygenController : MonoBehaviour
     [SerializeField]
     private CellBehavior oxygenBehavior;
     [SerializeField]
+    private CellBehavior oxygenBehaviorFollowCell;
+    [SerializeField]
     private Oxygen oxygenPrefab;
     [SerializeField]
     private int initialOxygenNumber;
     public List<Oxygen> oxygens;
+    [SerializeField]
+    private Transform oxygenArea;
 
     [Range(1f, 10f)]
     public float neighborRadius = 1.5f;
@@ -57,7 +61,9 @@ public class OxygenController : MonoBehaviour
         {
             Oxygen oxygen = oxygens[i];
             List<Transform> neighbors = GetNeighbors(oxygen);
-            Vector3 velocity = oxygenBehavior.CalculateVelocity(oxygen, neighbors);
+            Vector3 velocity = (oxygen.master == null) ?
+                oxygenBehavior.CalculateVelocity(oxygen, neighbors)
+              : oxygenBehaviorFollowCell.CalculateVelocity(oxygen, neighbors);
             velocity *= velocityMultiplier;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
             oxygen.Move(velocity);
@@ -68,7 +74,11 @@ public class OxygenController : MonoBehaviour
     {
         for (int i = 0; i < initialOxygenNumber; i++)
         {
-            Oxygen oxygen = Instantiate(oxygenPrefab);
+            Oxygen oxygen = Instantiate(
+                oxygenPrefab,
+                oxygenArea.position + Random.insideUnitSphere * initialOxygenNumber * 0.5f,
+                Random.rotation
+            );
             oxygens.Add(oxygen);
         }
     }
@@ -82,7 +92,8 @@ public class OxygenController : MonoBehaviour
         for (int i = 0; i < contextColliders.Length; i++)
         {
             var curr = contextColliders[i];
-            if (curr.tag != "Oxygen" || curr == oxygen.OxygenCollider) continue;
+            if (curr.tag != "Oxygen" || curr == oxygen.OxygenCollider
+                || curr.GetComponent<Oxygen>().master != null) continue;
             neighbors.Add(curr.transform);
         }
         return neighbors;

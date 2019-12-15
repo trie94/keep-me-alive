@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public enum CellState
+{
+    InVein, EnterOxygen, ExitOxygen, EnterHeart, ExitHeart
+}
+
 [RequireComponent(typeof(Collider))]
 public abstract class Cell : MonoBehaviour
 {
@@ -31,6 +37,10 @@ public abstract class Cell : MonoBehaviour
     public Segment currSeg;
     #endregion
 
+    public CellState cellState;
+    public int oxygenCapacity = 3;
+    public int currOxygen = 0;
+
     public virtual void Awake()
     {
         cellCollider = GetComponent<Collider>();
@@ -48,6 +58,7 @@ public abstract class Cell : MonoBehaviour
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
         transform.rotation = Random.rotation;
         PickNextEmotionAndReset();
+        UpdateCellStateOnEnterNewNode();
     }
 
     public virtual void Update()
@@ -93,6 +104,24 @@ public abstract class Cell : MonoBehaviour
         emotionPickInterval = Random.Range(5f, 10f);
         currEmotion = nextEmotion;
         currEmotionTextures = CellController.Instance.emotions.MapEnumWithTexture(currEmotion);
+    }
+
+    // check the current node
+    public void UpdateCellStateOnEnterNewNode()
+    {
+        var nodeType = currSeg.n0.type;
+        switch (nodeType)
+        {
+            case NodeType.HeartEntrance:
+                cellState = CellState.EnterHeart;
+                break;
+            case NodeType.OxygenEntrance:
+                cellState = CellState.EnterOxygen;
+                break;
+            default:
+                cellState = CellState.InVein;
+                break;
+        }
     }
 
     //private void OnDrawGizmos()

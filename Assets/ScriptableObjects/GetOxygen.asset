@@ -9,8 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66c16580f8cda4a81aefc11167561fad, type: 3}
-  m_Name: StayInRad
+  m_Script: {fileID: 11500000, guid: ded519db1648c44fb928b069b7a6a91a, type: 3}
+  m_Name: GetOxygen
   m_EditorClassIdentifier: 
-  center: {x: -35, y: 5, z: 11.2}
-  radius: 10

@@ -10,6 +10,7 @@ public class Oxygen : Cell
     {
         get { return oxygenCollider; }
     }
+    public Cell master;
 
     public override void Awake()
     {
@@ -22,8 +23,6 @@ public class Oxygen : Cell
 
     public override void Start()
     {
-        transform.position = Vector3.zero;  // TODO: assign init pos
-        transform.rotation = Random.rotation;
         PickNextEmotionAndReset();
     }
 }

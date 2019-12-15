@@ -15,6 +15,7 @@ public class FollowPath : CellBehavior
         {
             cell.progress = 0f;
             cell.currSeg = GetNextSegment(cell);
+            cell.UpdateCellStateOnEnterNewNode();
         }
 
         Vector3 target = Path.Instance.GetPoint(cell.currSeg, cell.progress);

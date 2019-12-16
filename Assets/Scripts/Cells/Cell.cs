@@ -19,6 +19,8 @@ public abstract class Cell : MonoBehaviour
     }
 
     #region Emotion
+    [SerializeField]
+    private CellEmotion cellEmotion;
     protected Renderer rend;
     protected int faceID;
     [SerializeField]
@@ -122,7 +124,7 @@ public abstract class Cell : MonoBehaviour
         pickTick = 0f;
         emotionPickInterval = Random.Range(5f, 10f);
         currEmotion = nextEmotion;
-        currEmotionTextures = CellController.Instance.emotions.MapEnumWithTexture(currEmotion);
+        currEmotionTextures = cellEmotion.MapEnumWithTexture(currEmotion);
     }
 
     protected List<Transform> GetNeighbors()
@@ -136,9 +138,9 @@ public abstract class Cell : MonoBehaviour
             // skip self
             if (curr == this.CellCollider) continue;
             // we don't want to deal with oxygen when the cell is in vein
+            // this is a quick fix.. need to be refactored
             if (cellState == CellState.InVein
-                && curr.tag == "Oxygen") continue;
-            // for other cases, we will handle this in the behavior
+                && OxygenController.Instance.oxygenMap.ContainsKey(curr.transform)) continue;
             neighbors.Add(curr.transform);
         }
         return neighbors;

@@ -15,7 +15,7 @@ public class Repel : CellMovement
         for (int i = 0; i < neighbors.Count; i++)
         {
             var curr = neighbors[i];
-            if (Vector3.SqrMagnitude(curr.position - creature.transform.position) < CellController.Instance.squareAvoidanceRadius)
+            if (Vector3.SqrMagnitude(curr.position - creature.transform.position) < creature.squareAvoidanceRadius)
             {
                 nAvoid++;
                 velocity += (creature.transform.position - curr.position);

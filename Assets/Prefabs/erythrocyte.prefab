@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 896347195976248771}
   m_Layer: 0
   m_Name: erythrocyte
-  m_TagString: Cell
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -118,6 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec153849e1979493c8231d37628173ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cellEmotion: {fileID: 11400000, guid: 71463cb99e88b42c99359c6e391baa92, type: 2}
   timeInterval: 0.2
   behaviors:
   - {fileID: 11400000, guid: f14bed46c8d2e44df92c1a54e2fa7d32, type: 2}
@@ -125,7 +126,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 08ed00fdc87064d189698208e184ae54, type: 2}
   - {fileID: 11400000, guid: 844e56444655642f5884367ae3473309, type: 2}
   - {fileID: 11400000, guid: a0fa33a8adbf34459bd4a8d33edadb14, type: 2}
-  currVelocity: {x: 0, y: 0, z: 0}
   progress: 0
   speed: 0
   currSeg:

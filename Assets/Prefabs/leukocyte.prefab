@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6651597540179289004}
   m_Layer: 0
   m_Name: leukocyte
-  m_TagString: Cell
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -118,6 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0a093676b568481aa3b0d2a9e20d09a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cellEmotion: {fileID: 11400000, guid: 71463cb99e88b42c99359c6e391baa92, type: 2}
   timeInterval: 0.2
   behaviors:
   - {fileID: 11400000, guid: f14bed46c8d2e44df92c1a54e2fa7d32, type: 2}

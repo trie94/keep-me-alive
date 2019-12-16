@@ -20,33 +20,10 @@ public class CellController : MonoBehaviour
     [SerializeField]
     private Cell[] cellPrefabs;
 
-    #region Behavior
-    // the behavior order should match with the cell state.
-    // inVein, EnterOxygen, ExitOxygen, EnterHeart, ExitHeart
-    [SerializeField]
-    private Movement<Cell>[] behaviors;
-
     [SerializeField]
     private int cellNum = 3;
-    public List<Cell> cells;
-    public static HashSet<Collider> obstacles;
-
-    [Range(1f, 10f)]
-    public float neighborRadius = 1.5f;
-    [Range(0f, 5f)]
-    public float avoidanceRadius = 0.5f;
-    [Range(0.1f, 10f)]
-    public float velocityMultiplier = 10f;
-    [Range(0.1f, 10f)]
-    public float maxSpeed = 5f;
-    private float squareMaxSpeed;
-    public float squareAvoidanceRadius;
-    private float squareNeighborRadius;
-    #endregion
-
-    #region Emotion
-    public CellEmotion emotions;
-    #endregion
+    public Dictionary<Transform, Cell> cellMap;
+    public HashSet<Cell> cells;
 
     #region
     public Transform oxygenExitNode;
@@ -58,11 +35,8 @@ public class CellController : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        squareMaxSpeed = maxSpeed * maxSpeed;
-        squareNeighborRadius = neighborRadius * neighborRadius;
-        squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
-        cells = new List<Cell>();
-        obstacles = new HashSet<Collider>();
+        cells = new HashSet<Cell>();
+        cellMap = new Dictionary<Transform, Cell>();
     }
 
     private void Start()
@@ -79,13 +53,8 @@ public class CellController : MonoBehaviour
             typeIndex = (i % 7 == 0) ? 2 : typeIndex;
 
             Cell cell = Instantiate(cellPrefabs[typeIndex]);
+            cellMap.Add(cell.transform, cell);
             cells.Add(cell);
         }
-    }
-
-    public void RegisterObstacles(Collider obstacle)
-    {
-        obstacles.Add(obstacle);
-        Debug.Log("register: " + obstacle);
     }
 }

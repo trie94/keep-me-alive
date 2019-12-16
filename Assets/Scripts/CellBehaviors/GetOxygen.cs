@@ -26,10 +26,8 @@ public class GetOxygen : CellMovement
         for (int i = 0; i < neighbors.Count; i++)
         {
             var curr = neighbors[i];
-            if (curr.tag != "Oxygen" || curr.GetComponent<Oxygen>().master != null)
-            {
-                continue;
-            }
+            // skip non-oxygen
+            if (!OxygenController.Instance.oxygenMap.ContainsKey(curr.transform)) continue;
 
             if (closest == null) 
             {

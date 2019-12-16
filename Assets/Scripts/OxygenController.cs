@@ -21,14 +21,16 @@ public class OxygenController : MonoBehaviour
     private Oxygen oxygenPrefab;
     [SerializeField]
     private int initialOxygenNumber;
-    public List<Oxygen> oxygens;
+    public Dictionary<Transform, Oxygen> oxygenMap;
+    public HashSet<Oxygen> oxygens;
     [SerializeField]
     private Transform oxygenArea;
 
     private void Awake()
     {
         instance = this;
-        oxygens = new List<Oxygen>();
+        oxygenMap = new Dictionary<Transform, Oxygen>();
+        oxygens = new HashSet<Oxygen>();
     }
 
     private void Start()
@@ -45,6 +47,7 @@ public class OxygenController : MonoBehaviour
                 oxygenArea.position + Random.insideUnitSphere * initialOxygenNumber * 0.5f,
                 Random.rotation
             );
+            oxygenMap.Add(oxygen.transform, oxygen);
             oxygens.Add(oxygen);
         }
     }

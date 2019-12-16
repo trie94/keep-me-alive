@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Cell/Align")]
-public class Align : CellBehavior
+public class Align : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
-        if (neighbors == null || neighbors.Count == 0) return cell.transform.up;
+        if (neighbors == null || neighbors.Count == 0) return creature.transform.up;
 
         //add all points together and average
         Vector3 velocity = Vector3.zero;

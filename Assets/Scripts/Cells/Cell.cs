@@ -8,6 +8,7 @@ public enum CellState
     InVein, EnterOxygen, ExitOxygen, EnterHeart, ExitHeart
 }
 
+[System.Serializable]
 [RequireComponent(typeof(Collider))]
 public abstract class Cell : MonoBehaviour
 {
@@ -27,19 +28,31 @@ public abstract class Cell : MonoBehaviour
     private Emotions currEmotion = Emotions.Neutral;
     private Texture2D[] currEmotionTextures;
     protected float emotionPickInterval;
-    private float pickTick = 0f;
+    protected float pickTick = 0f;
     #endregion
 
     #region Movement
-    public Vector3 currVelocity;
+    [SerializeField]
+    protected CellMovement[] behaviors;
+    protected Vector3 currVelocity;
     public float progress = 0f;
     public float speed;
     public Segment currSeg;
+
+    [Range(1f, 10f)]
+    public float neighborRadius = 1.5f;
+    [Range(0f, 5f)]
+    public float avoidanceRadius = 0.5f;
+    [Range(0.1f, 10f)]
+    public float velocityMultiplier = 10f;
+    [Range(0.1f, 10f)]
+    public float maxSpeed = 5f;
+    private float squareMaxSpeed;
+    public float squareAvoidanceRadius;
+    private float squareNeighborRadius;
     #endregion
 
     public CellState cellState;
-    public int oxygenCapacity = 3;
-    public int currOxygen = 0;
 
     public virtual void Awake()
     {
@@ -47,7 +60,7 @@ public abstract class Cell : MonoBehaviour
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
         emotionPickInterval = Random.Range(5f, 10f);
-        speed = Random.Range(0.5f, 2f);
+        speed = Random.Range(0.1f, 0.3f);
     }
 
     public virtual void Start()
@@ -58,11 +71,17 @@ public abstract class Cell : MonoBehaviour
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
         transform.rotation = Random.rotation;
         PickNextEmotionAndReset();
-        UpdateCellStateOnEnterNewNode();
     }
 
     public virtual void Update()
     {
+        List<Transform> neighbors = GetNeighbors();
+        // this should be fixed when other cells also get their states.
+        Vector3 velocity = behaviors[0].CalculateVelocity(this, neighbors);
+        velocity *= velocityMultiplier;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        Move(velocity);
+
         if (pickTick > emotionPickInterval)
         {
             PickNextEmotionAndReset();
@@ -78,7 +97,7 @@ public abstract class Cell : MonoBehaviour
         transform.up = currVelocity;
     }
 
-    private void PlayFaceAnim()
+    protected void PlayFaceAnim()
     {
         if (tick > timeInterval)
         {
@@ -106,23 +125,26 @@ public abstract class Cell : MonoBehaviour
         currEmotionTextures = CellController.Instance.emotions.MapEnumWithTexture(currEmotion);
     }
 
-    // check the current node
-    public void UpdateCellStateOnEnterNewNode()
+    protected List<Transform> GetNeighbors()
     {
-        var nodeType = currSeg.n0.type;
-        switch (nodeType)
+        List<Transform> neighbors = new List<Transform>();
+        Collider[] contextColliders = Physics.OverlapSphere(transform.position, neighborRadius);
+
+        for (int i = 0; i < contextColliders.Length; i++)
         {
-            case NodeType.HeartEntrance:
-                cellState = CellState.EnterHeart;
-                break;
-            case NodeType.OxygenEntrance:
-                cellState = CellState.EnterOxygen;
-                break;
-            default:
-                cellState = CellState.InVein;
-                break;
+            var curr = contextColliders[i];
+            // skip self
+            if (curr == this.CellCollider) continue;
+            // we don't want to deal with oxygen when the cell is in vein
+            if (cellState == CellState.InVein
+                && curr.tag == "Oxygen") continue;
+            // for other cases, we will handle this in the behavior
+            neighbors.Add(curr.transform);
         }
+        return neighbors;
     }
+
+    public virtual void UpdateCellState(){}
 
     //private void OnDrawGizmos()
     //{

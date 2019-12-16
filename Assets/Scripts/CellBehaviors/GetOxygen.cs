@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Cell/GetOxygen")]
-public class GetOxygen : CellBehavior
+[CreateAssetMenu(menuName = "Erythrocyte/GetOxygen")]
+public class GetOxygen : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
         // only check the oxygens
-        if (neighbors == null || neighbors.Count == 0) return Vector3.zero;
+        if (neighbors == null || neighbors.Count == 0
+            || !(creature is Erythrocyte)) return Vector3.zero;
         Vector3 velocity = Vector3.zero;
+        Erythrocyte erythrocyte = (Erythrocyte)creature;
 
         // check cap
-        if (cell.currOxygen >= cell.oxygenCapacity)
+        if (erythrocyte.currOxygen >= erythrocyte.oxygenCapacity)
         {
-            cell.cellState = CellState.ExitOxygen;
+            erythrocyte.cellState = CellState.ExitOxygen;
             return velocity;
             // when exit oxygen, the cell moves towards the exit node --> in the other behavior
         }
@@ -36,8 +38,8 @@ public class GetOxygen : CellBehavior
                 continue;
             }
 
-            if (Vector3.SqrMagnitude(curr.position - cell.transform.position)
-                < Vector3.SqrMagnitude(closest.position - cell.transform.position))
+            if (Vector3.SqrMagnitude(curr.position - erythrocyte.transform.position)
+                < Vector3.SqrMagnitude(closest.position - erythrocyte.transform.position))
             {
                 closest = curr;
             }
@@ -46,17 +48,17 @@ public class GetOxygen : CellBehavior
         if (closest == null) return velocity;
 
         // we catch the closest oxygen
-        if (Vector3.SqrMagnitude(closest.position - cell.transform.position) < 0.2f)
+        if (Vector3.SqrMagnitude(closest.position - erythrocyte.transform.position) < 0.2f)
         {
-            closest.GetComponent<Oxygen>().master = cell;
-            cell.currOxygen++;
+            closest.GetComponent<Oxygen>().master = erythrocyte;
+            erythrocyte.currOxygen++;
             Debug.Log("catch the oxygen");
             return velocity;
         }
 
         // get close to the closest oxygen
         velocity += closest.position;
-        velocity -= cell.transform.position;
+        velocity -= erythrocyte.transform.position;
         Debug.Log("catching " + closest.name);
 
         return velocity;

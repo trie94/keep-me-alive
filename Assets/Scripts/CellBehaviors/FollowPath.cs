@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Cell/FollowPath")]
-public class FollowPath : CellBehavior
+public class FollowPath : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
-        cell.progress += Time.deltaTime * cell.speed;
-        if (cell.currSeg.n0 == null || cell.currSeg.n1 == null) return Vector3.zero;
-        float distSqrt = (cell.currSeg.n1.transform.position - cell.transform.position).sqrMagnitude;
+        creature.progress += Time.deltaTime * creature.speed;
+        if (creature.currSeg.n0 == null || creature.currSeg.n1 == null) return Vector3.zero;
+        float distSqrt = (creature.currSeg.n1.transform.position - creature.transform.position).sqrMagnitude;
 
         if (distSqrt <= 1.5f)
         {
-            cell.progress = 0f;
-            cell.currSeg = GetNextSegment(cell);
-            cell.UpdateCellStateOnEnterNewNode();
+            creature.progress = 0f;
+            creature.currSeg = GetNextSegment(creature);
+            creature.UpdateCellState();
         }
 
-        Vector3 target = Path.Instance.GetPoint(cell.currSeg, cell.progress);
-        return target - cell.transform.position;
+        Vector3 target = Path.Instance.GetPoint(creature.currSeg, creature.progress);
+        return target - creature.transform.position;
     }
 
     private Segment GetNextSegment(Cell cell)

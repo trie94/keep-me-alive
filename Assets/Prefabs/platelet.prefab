@@ -106,16 +106,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeInterval: 0
-  currVelocity: {x: 0, y: 0, z: 0}
+  behaviors:
+  - {fileID: 11400000, guid: f14bed46c8d2e44df92c1a54e2fa7d32, type: 2}
   progress: 0
   speed: 0
   currSeg:
     n0: {fileID: 0}
     n1: {fileID: 0}
     weight: 0
+  neighborRadius: 1.5
+  avoidanceRadius: 0.5
+  velocityMultiplier: 10
+  maxSpeed: 5
+  squareAvoidanceRadius: 0
   cellState: 0
-  oxygenCapacity: 3
-  currOxygen: 0
   limbPrefab: {fileID: 7946225896251300908, guid: 21c7d9a0fce1942178eb7f584ca9a80e,
     type: 3}
   maxLimbNum: 8

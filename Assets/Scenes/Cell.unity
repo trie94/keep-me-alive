@@ -348,7 +348,7 @@ Transform:
   m_LocalScale: {x: 30, y: 30, z: 30}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
@@ -5317,54 +5317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03c3368d5bffa4a85bff6331ced7dc5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1111143775
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1111143777}
-  - component: {fileID: 1111143776}
-  m_Layer: 0
-  m_Name: CellControllerPathTestVersion
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1111143776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1111143775}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bffda7f434764660b41ee8d332d18f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 338385197157699535, guid: 531d2690c4cfe46dd9608ba5fe7f82ad,
-    type: 3}
-  cellNum: 10
-  isDebugMode: 1
-  player: {fileID: 0}
---- !u!4 &1111143777
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1111143775}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1232306306
 GameObject:
   m_ObjectHideFlags: 0
@@ -5441,7 +5393,7 @@ Transform:
   m_LocalScale: {x: 30, y: 30, z: 30}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1356003338
 GameObject:
@@ -5477,12 +5429,6 @@ MonoBehaviour:
   - {fileID: 6651597540179289004, guid: 4841a12e463e0459789f040b49a0a508, type: 3}
   - {fileID: 896347195976248771, guid: b64094b229bac4ff1ad32c1a73988375, type: 3}
   - {fileID: 9026372904065540676, guid: f68cda0e8b6d042dfac2634d4234f6fd, type: 3}
-  behaviors:
-  - {fileID: 11400000, guid: f14bed46c8d2e44df92c1a54e2fa7d32, type: 2}
-  - {fileID: 11400000, guid: abc8fdc7f6eb6423390579d16df7ad52, type: 2}
-  - {fileID: 11400000, guid: 08ed00fdc87064d189698208e184ae54, type: 2}
-  - {fileID: 11400000, guid: 844e56444655642f5884367ae3473309, type: 2}
-  - {fileID: 11400000, guid: a0fa33a8adbf34459bd4a8d33edadb14, type: 2}
   cellNum: 20
   cells:
   - {fileID: 0}
@@ -5620,19 +5566,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aa2c1ba64382447c830157a916745c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  oxygenBehavior: {fileID: 11400000, guid: b3c4ee9e88e8d4572ade6a95e499cb4b, type: 2}
-  oxygenBehaviorFollowCell: {fileID: 11400000, guid: 5e70711be60724b76b4a69ffbe0c8d80,
-    type: 2}
   oxygenPrefab: {fileID: 3244267922048944490, guid: 904117857346345868710b311aebe1bb,
     type: 3}
-  initialOxygenNumber: 50
+  initialOxygenNumber: 100
   oxygens: []
   oxygenArea: {fileID: 333408051}
-  neighborRadius: 1.5
-  avoidanceRadius: 0.5
-  velocityMultiplier: 10
-  maxSpeed: 5
-  squareAvoidanceRadius: 0
 --- !u!21 &1486204305
 Material:
   serializedVersion: 6

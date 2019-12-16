@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Cell/Composite")]
-public class Composite : CellBehavior
+public class Composite : CellMovement
 {
-    public CellBehavior[] behaviors;
+    public CellMovement[] behaviors;
     public float[] weights;
 
-    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
         if (weights.Length != behaviors.Length)
         {
@@ -19,7 +19,7 @@ public class Composite : CellBehavior
         Vector3 velocity = Vector3.zero;
         for (int i = 0; i < behaviors.Length; i++)
         {
-            Vector3 partialVelocity = behaviors[i].CalculateVelocity(cell, neighbors) * weights[i];
+            Vector3 partialVelocity = behaviors[i].CalculateVelocity(creature, neighbors) * weights[i];
 
             if (partialVelocity != Vector3.zero)
             {
@@ -36,11 +36,11 @@ public class Composite : CellBehavior
         return velocity;
     }
 
-    public override void DrawGizmos(Cell cell, List<Transform> context)
+    public override void DrawGizmos(Cell creature, List<Transform> context)
     {
         for (int i = 0; i < behaviors.Length; i++)
         {
-            behaviors[i].DrawGizmos(cell, context);
+            behaviors[i].DrawGizmos(creature, context);
         }
     }
 }

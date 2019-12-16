@@ -6,16 +6,16 @@ using UnityEngine;
 /*
 * https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Vector_formulation
 */
-public class StayOnLine : CellBehavior
+public class StayOnLine : CellMovement
 {
     private Vector3 debugVelocity;
-    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
-        if (cell.currSeg.n0 == null || cell.currSeg.n1 == null) return Vector3.zero;
-        Vector3 cellToStartPoint = cell.currSeg.n0.transform.position 
-                                       - cell.transform.position;
-        Vector3 segDir = (cell.currSeg.n1.transform.position 
-                          - cell.currSeg.n0.transform.position).normalized;
+        if (creature.currSeg.n0 == null || creature.currSeg.n1 == null) return Vector3.zero;
+        Vector3 cellToStartPoint = creature.currSeg.n0.transform.position 
+                                       - creature.transform.position;
+        Vector3 segDir = (creature.currSeg.n1.transform.position 
+                          - creature.currSeg.n0.transform.position).normalized;
         Vector3 cellToClosestPointOnLine = 
             (cellToStartPoint - Vector3.Dot(cellToStartPoint, segDir) * segDir);
 
@@ -24,12 +24,12 @@ public class StayOnLine : CellBehavior
         return cellToClosestPointOnLine * dist;
     }
 
-    public override void DrawGizmos(Cell cell, List<Transform> context)
+    public override void DrawGizmos(Cell creature, List<Transform> context)
     {
         Gizmos.color = Color.red;
         if (debugVelocity != Vector3.zero)
         {
-            Gizmos.DrawLine(cell.transform.position, cell.transform.position+debugVelocity);
+            Gizmos.DrawLine(creature.transform.position, creature.transform.position+debugVelocity);
         }
     }
 }

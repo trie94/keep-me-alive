@@ -3,27 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Cell/MoveTowardsTarget")]
-public class MoveTowardsTarget : CellBehavior
+public class MoveTowardsTarget : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
         Vector3 exitNode = Vector3.zero;
 
-        if (cell.cellState == CellState.ExitOxygen)
+        if (creature.cellState == CellState.ExitOxygen)
         {
             exitNode = CellController.Instance.oxygenExitNode.position;
         }
-        else if (cell.cellState == CellState.EnterHeart)
+        else if (creature.cellState == CellState.EnterHeart)
         {
             exitNode = CellController.Instance.oxygenExitNode.position;
         }
 
-        if (Vector3.SqrMagnitude(exitNode - cell.transform.position) < 0.3f)
+        if (Vector3.SqrMagnitude(exitNode - creature.transform.position) < 0.3f)
         {
-            cell.cellState = CellState.InVein;
+            creature.cellState = CellState.InVein;
             return Vector3.zero;
         }
 
-        return exitNode - cell.transform.position;
+        return exitNode - creature.transform.position;
     }
 }

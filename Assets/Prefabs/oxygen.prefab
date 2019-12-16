@@ -106,14 +106,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeInterval: 0
+  oxygenBehavior: {fileID: 11400000, guid: 1d650b68f5cb148d7bd2d53126ab4e21, type: 2}
+  oxygenBehaviorFollowCell: {fileID: 11400000, guid: f4b3b998ba2e443b9a78c0872980de70,
+    type: 2}
   currVelocity: {x: 0, y: 0, z: 0}
   progress: 0
   speed: 0
-  currSeg:
-    n0: {fileID: 0}
-    n1: {fileID: 0}
-    weight: 0
-  cellState: 0
-  oxygenCapacity: 3
-  currOxygen: 0
+  neighborRadius: 1.5
+  avoidanceRadius: 0.5
+  velocityMultiplier: 10
+  maxSpeed: 5
+  squareAvoidanceRadius: 0
   master: {fileID: 0}

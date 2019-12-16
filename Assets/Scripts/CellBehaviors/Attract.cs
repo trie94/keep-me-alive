@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Cell/Attract")]
-public class Attract : CellBehavior
+public class Attract : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell cell, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
         if (neighbors == null || neighbors.Count == 0) return Vector3.zero;
 
@@ -16,7 +16,7 @@ public class Attract : CellBehavior
             velocity += curr.position;
         }
         velocity /= neighbors.Count;
-        velocity -= cell.transform.position;
+        velocity -= creature.transform.position;
 
         return velocity;
     }

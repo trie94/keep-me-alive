@@ -147,9 +147,4 @@ public abstract class Cell : MonoBehaviour
     }
 
     public virtual void UpdateCellState(){}
-
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.DrawLine(transform.position, transform.position + vel);
-    //}
 }

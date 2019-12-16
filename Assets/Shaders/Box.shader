@@ -9,7 +9,7 @@
         Tags { "RenderType"="Transparent" "Queue"="Transparent-5" }
         LOD 100
         Blend SrcAlpha OneMinusSrcAlpha
-        Cull Back
+        Cull Front
 
         Pass
         {

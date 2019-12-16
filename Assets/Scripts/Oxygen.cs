@@ -84,9 +84,9 @@ public class Oxygen : MonoBehaviour
         for (int i = 0; i < contextColliders.Length; i++)
         {
             var curr = contextColliders[i];
-            var oxygenSet = OxygenController.Instance.oxygenMap;
-            if (curr == OxygenCollider || !oxygenSet.ContainsKey(curr.transform)
-                || oxygenSet[curr.transform].master != null) continue;
+            var oxygens = OxygenController.Instance.oxygenMap;
+            if (curr == OxygenCollider || !oxygens.ContainsKey(curr.transform)
+                || oxygens[curr.transform].master != null) continue;
             neighbors.Add(curr.transform);
         }
         return neighbors;

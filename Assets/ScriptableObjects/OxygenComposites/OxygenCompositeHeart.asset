@@ -9,8 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66c16580f8cda4a81aefc11167561fad, type: 3}
-  m_Name: StayInRad
+  m_Script: {fileID: 11500000, guid: 05dd007da79e842fd815c4e593107fe2, type: 3}
+  m_Name: OxygenCompositeHeart
   m_EditorClassIdentifier: 
-  center: {x: -35, y: 5, z: 11.2}
-  radius: 10
+  behaviors:
+  - {fileID: 11400000, guid: b4cd0275290664ffdafe282c770259f2, type: 2}
+  weights:
+  - 1

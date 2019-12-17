@@ -30,6 +30,8 @@ public class CellController : MonoBehaviour
     public Transform heardExitNode;
     #endregion
 
+    public Transform heart;
+
     public bool debugMode = true;
 
     private void Awake()

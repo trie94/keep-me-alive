@@ -13,9 +13,9 @@ public class MoveTowardsTarget : CellMovement
         {
             exitNode = CellController.Instance.oxygenExitNode.position;
         }
-        else if (creature.cellState == CellState.EnterHeart)
+        else if (creature.cellState == CellState.ExitHeart)
         {
-            exitNode = CellController.Instance.oxygenExitNode.position;
+            exitNode = CellController.Instance.heardExitNode.position;
         }
 
         if (Vector3.SqrMagnitude(exitNode - creature.transform.position) < 0.3f)

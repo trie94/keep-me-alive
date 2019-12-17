@@ -14,11 +14,10 @@ public class GetOxygen : CellMovement
         Erythrocyte erythrocyte = (Erythrocyte)creature;
 
         // check cap
-        if (erythrocyte.currOxygen >= erythrocyte.oxygenCapacity)
+        if (erythrocyte.childOxygen.Count >= erythrocyte.oxygenCapacity)
         {
             erythrocyte.cellState = CellState.ExitOxygen;
             return velocity;
-            // when exit oxygen, the cell moves towards the exit node --> in the other behavior
         }
 
         // find the closest oxygen and grab it
@@ -48,9 +47,9 @@ public class GetOxygen : CellMovement
         // we catch the closest oxygen
         if (Vector3.SqrMagnitude(closest.position - erythrocyte.transform.position) < 0.2f)
         {
-            closest.GetComponent<Oxygen>().master = erythrocyte;
-            erythrocyte.currOxygen++;
-            Debug.Log("catch the oxygen");
+            // AAAAAAAAA
+            Oxygen target = OxygenController.Instance.oxygenMap[closest];
+            erythrocyte.RegisterOxygen(target);
             return velocity;
         }
 

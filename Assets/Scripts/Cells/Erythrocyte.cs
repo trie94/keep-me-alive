@@ -5,12 +5,15 @@ using UnityEngine;
 public class Erythrocyte : Cell
 {
     public int oxygenCapacity = 3;
-    public int currOxygen = 0;
+    public float oxygenReleaseInterval = 2f;
+    public float oxygenReleaseTick = 0f;
+    public Stack<Oxygen> childOxygen;
 
     public override void Start()
     {
         base.Start();
         UpdateCellState();
+        childOxygen = new Stack<Oxygen>();
     }
 
     public override void Update()
@@ -45,5 +48,20 @@ public class Erythrocyte : Cell
                 cellState = CellState.InVein;
                 break;
         }
+    }
+
+    public void RegisterOxygen(Oxygen o)
+    {
+        childOxygen.Push(o);
+        o.master = this;
+        o.state = OxygenState.BeingCarried;
+    }
+
+    public void ReleaseOxygen()
+    {
+        Debug.Assert(childOxygen.Count > 0);
+        Oxygen o = childOxygen.Pop();
+        o.master = null;
+        o.state = OxygenState.HeartArea;
     }
 }

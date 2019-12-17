@@ -26,7 +26,7 @@ public class Platelet : Cell
         Quaternion rotation = Quaternion.identity;
         int length = Shader.PropertyToID("_Length");
         int thickness = Shader.PropertyToID("_Thickness");
-        int speed = Shader.PropertyToID("_Speed");
+        int limbSpeed = Shader.PropertyToID("_Speed");
 
         for (int i = 0; i < limbNum; i++)
         {
@@ -35,7 +35,7 @@ public class Platelet : Cell
             Material limbMat = limb.GetComponent<Renderer>().material;
             limbMat.SetFloat(length, Random.Range(2f, 2.3f));
             limbMat.SetFloat(thickness, Random.Range(1.0f, 1.2f));
-            limbMat.SetFloat(speed, Random.Range(1.4f, 1.8f));
+            limbMat.SetFloat(limbSpeed, Random.Range(1.4f, 1.8f));
             limbs.Add(limb);
         }
     }

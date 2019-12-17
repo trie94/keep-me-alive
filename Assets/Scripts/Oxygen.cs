@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum OxygenState
+{
+    OxygenArea, BeingCarried, HeartArea, HitHeart
+}
+
+[System.Serializable]
 [RequireComponent(typeof(Collider))]
 public class Oxygen : MonoBehaviour
 {
@@ -29,6 +35,8 @@ public class Oxygen : MonoBehaviour
     private OxygenMovement oxygenBehavior;
     [SerializeField]
     private OxygenMovement oxygenBehaviorFollowCell;
+    [SerializeField]
+    private OxygenMovement oxygenBehaviorHeart;
 
     public Vector3 currVelocity;
     public float progress = 0f;
@@ -48,22 +56,56 @@ public class Oxygen : MonoBehaviour
     #endregion
 
     public Cell master;
+    public OxygenState state;
+    private float resetTime = 1f;
+    private float resetTick = 0f;
 
     private void Awake()
     {
         oxygenCollider = GetComponent<Collider>();
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
-        emotionPickInterval = Random.Range(5f, 10f);
         speed = Random.Range(0.5f, 0.7f);
+        emotionPickInterval = Random.Range(5f, 10f);
+        state = OxygenState.OxygenArea;
     }
 
+    // refactor this based on the oxygen state
     private void Update()
     {
         List<Transform> neighbors = GetNeighbors();
-        Vector3 velocity = (master == null) ?
-            oxygenBehavior.CalculateVelocity(this, neighbors)
-          : oxygenBehaviorFollowCell.CalculateVelocity(this, neighbors);
+        Vector3 velocity = Vector3.zero;
+        if (state == OxygenState.BeingCarried)
+        {
+            velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, neighbors);
+        } 
+        else if (state == OxygenState.OxygenArea)
+        {
+            velocity = oxygenBehavior.CalculateVelocity(this, neighbors);
+        }
+        else if (state == OxygenState.HeartArea)
+        {
+            velocity = oxygenBehaviorHeart.CalculateVelocity(this, neighbors);
+            float dist = Vector3.SqrMagnitude(transform.position
+                                              - OxygenController.Instance.heart.position);
+            if (dist < 0.2f)
+            {
+                state = OxygenState.HitHeart;
+            }
+            // on collision, change to hit heart
+        }
+        else if (state == OxygenState.HitHeart)
+        {
+            if (resetTick > resetTime)
+            {
+                Reset();
+            }
+            else
+            {
+                resetTick += Time.deltaTime;
+            }
+        }
+
         velocity *= velocityMultiplier;
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         Move(velocity);
@@ -90,5 +132,15 @@ public class Oxygen : MonoBehaviour
             neighbors.Add(curr.transform);
         }
         return neighbors;
+    }
+
+    private void Reset()
+    {
+        speed = Random.Range(0.5f, 0.7f);
+        emotionPickInterval = Random.Range(5f, 10f);
+        state = OxygenState.OxygenArea;
+        transform.position = OxygenController.Instance.GetRandomPositionInOxygenArea();
+        transform.rotation = Random.rotation;
+        resetTick = 0f;
     }
 }

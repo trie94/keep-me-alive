@@ -13,14 +13,10 @@ MonoBehaviour:
   m_Name: EnterHeartComposite
   m_EditorClassIdentifier: 
   behaviors:
-  - {fileID: 11400000, guid: bdaec36a00b5949f9afe9fa8a928875f, type: 2}
+  - {fileID: 11400000, guid: 3cd8df156c9a84b08ab693666c36ecb0, type: 2}
   - {fileID: 11400000, guid: bf75a16a152fb49628aaa2835b3afd53, type: 2}
   - {fileID: 11400000, guid: efd4d2c0fbd174e90a5e4d9d95cf3b54, type: 2}
-  - {fileID: 11400000, guid: 1fe0432c1a2fc40b997392970feca1d5, type: 2}
-  - {fileID: 11400000, guid: 5b856575573f14bd8afa738c833a9372, type: 2}
   weights:
-  - 1
   - 20
+  - 5
   - 2
-  - 20
-  - 50

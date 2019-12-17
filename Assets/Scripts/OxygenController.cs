@@ -19,12 +19,12 @@ public class OxygenController : MonoBehaviour
 
     [SerializeField]
     private Oxygen oxygenPrefab;
-    [SerializeField]
-    private int initialOxygenNumber;
+    public int initialOxygenNumber;
     public Dictionary<Transform, Oxygen> oxygenMap;
     public HashSet<Oxygen> oxygens;
-    [SerializeField]
-    private Transform oxygenArea;
+    public Transform oxygenArea;
+    public Transform heart;
+    private float density = 0.03f;
 
     private void Awake()
     {
@@ -44,11 +44,18 @@ public class OxygenController : MonoBehaviour
         {
             Oxygen oxygen = Instantiate(
                 oxygenPrefab,
-                oxygenArea.position + Random.insideUnitSphere * initialOxygenNumber * 0.5f,
+                oxygenArea.position + Random.insideUnitSphere * initialOxygenNumber * density,
                 Random.rotation
             );
             oxygenMap.Add(oxygen.transform, oxygen);
             oxygens.Add(oxygen);
         }
+    }
+
+    public Vector3 GetRandomPositionInOxygenArea()
+    {
+        return oxygenArea.position
+                         + Random.insideUnitSphere
+                         * initialOxygenNumber * density;
     }
 }

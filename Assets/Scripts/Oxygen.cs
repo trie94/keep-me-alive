@@ -78,7 +78,7 @@ public class Oxygen : MonoBehaviour
         if (state == OxygenState.BeingCarried)
         {
             velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, neighbors);
-        } 
+        }
         else if (state == OxygenState.OxygenArea)
         {
             velocity = oxygenBehavior.CalculateVelocity(this, neighbors);

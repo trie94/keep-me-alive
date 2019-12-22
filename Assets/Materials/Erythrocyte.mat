@@ -40,9 +40,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Face:
-        m_Texture: {fileID: 2800000, guid: 66a1b183f119b4e5cabae7c3f1801c2b, type: 3}
-        m_Scale: {x: 1, y: 0.8}
-        m_Offset: {x: 0, y: 0}
+        m_Texture: {fileID: 2800000, guid: ed774c282b8a44c58a74751368e5ad64, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0.07}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -73,11 +73,11 @@ Material:
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseFreq: 0.583
-    - _NoiseHeight: 0.341
-    - _NoiseScale: 1.26
+    - _NoiseFreq: 0.511
+    - _NoiseHeight: 0.242
+    - _NoiseScale: 0.78
     - _OcclusionStrength: 1
-    - _Offset: 0.662
+    - _Offset: 0.53
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -88,5 +88,5 @@ Material:
     m_Colors:
     - _Color: {r: 0.754717, g: 0.046279836, b: 0.046279836, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Position: {r: -2.9366481, g: -3.6839647, b: -12.003321, a: 0}
-    - _PrevPosition: {r: 1.3484502, g: -19.052057, b: -15.845504, a: 0}
+    - _Position: {r: 3.097706, g: -2.7275758, b: -15.026907, a: 0}
+    - _PrevPosition: {r: 0, g: 0, b: 0, a: 0}

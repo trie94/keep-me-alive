@@ -96,7 +96,7 @@ public abstract class Cell : MonoBehaviour
     {
         if (velocity != Vector3.zero) currVelocity = velocity;
         transform.position += currVelocity * Time.deltaTime * speed;
-        transform.up = currVelocity;
+        transform.forward = currVelocity;
     }
 
     protected void PlayFaceAnim()

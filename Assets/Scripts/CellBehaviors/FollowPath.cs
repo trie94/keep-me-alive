@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/FollowPath")]
 public class FollowPath : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Transform target)
     {
         creature.progress += Time.deltaTime * creature.speed;
         if (creature.currSeg.n0 == null || creature.currSeg.n1 == null) return Vector3.zero;
@@ -17,9 +17,9 @@ public class FollowPath : CellMovement
             creature.currSeg = GetNextSegment(creature);
             creature.UpdateCellState();
         }
-
-        Vector3 target = Path.Instance.GetPoint(creature.currSeg, creature.progress);
-        return target - creature.transform.position;
+        // this should be fixed later
+        Vector3 node = Path.Instance.GetPoint(creature.currSeg, creature.progress);
+        return node - creature.transform.position;
     }
 
     private Segment GetNextSegment(Cell cell)

@@ -9,7 +9,7 @@ using UnityEngine;
 public class StayOnLine : CellMovement
 {
     private Vector3 debugVelocity;
-    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Transform target)
     {
         if (creature.currSeg.n0 == null || creature.currSeg.n1 == null) return Vector3.zero;
         Vector3 cellToStartPoint = creature.currSeg.n0.transform.position 

@@ -21,7 +21,7 @@ public class OxygenController : MonoBehaviour
     private Oxygen oxygenPrefab;
     public int initialOxygenNumber;
     public Dictionary<Transform, Oxygen> oxygenMap;
-    public List<Oxygen> oxygens;
+    public Stack<Oxygen> oxygens;
     public Transform oxygenArea;
     public Transform heart;
     private float density = 0.03f;
@@ -30,7 +30,7 @@ public class OxygenController : MonoBehaviour
     {
         instance = this;
         oxygenMap = new Dictionary<Transform, Oxygen>();
-        oxygens = new List<Oxygen>();
+        oxygens = new Stack<Oxygen>();
     }
 
     private void Start()
@@ -48,7 +48,7 @@ public class OxygenController : MonoBehaviour
                 Random.rotation
             );
             oxygenMap.Add(oxygen.transform, oxygen);
-            oxygens.Add(oxygen);
+            oxygens.Push(oxygen);
         }
     }
 

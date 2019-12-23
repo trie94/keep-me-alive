@@ -16,6 +16,13 @@ public class Erythrocyte : Cell
     public float oxygenReleaseTick = 0f;
     public Stack<Oxygen> childOxygen;
     public OxygenHolder[] oxygenHolders;
+    [SerializeField]
+    private Transform target = null;
+
+    [SerializeField]
+    private ErythrocyteState cellState;
+    [SerializeField]
+    private ErythrocyteState prevState;
 
     public override void Start()
     {
@@ -27,47 +34,36 @@ public class Erythrocyte : Cell
     public override void Update()
     {
         List<Transform> neighbors = GetNeighbors();
-        Vector3 velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors);
-        velocity *= velocityMultiplier;
-        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-        Move(velocity);
+        Vector3 velocity = Vector3.zero;
 
         if (cellState == ErythrocyteState.InVein)
         {
-            
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors);
         }
         else if (cellState == ErythrocyteState.EnterOxygenArea)
         {
-            if (Vector3.SqrMagnitude(OxygenController.Instance.oxygenArea.position - transform.position) < 0.5f)
+            if (target == null || prevState != cellState)
             {
+                target = OxygenController.Instance.oxygenArea;
+            }
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
+
+            if (Vector3.SqrMagnitude(target.position - transform.position) < 0.5f)
+            {
+                prevState = cellState;
                 cellState = ErythrocyteState.WaitOxygen;
             }
         }
         else if (cellState == ErythrocyteState.WaitOxygen)
         {
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors);
             if (childOxygen.Count < oxygenCapacity)
             {
-                Oxygen closest = null;
-                for (int i = 0; i < OxygenController.Instance.oxygens.Count; i++)
+                for (int i = 0; i < oxygenCapacity; i++)
                 {
-                    var curr = OxygenController.Instance.oxygens[i];
-
-                    if (closest == null)
-                    {
-                        closest = curr;
-                        continue;
-                    }
-
-                    if (childOxygen.Contains(curr) || curr.master != null) continue;
-
-                    if (Vector3.SqrMagnitude(curr.transform.position - transform.position)
-                        < Vector3.SqrMagnitude(closest.transform.position - transform.position))
-                    {
-                        closest = curr;
-                    }
+                    Oxygen oxygen = OxygenController.Instance.oxygens.Pop();
+                    RegisterOxygen(oxygen);
                 }
-
-                RegisterOxygen(closest);
             }
             else
             {
@@ -80,13 +76,23 @@ public class Erythrocyte : Cell
                     }
                 }
 
-                if (isReadyToGo) cellState = ErythrocyteState.ExitOxygenArea;
+                if (isReadyToGo)
+                {
+                    prevState = cellState;
+                    cellState = ErythrocyteState.ExitOxygenArea;
+                }
             }
         }
         else if (cellState == ErythrocyteState.ExitOxygenArea)
         {
-            if (Vector3.SqrMagnitude(CellController.Instance.oxygenExitNode.position - transform.position) < 0.5f)
+            if (target == null || prevState != cellState)
             {
+                target = CellController.Instance.oxygenExitNode;
+            }
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
+            if (Vector3.SqrMagnitude(target.position - transform.position) < 0.5f)
+            {
+                prevState = cellState;
                 cellState = ErythrocyteState.InVein;
             }
         }
@@ -94,35 +100,61 @@ public class Erythrocyte : Cell
         {
             if (childOxygen.Count <= 0)
             {
+                prevState = cellState;
                 cellState = ErythrocyteState.ExitHeartArea;
             }
-            else if (Vector3.SqrMagnitude(CellController.Instance.heart.position - transform.position) < 0.7f)
+            else
             {
-                cellState = ErythrocyteState.ReleaseOxygen;
+                if (target == null || prevState != cellState)
+                {
+                    target = CellController.Instance.heart;
+                }
+                velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
+
+                if (Vector3.SqrMagnitude(target.position - transform.position) < 0.7f)
+                {
+                    prevState = cellState;
+                    cellState = ErythrocyteState.ReleaseOxygen;
+                }
             }
         }
         else if (cellState == ErythrocyteState.ReleaseOxygen)
         {
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors);
+
             if (childOxygen.Count <= 0)
             {
+                prevState = cellState;
                 cellState = ErythrocyteState.ExitHeartArea;
                 oxygenReleaseTick = 0f;
-            }
-
-            if (oxygenReleaseTick >= oxygenReleaseInterval)
+            } 
+            else if (oxygenReleaseTick >= oxygenReleaseInterval)
             {
                 ReleaseOxygen();
                 oxygenReleaseTick = 0f;
             }
-            oxygenReleaseTick += Time.deltaTime;
+            else
+            {
+                oxygenReleaseTick += Time.deltaTime;
+            }
         }
         else if (cellState == ErythrocyteState.ExitHeartArea)
         {
-            if (Vector3.SqrMagnitude(CellController.Instance.heardExitNode.position - transform.position) < 0.5f)
+            if (target == null || prevState != cellState)
             {
+                target = CellController.Instance.heartExitNode;
+            }
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
+            if (Vector3.SqrMagnitude(target.position - transform.position) < 0.5f)
+            {
+                prevState = cellState;
                 cellState = ErythrocyteState.InVein;
             }
         }
+
+        velocity *= velocityMultiplier;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        Move(velocity);
 
         // emotion
         if (pickTick > emotionPickInterval)
@@ -140,12 +172,15 @@ public class Erythrocyte : Cell
         switch (nodeType)
         {
             case NodeType.HeartEntrance:
+                prevState = cellState;
                 cellState = ErythrocyteState.EnterHeartArea;
                 break;
             case NodeType.OxygenEntrance:
+                prevState = cellState;
                 cellState = ErythrocyteState.EnterOxygenArea;
                 break;
             default:
+                prevState = cellState;
                 cellState = ErythrocyteState.InVein;
                 break;
         }
@@ -153,8 +188,7 @@ public class Erythrocyte : Cell
 
     public void RegisterOxygen(Oxygen o)
     {
-        if (childOxygen.Count >= oxygenCapacity) return;
-
+        Debug.Assert(childOxygen.Count < oxygenCapacity);
         var holder = oxygenHolders[childOxygen.Count];
         o.hopOnHolder = holder;
         childOxygen.Push(o);
@@ -177,10 +211,10 @@ public class Erythrocyte : Cell
         o.state = OxygenState.HeartArea;
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    if (!Application.isPlaying) return;
-    //    List<Transform> neighbors = GetNeighbors();
-    //    behaviors[(int)cellState].DrawGizmos(this, neighbors);
-    //}
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying) return;
+        List<Transform> neighbors = GetNeighbors();
+        behaviors[(int)cellState].DrawGizmos(this, neighbors);
+    }
 }

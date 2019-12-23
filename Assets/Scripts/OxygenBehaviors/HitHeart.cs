@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Oxygen/HitHeart")]
 public class HitHeart : OxygenMovement
 {
-    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Transform target)
     {
         Vector3 velocity = OxygenController.Instance.heart.position - creature.transform.position;
         return velocity;

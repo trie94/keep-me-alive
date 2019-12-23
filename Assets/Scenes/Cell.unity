@@ -5500,7 +5500,7 @@ MonoBehaviour:
   - {fileID: 9026372904065540676, guid: f68cda0e8b6d042dfac2634d4234f6fd, type: 3}
   cellNum: 20
   oxygenExitNode: {fileID: 811187572}
-  heardExitNode: {fileID: 951600591}
+  heartExitNode: {fileID: 951600591}
   heart: {fileID: 2010323031}
   debugMode: 1
 --- !u!4 &1356003340
@@ -5532,7 +5532,6 @@ MonoBehaviour:
   oxygenPrefab: {fileID: 3244267922048944490, guid: 904117857346345868710b311aebe1bb,
     type: 3}
   initialOxygenNumber: 100
-  oxygens: []
   oxygenArea: {fileID: 333408051}
   heart: {fileID: 2010323031}
 --- !u!21 &1486204305

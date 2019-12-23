@@ -48,8 +48,6 @@ public abstract class Cell : MonoBehaviour
     private float squareNeighborRadius;
     #endregion
 
-    public ErythrocyteState cellState;
-
     public virtual void Awake()
     {
         cellCollider = GetComponent<Collider>();
@@ -92,7 +90,7 @@ public abstract class Cell : MonoBehaviour
 
     public virtual void Move(Vector3 velocity)
     {
-        if (velocity != Vector3.zero) currVelocity = velocity;
+        currVelocity = velocity;
         transform.position += currVelocity * Time.deltaTime * speed;
         if (currVelocity != Vector3.zero) transform.forward = currVelocity;
     }
@@ -135,10 +133,6 @@ public abstract class Cell : MonoBehaviour
             var curr = contextColliders[i];
             // skip self
             if (curr == this.CellCollider) continue;
-            // we don't want to deal with oxygen when the cell is in vein
-            // this is a quick fix.. need to be refactored
-            if (cellState == ErythrocyteState.InVein
-                && OxygenController.Instance.oxygenMap.ContainsKey(curr.transform)) continue;
             neighbors.Add(curr.transform);
         }
         return neighbors;

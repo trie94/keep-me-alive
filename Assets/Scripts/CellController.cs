@@ -27,7 +27,7 @@ public class CellController : MonoBehaviour
 
     #region
     public Transform oxygenExitNode;
-    public Transform heardExitNode;
+    public Transform heartExitNode;
     #endregion
 
     public Transform heart;

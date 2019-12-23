@@ -6,7 +6,7 @@ using UnityEngine;
 public class Repel : CellMovement
 {
     private Vector3 currentVelocity;
-    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Transform target)
     {
         if (neighbors == null || neighbors.Count == 0) return Vector3.zero;
 

@@ -155,6 +155,7 @@ public class Oxygen : MonoBehaviour
         state = OxygenState.OxygenArea;
         transform.position = OxygenController.Instance.GetRandomPositionInOxygenArea();
         transform.rotation = Random.rotation;
+        OxygenController.Instance.oxygens.Push(this);
         resetTick = 0f;
     }
 }

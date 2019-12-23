@@ -9,7 +9,7 @@ public class Composite : CellMovement
     public float[] weights;
     public Vector3 debug;
 
-    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Transform target)
     {
         if (weights.Length != behaviors.Length)
         {
@@ -18,22 +18,24 @@ public class Composite : CellMovement
         }
 
         Vector3 velocity = Vector3.zero;
+        float totalWeight = 0f;
         for (int i = 0; i < behaviors.Length; i++)
         {
-            Vector3 partialVelocity = behaviors[i].CalculateVelocity(creature, neighbors) * weights[i];
-
+            Vector3 partialVelocity = behaviors[i].CalculateVelocity(creature, neighbors, target) * weights[i];
+            float currWeight = weights[i];
             if (partialVelocity != Vector3.zero)
             {
-                if (partialVelocity.sqrMagnitude > weights[i] * weights[i])
+                if (partialVelocity.sqrMagnitude > currWeight * currWeight)
                 {
                     partialVelocity.Normalize();
                     partialVelocity *= weights[i];
                 }
-
+                totalWeight += currWeight;
                 velocity += partialVelocity;
             }
         }
-        if (velocity != Vector3.zero) velocity.Normalize();
+        if (totalWeight > 0f) velocity /= totalWeight;
+        //if (velocity != Vector3.zero) velocity.Normalize();
 
         debug = velocity;
         return velocity;

@@ -420,7 +420,7 @@ MonoBehaviour:
   squareAvoidanceRadius: 0
   cellState: 0
   oxygenCapacity: 3
-  oxygenReleaseInterval: 2
+  oxygenReleaseInterval: 0.5
   oxygenReleaseTick: 0
   oxygenHolders:
   - {fileID: 2552576719303791281}

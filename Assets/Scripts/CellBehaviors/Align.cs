@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/Align")]
 public class Align : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Transform target)
     {
         if (neighbors == null || neighbors.Count == 0) return creature.transform.forward;
 

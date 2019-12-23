@@ -8,7 +8,7 @@ public class OxygenStayInRadius : OxygenMovement
     public Vector3 center;
     public float radius = 15f;
 
-    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Transform target)
     {
         Vector3 centerOffset = center - creature.transform.position;
         float t = centerOffset.magnitude / radius;

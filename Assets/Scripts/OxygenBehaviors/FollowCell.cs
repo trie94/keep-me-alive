@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Oxygen/FollowCell")]
 public class FollowCell : OxygenMovement
 {
-    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors)
+    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Transform target)
     {
         return creature.hopOnHolder.transform.position
                        - creature.transform.position;

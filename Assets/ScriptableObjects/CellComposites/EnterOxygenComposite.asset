@@ -13,10 +13,7 @@ MonoBehaviour:
   m_Name: EnterOxygenComposite
   m_EditorClassIdentifier: 
   behaviors:
-  - {fileID: 11400000, guid: 505450913a9004f578d414223469eddf, type: 2}
-  - {fileID: 11400000, guid: bf75a16a152fb49628aaa2835b3afd53, type: 2}
-  - {fileID: 11400000, guid: 21cafea936e7b4fb3b214d509697bcb3, type: 2}
+  - {fileID: 11400000, guid: 0de1f3b4628df4531a9842190bd51ec7, type: 2}
   weights:
-  - 3
   - 1
-  - 2
+  debug: {x: 0.99001056, y: -0.00868763, z: 0.14072534}

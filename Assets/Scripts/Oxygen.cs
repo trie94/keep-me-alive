@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum OxygenState
 {
-    OxygenArea, BeingCarried, HeartArea, HitHeart
+    OxygenArea, HopOnCell, BeingCarried, HeartArea, HitHeart
 }
 
 [System.Serializable]
@@ -56,6 +56,7 @@ public class Oxygen : MonoBehaviour
     #endregion
 
     public Cell master;
+    public OxygenHolder hopOnHolder;
     public OxygenState state;
     private float resetTime = 1f;
     private float resetTick = 0f;
@@ -75,9 +76,23 @@ public class Oxygen : MonoBehaviour
     {
         List<Transform> neighbors = GetNeighbors();
         Vector3 velocity = Vector3.zero;
-        if (state == OxygenState.BeingCarried)
+        if (state == OxygenState.HopOnCell)
+        {
+            float distSqrt = Vector3.SqrMagnitude(hopOnHolder.transform.position - transform.position);
+            if (distSqrt < 0.01f)
+            {
+                hopOnHolder.isOccupied = true;
+                state = OxygenState.BeingCarried;
+            }
+            else
+            {
+                velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, neighbors);
+            }
+        }
+        else if (state == OxygenState.BeingCarried)
         {
             velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, neighbors);
+            return;
         }
         else if (state == OxygenState.OxygenArea)
         {
@@ -92,7 +107,6 @@ public class Oxygen : MonoBehaviour
             {
                 state = OxygenState.HitHeart;
             }
-            // on collision, change to hit heart
         }
         else if (state == OxygenState.HitHeart)
         {
@@ -115,7 +129,7 @@ public class Oxygen : MonoBehaviour
     {
         if (velocity != Vector3.zero) currVelocity = velocity;
         transform.position += currVelocity * Time.deltaTime * speed;
-        transform.up = currVelocity;
+        if (currVelocity != Vector3.zero) transform.forward = currVelocity;
     }
 
     private List<Transform> GetNeighbors()

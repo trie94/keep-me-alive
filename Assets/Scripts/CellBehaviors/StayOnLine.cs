@@ -23,13 +23,4 @@ public class StayOnLine : CellMovement
         float dist = cellToClosestPointOnLine.magnitude;
         return cellToClosestPointOnLine * dist;
     }
-
-    public override void DrawGizmos(Cell creature, List<Transform> context)
-    {
-        Gizmos.color = Color.red;
-        if (debugVelocity != Vector3.zero)
-        {
-            Gizmos.DrawLine(creature.transform.position, creature.transform.position+debugVelocity);
-        }
-    }
 }

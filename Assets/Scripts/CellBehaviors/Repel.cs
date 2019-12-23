@@ -25,7 +25,7 @@ public class Repel : CellMovement
 
         // since repel causes jittery movement, we need to smooth out here
         // and add more weight when composite all the velocity
-        velocity = Vector3.SmoothDamp(creature.transform.up, velocity, ref currentVelocity, 0.5f);
+        velocity = Vector3.SmoothDamp(creature.transform.forward, velocity, ref currentVelocity, 0.5f);
         return velocity;
     }
 }

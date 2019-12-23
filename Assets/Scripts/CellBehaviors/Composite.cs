@@ -7,6 +7,7 @@ public class Composite : CellMovement
 {
     public CellMovement[] behaviors;
     public float[] weights;
+    public Vector3 debug;
 
     public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
@@ -32,7 +33,9 @@ public class Composite : CellMovement
                 velocity += partialVelocity;
             }
         }
+        if (velocity != Vector3.zero) velocity.Normalize();
 
+        debug = velocity;
         return velocity;
     }
 
@@ -42,5 +45,6 @@ public class Composite : CellMovement
         {
             behaviors[i].DrawGizmos(creature, context);
         }
+        Gizmos.DrawLine(creature.transform.position, creature.transform.position + debug);
     }
 }

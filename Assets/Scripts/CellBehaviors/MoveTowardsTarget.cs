@@ -7,23 +7,30 @@ public class MoveTowardsTarget : CellMovement
 {
     public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
-        Vector3 exitNode = Vector3.zero;
+        Vector3 targetNode = Vector3.zero;
+        Erythrocyte erythrocyte = (Erythrocyte)creature;
 
-        if (creature.cellState == CellState.ExitOxygen)
+        if (erythrocyte.cellState == ErythrocyteState.EnterOxygenArea)
         {
-            exitNode = CellController.Instance.oxygenExitNode.position;
+            targetNode = OxygenController.Instance.oxygenArea.position;
         }
-        else if (creature.cellState == CellState.ExitHeart)
+        else if (erythrocyte.cellState == ErythrocyteState.EnterHeartArea
+                 || erythrocyte.cellState == ErythrocyteState.ReleaseOxygen)
         {
-            exitNode = CellController.Instance.heardExitNode.position;
+            targetNode = OxygenController.Instance.heart.position;
+        }
+        else if (erythrocyte.cellState == ErythrocyteState.ExitOxygenArea)
+        {
+            targetNode = CellController.Instance.oxygenExitNode.position;
+        }
+        else if (erythrocyte.cellState == ErythrocyteState.ExitHeartArea)
+        {
+            targetNode = CellController.Instance.heardExitNode.position;
         }
 
-        if (Vector3.SqrMagnitude(exitNode - creature.transform.position) < 0.3f)
-        {
-            creature.cellState = CellState.InVein;
-            return Vector3.zero;
-        }
+        Vector3 velocity = (targetNode - erythrocyte.transform.position);
+        velocity *= velocity.magnitude;
 
-        return exitNode - creature.transform.position;
+        return velocity;
     }
 }

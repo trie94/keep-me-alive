@@ -350,6 +350,75 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &636062893
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 866110491756042920, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_Name
+      value: erythrocyte
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4205890634924255419, guid: b64094b229bac4ff1ad32c1a73988375,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b64094b229bac4ff1ad32c1a73988375, type: 3}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -5463,6 +5532,7 @@ MonoBehaviour:
   oxygenPrefab: {fileID: 3244267922048944490, guid: 904117857346345868710b311aebe1bb,
     type: 3}
   initialOxygenNumber: 100
+  oxygens: []
   oxygenArea: {fileID: 333408051}
   heart: {fileID: 2010323031}
 --- !u!21 &1486204305
@@ -5721,7 +5791,7 @@ BoxCollider:
   m_GameObject: {fileID: 2010323027}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}

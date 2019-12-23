@@ -7,7 +7,7 @@ public class Align : CellMovement
 {
     public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors)
     {
-        if (neighbors == null || neighbors.Count == 0) return creature.transform.up;
+        if (neighbors == null || neighbors.Count == 0) return creature.transform.forward;
 
         //add all points together and average
         Vector3 velocity = Vector3.zero;

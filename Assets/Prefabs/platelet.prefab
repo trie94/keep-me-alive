@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellEmotion: {fileID: 11400000, guid: 71463cb99e88b42c99359c6e391baa92, type: 2}
-  timeInterval: 0
+  timeInterval: 0.2
   behaviors:
   - {fileID: 11400000, guid: f14bed46c8d2e44df92c1a54e2fa7d32, type: 2}
   progress: 0
@@ -117,7 +117,7 @@ MonoBehaviour:
     weight: 0
   neighborRadius: 1.5
   avoidanceRadius: 0.5
-  velocityMultiplier: 10
+  velocityMultiplier: 2.67
   maxSpeed: 5
   squareAvoidanceRadius: 0
   cellState: 0

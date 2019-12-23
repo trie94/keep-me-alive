@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public enum CellState
-{
-    InVein, EnterOxygen, ExitOxygen, EnterHeart, ExitHeart
-}
-
-[System.Serializable]
 [RequireComponent(typeof(Collider))]
 public abstract class Cell : MonoBehaviour
 {
@@ -54,7 +48,7 @@ public abstract class Cell : MonoBehaviour
     private float squareNeighborRadius;
     #endregion
 
-    public CellState cellState;
+    public ErythrocyteState cellState;
 
     public virtual void Awake()
     {
@@ -63,6 +57,10 @@ public abstract class Cell : MonoBehaviour
         faceID = Shader.PropertyToID("_Face");
         emotionPickInterval = Random.Range(5f, 10f);
         speed = Random.Range(0.1f, 0.3f);
+
+        squareMaxSpeed = maxSpeed * maxSpeed;
+        squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
+        squareNeighborRadius = neighborRadius * neighborRadius;
     }
 
     public virtual void Start()
@@ -96,7 +94,7 @@ public abstract class Cell : MonoBehaviour
     {
         if (velocity != Vector3.zero) currVelocity = velocity;
         transform.position += currVelocity * Time.deltaTime * speed;
-        transform.forward = currVelocity;
+        if (currVelocity != Vector3.zero) transform.forward = currVelocity;
     }
 
     protected void PlayFaceAnim()
@@ -139,7 +137,7 @@ public abstract class Cell : MonoBehaviour
             if (curr == this.CellCollider) continue;
             // we don't want to deal with oxygen when the cell is in vein
             // this is a quick fix.. need to be refactored
-            if (cellState == CellState.InVein
+            if (cellState == ErythrocyteState.InVein
                 && OxygenController.Instance.oxygenMap.ContainsKey(curr.transform)) continue;
             neighbors.Add(curr.transform);
         }
@@ -147,4 +145,11 @@ public abstract class Cell : MonoBehaviour
     }
 
     public virtual void UpdateCellState(){}
+
+    //private void OnDrawGizmos()
+    //{
+    //    if (!Application.isPlaying) return;
+    //    List<Transform> neighbors = GetNeighbors();
+    //    behaviors[0].DrawGizmos(this, neighbors);
+    //}
 }

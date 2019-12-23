@@ -21,7 +21,7 @@ public class OxygenController : MonoBehaviour
     private Oxygen oxygenPrefab;
     public int initialOxygenNumber;
     public Dictionary<Transform, Oxygen> oxygenMap;
-    public HashSet<Oxygen> oxygens;
+    public List<Oxygen> oxygens;
     public Transform oxygenArea;
     public Transform heart;
     private float density = 0.03f;
@@ -30,7 +30,7 @@ public class OxygenController : MonoBehaviour
     {
         instance = this;
         oxygenMap = new Dictionary<Transform, Oxygen>();
-        oxygens = new HashSet<Oxygen>();
+        oxygens = new List<Oxygen>();
     }
 
     private void Start()

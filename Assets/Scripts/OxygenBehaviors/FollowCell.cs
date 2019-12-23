@@ -7,7 +7,7 @@ public class FollowCell : OxygenMovement
 {
     public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors)
     {
-        // this makes the oxygen follow the master cell
-        return creature.master.transform.position - creature.transform.position;
+        return creature.hopOnHolder.transform.position
+                       - creature.transform.position;
     }
 }

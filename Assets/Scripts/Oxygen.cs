@@ -96,13 +96,15 @@ public class Oxygen : MonoBehaviour
         }
         else if (state == OxygenState.OxygenArea)
         {
-            velocity = oxygenBehavior.CalculateVelocity(this, neighbors);
+            velocity = oxygenBehavior.CalculateVelocity(this, neighbors,
+                                                        CellController.Instance.oxygenArea.position);
         }
         else if (state == OxygenState.HeartArea)
         {
-            velocity = oxygenBehaviorHeart.CalculateVelocity(this, neighbors);
+            velocity = oxygenBehaviorHeart.CalculateVelocity(this, neighbors,
+                                                             CellController.Instance.heart.position);
             float dist = Vector3.SqrMagnitude(transform.position
-                                              - OxygenController.Instance.heart.position);
+                                              - CellController.Instance.heart.position);
             if (dist < 0.2f)
             {
                 state = OxygenState.HitHeart;

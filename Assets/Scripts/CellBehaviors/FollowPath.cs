@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/FollowPath")]
 public class FollowPath : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Transform target)
+    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Vector3? target)
     {
         creature.progress += Time.deltaTime * creature.speed;
         if (creature.currSeg.n0 == null || creature.currSeg.n1 == null) return Vector3.zero;

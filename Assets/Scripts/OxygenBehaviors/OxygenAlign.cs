@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Oxygen/Align")]
 public class OxygenAlign : OxygenMovement
 {
-    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Transform target)
+    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Vector3? target)
     {
         if (neighbors == null || neighbors.Count == 0) return creature.transform.forward;
 

@@ -8,7 +8,7 @@ public class OxygenComposite : OxygenMovement
     public OxygenMovement[] behaviors;
     public float[] weights;
 
-    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Transform target)
+    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Vector3? target)
     {
         if (weights.Length != behaviors.Length)
         {

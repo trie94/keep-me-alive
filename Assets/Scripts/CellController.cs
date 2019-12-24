@@ -25,12 +25,14 @@ public class CellController : MonoBehaviour
     public Dictionary<Transform, Cell> cellMap;
     public HashSet<Cell> cells;
 
-    #region
+    #region targets
     public Transform oxygenExitNode;
     public Transform heartExitNode;
+    public Transform heart;
+    public Transform oxygenArea;
     #endregion
 
-    public Transform heart;
+    private float radius = 3f;
 
     public bool debugMode = true;
 
@@ -58,5 +60,17 @@ public class CellController : MonoBehaviour
             cellMap.Add(cell.transform, cell);
             cells.Add(cell);
         }
+    }
+
+    public Vector3 GetRandomPositionInOxygenArea()
+    {
+        return oxygenArea.position
+                         + Random.insideUnitSphere * radius;
+    }
+
+    public Vector3 GetRandomPositionInHeartArea()
+    {
+        return heart.position
+                    + Random.insideUnitSphere * radius;
     }
 }

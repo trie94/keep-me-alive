@@ -22,8 +22,6 @@ public class OxygenController : MonoBehaviour
     public int initialOxygenNumber;
     public Dictionary<Transform, Oxygen> oxygenMap;
     public Stack<Oxygen> oxygens;
-    public Transform oxygenArea;
-    public Transform heart;
     private float density = 0.03f;
 
     private void Awake()
@@ -44,7 +42,8 @@ public class OxygenController : MonoBehaviour
         {
             Oxygen oxygen = Instantiate(
                 oxygenPrefab,
-                oxygenArea.position + Random.insideUnitSphere * initialOxygenNumber * density,
+                CellController.Instance.oxygenArea.position
+                + Random.insideUnitSphere * initialOxygenNumber * density,
                 Random.rotation
             );
             oxygenMap.Add(oxygen.transform, oxygen);
@@ -54,7 +53,7 @@ public class OxygenController : MonoBehaviour
 
     public Vector3 GetRandomPositionInOxygenArea()
     {
-        return oxygenArea.position
+        return CellController.Instance.oxygenArea.position
                          + Random.insideUnitSphere
                          * initialOxygenNumber * density;
     }

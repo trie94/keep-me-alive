@@ -17,7 +17,7 @@ public class Erythrocyte : Cell
     public Stack<Oxygen> childOxygen;
     public OxygenHolder[] oxygenHolders;
     [SerializeField]
-    private Transform target = null;
+    private Vector3? target = null;
 
     [SerializeField]
     private ErythrocyteState cellState;
@@ -44,11 +44,13 @@ public class Erythrocyte : Cell
         {
             if (target == null || prevState != cellState)
             {
-                target = OxygenController.Instance.oxygenArea;
+                Debug.Log(prevState + ", " + cellState);
+                prevState = cellState;
+                target = CellController.Instance.GetRandomPositionInOxygenArea();
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
 
-            if (Vector3.SqrMagnitude(target.position - transform.position) < 0.5f)
+            if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
             {
                 prevState = cellState;
                 cellState = ErythrocyteState.WaitOxygen;
@@ -56,7 +58,7 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.WaitOxygen)
         {
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, CellController.Instance.oxygenArea.position);
             if (childOxygen.Count < oxygenCapacity)
             {
                 for (int i = 0; i < oxygenCapacity; i++)
@@ -87,10 +89,11 @@ public class Erythrocyte : Cell
         {
             if (target == null || prevState != cellState)
             {
-                target = CellController.Instance.oxygenExitNode;
+                prevState = cellState;
+                target = CellController.Instance.oxygenExitNode.position;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
-            if (Vector3.SqrMagnitude(target.position - transform.position) < 0.5f)
+            if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
             {
                 prevState = cellState;
                 cellState = ErythrocyteState.InVein;
@@ -107,11 +110,12 @@ public class Erythrocyte : Cell
             {
                 if (target == null || prevState != cellState)
                 {
-                    target = CellController.Instance.heart;
+                    prevState = cellState;
+                    target = CellController.Instance.GetRandomPositionInHeartArea();
                 }
                 velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
 
-                if (Vector3.SqrMagnitude(target.position - transform.position) < 0.7f)
+                if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.7f)
                 {
                     prevState = cellState;
                     cellState = ErythrocyteState.ReleaseOxygen;
@@ -142,10 +146,11 @@ public class Erythrocyte : Cell
         {
             if (target == null || prevState != cellState)
             {
-                target = CellController.Instance.heartExitNode;
+                prevState = cellState;
+                target = CellController.Instance.heartExitNode.position;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
-            if (Vector3.SqrMagnitude(target.position - transform.position) < 0.5f)
+            if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
             {
                 prevState = cellState;
                 cellState = ErythrocyteState.InVein;
@@ -168,19 +173,17 @@ public class Erythrocyte : Cell
     // check the current node
     public override void UpdateCellState()
     {
+        prevState = cellState;
         var nodeType = currSeg.n0.type;
         switch (nodeType)
         {
             case NodeType.HeartEntrance:
-                prevState = cellState;
                 cellState = ErythrocyteState.EnterHeartArea;
                 break;
             case NodeType.OxygenEntrance:
-                prevState = cellState;
                 cellState = ErythrocyteState.EnterOxygenArea;
                 break;
             default:
-                prevState = cellState;
                 cellState = ErythrocyteState.InVein;
                 break;
         }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class OxygenRepel : OxygenMovement
 {
     private Vector3 currentVelocity;
-    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Transform target)
+    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Vector3? target)
     {
         if (neighbors == null || neighbors.Count == 0) return Vector3.zero;
 

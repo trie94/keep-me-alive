@@ -9,7 +9,8 @@ public class PathTester : MonoBehaviour
 
     private void Start()
     {
-        speed = Random.Range(0.5f, 2f);
+        //speed = Random.Range(0.5f, 2f);
+        speed = 0.3f;
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
         // initial position

@@ -6,8 +6,7 @@ using UnityEngine;
 public class OxygenStayInRadius : OxygenMovement
 {
     public float radius = 15f;
-
-    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Vector3? target)
+    public override Vector3 CalculateVelocity(Oxygen creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
         Vector3 centerOffset = target.Value - creature.transform.position;
         float t = centerOffset.magnitude / radius;

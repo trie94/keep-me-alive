@@ -5,8 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/Attract")]
 public class Attract : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Vector3? target)
+    public CreatureTypes type = CreatureTypes.Cell;
+    public override Vector3 CalculateVelocity(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
+        List<Transform> neighbors = groups[type];
         if (neighbors == null || neighbors.Count == 0) return Vector3.zero;
 
         Vector3 velocity = Vector3.zero;

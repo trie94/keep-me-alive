@@ -128,9 +128,9 @@ MonoBehaviour:
     n0: {fileID: 0}
     n1: {fileID: 0}
     weight: 0
-  neighborRadius: 1.5
-  avoidanceRadius: 0.5
-  velocityMultiplier: 1.71
+  neighborRadius: 2
+  avoidanceRadius: 0.8
+  germDetectionRadius: 3
+  velocityMultiplier: 5.08
   maxSpeed: 5
   squareAvoidanceRadius: 0
-  cellState: 0

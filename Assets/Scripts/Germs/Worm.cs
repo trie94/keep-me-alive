@@ -2,7 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Worm : MonoBehaviour
+[System.Serializable]
+public enum WormState
+{
+    Idle, FindTargetOxygen, EatOxygen
+}
+
+[System.Serializable]
+public class Worm : Germ
 {
     [SerializeField]
     private GameObject worm;
@@ -17,6 +24,8 @@ public class Worm : MonoBehaviour
     private float startBody = -1.5f;
     private float currBody = 0f;
 
+    private WormState state;
+
     private void Awake()
     {
         rend = GetComponentInChildren<Renderer>();
@@ -24,6 +33,8 @@ public class Worm : MonoBehaviour
         currBody = rend.material.GetFloat(growFactor);
         fullBody = currBody;
         rend.material.SetFloat(growFactor, startBody);
+
+        state = WormState.Idle;
     }
 
     private void Start()
@@ -39,9 +50,6 @@ public class Worm : MonoBehaviour
             currBody = rend.material.GetFloat(growFactor);
             currBody += (fullBody - startBody) / duration * Time.deltaTime;
             rend.material.SetFloat(growFactor, currBody);
-
-            // move local z
-            //transform.position += transform.forward * Time.deltaTime * 0.1f;
             yield return null;
         }
 

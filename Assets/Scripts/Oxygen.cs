@@ -55,11 +55,16 @@ public class Oxygen : MonoBehaviour
     private float squareNeighborRadius;
     #endregion
 
+    #region Delivery
     public Cell master;
     public OxygenHolder hopOnHolder;
     public OxygenState state;
     private float resetTime = 1f;
     private float resetTick = 0f;
+    #endregion
+
+    public CreatureTypes type = CreatureTypes.Oxygen;
+    private Dictionary<CreatureTypes, List<Transform>> oxygenGroup;
 
     private void Awake()
     {
@@ -69,12 +74,14 @@ public class Oxygen : MonoBehaviour
         speed = Random.Range(0.5f, 0.7f);
         emotionPickInterval = Random.Range(5f, 10f);
         state = OxygenState.OxygenArea;
+        oxygenGroup = new Dictionary<CreatureTypes, List<Transform>>();
+        oxygenGroup.Add(type, null);
     }
 
     // refactor this based on the oxygen state
     private void Update()
     {
-        List<Transform> neighbors = GetNeighbors();
+        List<Transform> neighbors = GetOxygenNeighbors();
         Vector3 velocity = Vector3.zero;
         if (state == OxygenState.HopOnCell)
         {
@@ -86,22 +93,26 @@ public class Oxygen : MonoBehaviour
             }
             else
             {
-                velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, neighbors);
+                oxygenGroup[type] = neighbors;
+                velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, oxygenGroup);
             }
         }
         else if (state == OxygenState.BeingCarried)
         {
-            velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, neighbors);
+            oxygenGroup[type] = neighbors;
+            velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, oxygenGroup);
             return;
         }
         else if (state == OxygenState.OxygenArea)
         {
-            velocity = oxygenBehavior.CalculateVelocity(this, neighbors,
+            oxygenGroup[type] = neighbors;
+            velocity = oxygenBehavior.CalculateVelocity(this, oxygenGroup,
                                                         CellController.Instance.oxygenArea.position);
         }
         else if (state == OxygenState.HeartArea)
         {
-            velocity = oxygenBehaviorHeart.CalculateVelocity(this, neighbors,
+            oxygenGroup[type] = neighbors;
+            velocity = oxygenBehaviorHeart.CalculateVelocity(this, oxygenGroup,
                                                              CellController.Instance.heart.position);
             float dist = Vector3.SqrMagnitude(transform.position
                                               - CellController.Instance.heart.position);
@@ -134,7 +145,7 @@ public class Oxygen : MonoBehaviour
         if (currVelocity != Vector3.zero) transform.forward = currVelocity;
     }
 
-    private List<Transform> GetNeighbors()
+    private List<Transform> GetOxygenNeighbors()
     {
         List<Transform> neighbors = new List<Transform>();
         Collider[] contextColliders = Physics.OverlapSphere(transform.position, neighborRadius);
@@ -143,7 +154,8 @@ public class Oxygen : MonoBehaviour
         {
             var curr = contextColliders[i];
             var oxygens = OxygenController.Instance.oxygenMap;
-            if (curr == OxygenCollider || !oxygens.ContainsKey(curr.transform)
+            // 1. not self, 2. only oxygen, 3. exclude the ones are being carried
+            if (curr == oxygenCollider || !oxygens.ContainsKey(curr.transform)
                 || oxygens[curr.transform].master != null) continue;
             neighbors.Add(curr.transform);
         }

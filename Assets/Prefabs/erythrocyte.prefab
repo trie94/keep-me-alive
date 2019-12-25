@@ -413,12 +413,12 @@ MonoBehaviour:
     n0: {fileID: 0}
     n1: {fileID: 0}
     weight: 0
-  neighborRadius: 1.5
-  avoidanceRadius: 0.5
+  neighborRadius: 2.1
+  avoidanceRadius: 0.8
+  germDetectionRadius: 3
   velocityMultiplier: 7.52
   maxSpeed: 5
   squareAvoidanceRadius: 0
-  cellState: 0
   oxygenCapacity: 3
   oxygenReleaseInterval: 0.5
   oxygenReleaseTick: 0
@@ -426,3 +426,5 @@ MonoBehaviour:
   - {fileID: 2552576719303791281}
   - {fileID: 4762529319642841234}
   - {fileID: 3315417022700021788}
+  cellState: 0
+  prevState: 0

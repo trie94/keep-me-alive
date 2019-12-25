@@ -9,7 +9,7 @@ public class Composite : CellMovement
     public float[] weights;
     public Vector3 debug;
 
-    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Vector3? target)
+    public override Vector3 CalculateVelocity(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
         if (weights.Length != behaviors.Length)
         {
@@ -21,7 +21,7 @@ public class Composite : CellMovement
         float totalWeight = 0f;
         for (int i = 0; i < behaviors.Length; i++)
         {
-            Vector3 partialVelocity = behaviors[i].CalculateVelocity(creature, neighbors, target) * weights[i];
+            Vector3 partialVelocity = behaviors[i].CalculateVelocity(creature, groups, target) * weights[i];
             float currWeight = weights[i];
             if (partialVelocity != Vector3.zero)
             {

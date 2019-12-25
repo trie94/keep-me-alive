@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/MoveTowardsTarget")]
 public class MoveTowardsTarget : CellMovement
 {
-    public override Vector3 CalculateVelocity(Cell creature, List<Transform> neighbors, Vector3? target)
+    public override Vector3 CalculateVelocity(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
         Debug.Assert(target != null);
         Vector3 velocity = target.Value - creature.transform.position;

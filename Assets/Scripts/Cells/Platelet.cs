@@ -15,6 +15,7 @@ public class Platelet : Cell
     public override void Awake()
     {
         base.Awake();
+        cellType = CellType.Platelet;
         limbs = new List<GameObject>();
         InitLimbs();
     }

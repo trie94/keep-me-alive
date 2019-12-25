@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class Movement<T> : ScriptableObject
 {
-    public abstract Vector3 CalculateVelocity(T creature, List<Transform> neighbors, Vector3? target = null);
+    public abstract Vector3 CalculateVelocity(T creature, Dictionary<CreatureTypes, List<Transform>>groups, Vector3? target = null);
     public virtual void DrawGizmos(T creature, List<Transform> context){}
 }
 

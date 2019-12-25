@@ -24,21 +24,29 @@ public class Erythrocyte : Cell
     [SerializeField]
     private ErythrocyteState prevState;
 
+    public override void Awake()
+    {
+        base.Awake();
+        childOxygen = new Stack<Oxygen>();
+        cellType = CellType.Erythrocyte;
+    }
+
     public override void Start()
     {
         base.Start();
         UpdateCellState();
-        childOxygen = new Stack<Oxygen>();
     }
 
     public override void Update()
     {
-        List<Transform> neighbors = GetNeighbors();
+        creatureGroups[CreatureTypes.Cell] = GetCellNeighbors();
+        creatureGroups[CreatureTypes.Germ] = GetGermNeighbors();
+
         Vector3 velocity = Vector3.zero;
 
         if (cellState == ErythrocyteState.InVein)
         {
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups);
         }
         else if (cellState == ErythrocyteState.EnterOxygenArea)
         {
@@ -47,7 +55,7 @@ public class Erythrocyte : Cell
                 prevState = cellState;
                 target = CellController.Instance.GetRandomPositionInOxygenArea();
             }
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
 
             if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
             {
@@ -57,7 +65,7 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.WaitOxygen)
         {
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, CellController.Instance.oxygenArea.position);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, CellController.Instance.oxygenArea.position);
             if (childOxygen.Count < oxygenCapacity)
             {
                 for (int i = 0; i < oxygenCapacity; i++)
@@ -91,7 +99,7 @@ public class Erythrocyte : Cell
                 prevState = cellState;
                 target = CellController.Instance.oxygenExitNode.position;
             }
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
             if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
             {
                 prevState = cellState;
@@ -112,7 +120,7 @@ public class Erythrocyte : Cell
                     prevState = cellState;
                     target = CellController.Instance.GetRandomPositionInHeartArea();
                 }
-                velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
+                velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
 
                 if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.7f)
                 {
@@ -123,7 +131,7 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.ReleaseOxygen)
         {
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups);
 
             if (childOxygen.Count <= 0)
             {
@@ -148,7 +156,7 @@ public class Erythrocyte : Cell
                 prevState = cellState;
                 target = CellController.Instance.heartExitNode.position;
             }
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, neighbors, target);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
             if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
             {
                 prevState = cellState;
@@ -216,7 +224,7 @@ public class Erythrocyte : Cell
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying) return;
-        List<Transform> neighbors = GetNeighbors();
+        List<Transform> neighbors = GetCellNeighbors();
         behaviors[(int)cellState].DrawGizmos(this, neighbors);
     }
 }

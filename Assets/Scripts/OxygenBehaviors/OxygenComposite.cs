@@ -8,7 +8,7 @@ public class OxygenComposite : OxygenMovement
     public OxygenMovement[] behaviors;
     public float[] weights;
 
-    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Vector3? target)
+    public override Vector3 CalculateVelocity(Oxygen creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
         if (weights.Length != behaviors.Length)
         {
@@ -19,7 +19,7 @@ public class OxygenComposite : OxygenMovement
         Vector3 velocity = Vector3.zero;
         for (int i = 0; i < behaviors.Length; i++)
         {
-            Vector3 partialVelocity = behaviors[i].CalculateVelocity(creature, neighbors, target) * weights[i];
+            Vector3 partialVelocity = behaviors[i].CalculateVelocity(creature, groups, target) * weights[i];
 
             if (partialVelocity != Vector3.zero)
             {

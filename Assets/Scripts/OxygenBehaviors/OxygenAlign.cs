@@ -5,8 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Oxygen/Align")]
 public class OxygenAlign : OxygenMovement
 {
-    public override Vector3 CalculateVelocity(Oxygen creature, List<Transform> neighbors, Vector3? target)
+    public CreatureTypes type = CreatureTypes.Oxygen;
+    public override Vector3 CalculateVelocity(Oxygen creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
+        List<Transform> neighbors = groups[type];
         if (neighbors == null || neighbors.Count == 0) return creature.transform.forward;
 
         //add all points together and average

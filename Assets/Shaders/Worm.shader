@@ -2,8 +2,8 @@
 {
     Properties
     {
-        _HeadColor ("HeadColor", color) = (1,0,0,1)
-        _TailColor ("TailColor", color) = (1,0,0,1)
+        _HeadColor ("Head Color", color) = (1,0,0,1)
+        _TailColor ("Tail Color", color) = (1,0,0,1)
         _Face ("Face", 2D) = "black" {}
         _Ramp ("Toon Ramp (RGB)", 2D) = "white" {}
         
@@ -13,6 +13,10 @@
 
         _Speed ("Speed", Range(1.0, 70.0)) = 0.1
         _Wobble ("Wobble", Range(0.0, 1.0)) = 0.1
+
+        _Deform ("Deform", Range(-1.5, 3.0)) = 0.1
+        _DeformPower ("Deform Power", Range(0.1, 1.0)) = 0.35
+        _Flip("Flip", Int) = 1
     }
     SubShader
     {
@@ -65,20 +69,27 @@
             float _Wobble;
             float _Speed;
 
+            float _Deform;
+            float _DeformPower;
+            fixed _Flip;
+
             v2f vert (appdata v)
             {
                 v2f o;
                 o.localPos = v.vertex;
+                v.vertex.xy = v.vertex.xy * pow(saturate(v.vertex.z + _Deform), _DeformPower);
+
                 if (abs(v.vertex.z) <= _Cap) {
                     v.vertex.z *= _BodyLength;
                 } else {
                     v.vertex.z += (_BodyLength-1) * sign(v.vertex.z);
                 }
+                
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
                 o.worldPos = worldPos;
 
                 float y = sin(v.vertex.z + (_Time.x * _Speed)) * _Wobble;
-                v.vertex.y += y;
+                v.vertex.y += y * _Flip;
 
                 o.worldNormal = mul((float3x3)unity_ObjectToWorld, v.normal);
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -103,6 +114,7 @@
                 fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
                 col.rgb = lerp(col.rgb, background.rgb, viewDistance);
                 col = col * lighting;
+
                 return col;
             }
             ENDCG

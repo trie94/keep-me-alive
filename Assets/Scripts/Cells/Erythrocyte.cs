@@ -44,7 +44,6 @@ public class Erythrocyte : Cell
         {
             if (target == null || prevState != cellState)
             {
-                Debug.Log(prevState + ", " + cellState);
                 prevState = cellState;
                 target = CellController.Instance.GetRandomPositionInOxygenArea();
             }

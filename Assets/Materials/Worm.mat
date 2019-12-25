@@ -64,12 +64,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BodyLength: 1.41
+    - _BodyLength: 1.44
     - _BumpScale: 1
     - _Cap: 1
     - _Cutoff: 0.5
+    - _Deform: 0.94
+    - _DeformPower: 0.7
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _Flip: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -86,7 +89,7 @@ Material:
     - _SrcBlend: 1
     - _SwayMax: 0.83
     - _UVSec: 0
-    - _Wobble: 0.37
+    - _Wobble: 0.807
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

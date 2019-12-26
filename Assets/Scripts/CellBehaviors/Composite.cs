@@ -7,7 +7,7 @@ public class Composite : CellMovement
 {
     public CellMovement[] behaviors;
     public float[] weights;
-    public Vector3 debug;
+    public Vector3 debugVelocity;
 
     public override Vector3 CalculateVelocity(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
@@ -36,16 +36,16 @@ public class Composite : CellMovement
         }
         if (totalWeight > 0f) velocity /= totalWeight;
 
-        debug = velocity;
+        debugVelocity = velocity;
         return velocity;
     }
 
-    public override void DrawGizmos(Cell creature, List<Transform> context)
+    public override void DrawGizmos(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups)
     {
-        for (int i = 0; i < behaviors.Length; i++)
-        {
-            behaviors[i].DrawGizmos(creature, context);
-        }
-        Gizmos.DrawLine(creature.transform.position, creature.transform.position + debug);
+        //for (int i = 0; i < behaviors.Length; i++)
+        //{
+        //    behaviors[i].DrawGizmos(creature, groups);
+        //}
+        Gizmos.DrawLine(creature.transform.position, creature.transform.position + debugVelocity);
     }
 }

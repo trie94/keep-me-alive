@@ -131,7 +131,7 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.ReleaseOxygen)
         {
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
 
             if (childOxygen.Count <= 0)
             {
@@ -207,7 +207,7 @@ public class Erythrocyte : Cell
         o.state = OxygenState.HopOnCell;
     }
 
-    public void ReleaseOxygen()
+    private void ReleaseOxygen()
     {
         Debug.Assert(childOxygen.Count > 0);
         Oxygen o = childOxygen.Pop();
@@ -224,7 +224,9 @@ public class Erythrocyte : Cell
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying) return;
-        List<Transform> neighbors = GetCellNeighbors();
-        behaviors[(int)cellState].DrawGizmos(this, neighbors);
+        if (cellState == ErythrocyteState.InVein)
+        {
+            behaviors[(int)cellState].DrawGizmos(this, creatureGroups);
+        }
     }
 }

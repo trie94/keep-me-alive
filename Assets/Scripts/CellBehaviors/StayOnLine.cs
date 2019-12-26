@@ -9,6 +9,7 @@ using UnityEngine;
 public class StayOnLine : CellMovement
 {
     private Vector3 debugVelocity;
+    public float maxDistance = 5f;
 
     public override Vector3 CalculateVelocity(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
@@ -22,6 +23,7 @@ public class StayOnLine : CellMovement
 
         debugVelocity = cellToClosestPointOnLine;
         float dist = cellToClosestPointOnLine.magnitude;
+
         return cellToClosestPointOnLine * dist;
     }
 }

@@ -36,11 +36,11 @@ public class OxygenComposite : OxygenMovement
         return velocity;
     }
 
-    public override void DrawGizmos(Oxygen creature, List<Transform> context)
+    public override void DrawGizmos(Oxygen creature, Dictionary<CreatureTypes, List<Transform>> groups)
     {
         for (int i = 0; i < behaviors.Length; i++)
         {
-            behaviors[i].DrawGizmos(creature, context);
+            behaviors[i].DrawGizmos(creature, groups);
         }
     }
 }

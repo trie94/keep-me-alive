@@ -415,7 +415,7 @@ MonoBehaviour:
     weight: 0
   neighborRadius: 2.1
   avoidanceRadius: 0.8
-  germDetectionRadius: 3
+  germDetectionRadius: 1
   velocityMultiplier: 7.52
   maxSpeed: 5
   squareAvoidanceRadius: 0

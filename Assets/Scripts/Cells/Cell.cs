@@ -86,7 +86,8 @@ public abstract class Cell : MonoBehaviour
         // set initial position
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
-        transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
+        progress = Random.Range(0f, 1f);
+        transform.position = Path.Instance.GetPoint(currSeg, progress);
         transform.rotation = Random.rotation;
         PickNextEmotionAndReset();
     }
@@ -169,9 +170,7 @@ public abstract class Cell : MonoBehaviour
             var currWorm = worms[i];
             if (Vector3.SqrMagnitude(currWorm.transform.position-transform.position) <= squareGermDetectionRadius)
             {
-                // worm near by!
                 neighbors.Add(currWorm.transform);
-                Debug.Log("worm nearby!");
             }
         }
         return neighbors;

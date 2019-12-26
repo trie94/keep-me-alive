@@ -6,9 +6,36 @@ using UnityEngine;
 public class AvoidGerms : CellMovement
 {
     public CreatureTypes type = CreatureTypes.Germ;
+    public Vector3 debugVelocity = Vector3.zero;
+
     public override Vector3 CalculateVelocity(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
         List<Transform> neighbors = groups[type];
-        return Vector3.zero;
+        if (neighbors == null || neighbors.Count == 0) return creature.transform.forward;
+        Vector3 velocity = Vector3.zero;
+        float distFactor = 0f;
+
+        for (int i = 0; i < neighbors.Count; i++)
+        {
+            var currWorm = neighbors[i];
+            Vector3 cellToWorm = currWorm.position - creature.transform.position;
+            distFactor = cellToWorm.sqrMagnitude;
+            Vector3 projectedVector = Vector3.Project(cellToWorm, creature.transform.forward);
+            Vector3 projectedVectorToWorm = cellToWorm - projectedVector;
+            Vector3 singleVelocity = -projectedVectorToWorm;
+            velocity += singleVelocity;
+        }
+
+        velocity /= neighbors.Count;
+        debugVelocity = velocity;
+        velocity = Vector3.Lerp(velocity, creature.transform.forward, 0.75f);
+
+        return velocity;
+    }
+
+
+    public override void DrawGizmos(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups)
+    {
+        Gizmos.DrawLine(creature.transform.position, creature.transform.position + debugVelocity);
     }
 }

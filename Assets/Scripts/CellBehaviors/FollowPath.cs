@@ -17,9 +17,10 @@ public class FollowPath : CellMovement
             creature.currSeg = GetNextSegment(creature);
             creature.UpdateCellState();
         }
-        // this should be fixed later
+
         Vector3 node = Path.Instance.GetPoint(creature.currSeg, creature.progress);
-        return node - creature.transform.position;
+        Vector3 velocity = node - creature.currSeg.n0.transform.position;
+        return velocity;
     }
 
     private Segment GetNextSegment(Cell cell)

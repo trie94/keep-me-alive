@@ -9,11 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9c8b6f6bf9034ee4b907a3d711d28f7, type: 3}
-  m_Name: ReleaseOxygenComposite
+  m_Script: {fileID: 11500000, guid: f99b63c413a244678a3dd70ebb5c0e8b, type: 3}
+  m_Name: AvoidGerms
   m_EditorClassIdentifier: 
-  behaviors:
-  - {fileID: 11400000, guid: 531cb041a58414923bf6f6c0eaed9472, type: 2}
-  weights:
-  - 1
-  debug: {x: -0.055210944, y: -0.9718264, z: 0.06511017}
+  type: 2

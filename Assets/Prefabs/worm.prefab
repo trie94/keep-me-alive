@@ -40,7 +40,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2963693394846855390}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 03c3368d5bffa4a85bff6331ced7dc5f, type: 3}
   m_Name: 
@@ -57,10 +57,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d36132c97216847ab90ef8f92a8587d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  separate: 0
   worm: {fileID: 2963693394846855390}
   duration: 5
-  tick: 0
 --- !u!1 &3132869525905672673
 GameObject:
   m_ObjectHideFlags: 0

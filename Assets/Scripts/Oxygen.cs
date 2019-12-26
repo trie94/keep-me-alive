@@ -74,7 +74,6 @@ public class Oxygen : MonoBehaviour
         squareNeighborRadius = neighborRadius * neighborRadius;
     }
 
-    // refactor this based on the oxygen state
     private void Update()
     {
         List<Transform> neighbors = GetOxygenNeighbors();

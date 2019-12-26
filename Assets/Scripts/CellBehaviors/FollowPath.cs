@@ -18,8 +18,8 @@ public class FollowPath : CellMovement
             creature.UpdateCellState();
         }
 
-        Vector3 node = Path.Instance.GetPoint(creature.currSeg, creature.progress);
-        Vector3 velocity = node - creature.currSeg.n0.transform.position;
+        Vector3 velocity = creature.currSeg.n1.transform.position
+                                   - creature.currSeg.n0.transform.position;
         return velocity;
     }
 

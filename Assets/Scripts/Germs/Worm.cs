@@ -24,6 +24,10 @@ public class Worm : Germ
     private float startBody = -1.5f;
     private float currBody = 0f;
 
+    [SerializeField]
+    private float attackRadius = 1.5f;
+    private float squareAttackRadius;
+
     private WormState state;
 
     private void Awake()
@@ -33,6 +37,7 @@ public class Worm : Germ
         currBody = rend.material.GetFloat(growFactor);
         fullBody = currBody;
         rend.material.SetFloat(growFactor, startBody);
+        squareAttackRadius = attackRadius * attackRadius;
 
         state = WormState.Idle;
     }
@@ -54,6 +59,28 @@ public class Worm : Germ
         }
 
         tick = 0f;
+    }
+
+    // find target to attack
+    private Erythrocyte FindTarget()
+    {
+        var erythrocytes = CellController.Instance.erythrocytes;
+        Cell target = null;
+        float closestSquareDist = 0f;
+
+        for (int i = 0; i < erythrocytes.Count; i++)
+        {
+            var currErythrocyte = erythrocytes[i];
+            float squareDistBetween = Vector3.SqrMagnitude(currErythrocyte.transform.position - transform.position);
+            if (squareDistBetween <= squareAttackRadius)
+            {
+                if (target == null || squareDistBetween < closestSquareDist)
+                {
+                    target = currErythrocyte;
+                }
+            }
+        }
+        return (target != null) ? (Erythrocyte)target : null;
     }
 
     private void InitAnother()

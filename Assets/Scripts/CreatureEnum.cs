@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum CreatureTypes
+﻿public enum CreatureTypes
 {
-    Cell, Oxygen, Germ
+    Cell, Oxygen, Germ,
+    Erythrocyte, Leukocyte, Platelet
 }

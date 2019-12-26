@@ -5427,10 +5427,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellPrefabs:
-  - {fileID: 6651597540179289004, guid: 4841a12e463e0459789f040b49a0a508, type: 3}
   - {fileID: 896347195976248771, guid: b64094b229bac4ff1ad32c1a73988375, type: 3}
+  - {fileID: 6651597540179289004, guid: 4841a12e463e0459789f040b49a0a508, type: 3}
   - {fileID: 9026372904065540676, guid: f68cda0e8b6d042dfac2634d4234f6fd, type: 3}
   cellNum: 30
+  entireCells: []
+  erythrocytes: []
+  leukocytes: []
+  platelets: []
   oxygenExitNode: {fileID: 811187572}
   heartExitNode: {fileID: 951600591}
   heart: {fileID: 2010323031}
@@ -5465,6 +5469,7 @@ MonoBehaviour:
   oxygenPrefab: {fileID: 3244267922048944490, guid: 904117857346345868710b311aebe1bb,
     type: 3}
   initialOxygenNumber: 100
+  oxygenList: []
 --- !u!114 &1356003342
 MonoBehaviour:
   m_ObjectHideFlags: 0

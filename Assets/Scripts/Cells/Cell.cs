@@ -9,15 +9,8 @@ public enum CellType
 }
 
 [System.Serializable]
-[RequireComponent(typeof(Collider))]
 public abstract class Cell : MonoBehaviour
 {
-    private Collider cellCollider;
-    public Collider CellCollider
-    {
-        get { return cellCollider; }
-    }
-
     #region Emotion
     [SerializeField]
     private CellEmotion cellEmotion;
@@ -63,7 +56,6 @@ public abstract class Cell : MonoBehaviour
 
     public virtual void Awake()
     {
-        cellCollider = GetComponent<Collider>();
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
         emotionPickInterval = Random.Range(5f, 10f);
@@ -148,15 +140,19 @@ public abstract class Cell : MonoBehaviour
     protected List<Transform> GetCellNeighbors()
     {
         List<Transform> neighbors = new List<Transform>();
-        Collider[] contextColliders = Physics.OverlapSphere(transform.position, neighborRadius);
-        var cells = CellController.Instance.cellMap;
-        for (int i = 0; i < contextColliders.Length; i++)
+        var cells = CellController.Instance.entireCells;
+
+        for (int i = 0; i < cells.Count; i++)
         {
-            var curr = contextColliders[i];
-            // 1. not self, 2.only cells
-            if (curr == cellCollider || !cells.ContainsKey(curr.transform)) continue;
-            neighbors.Add(curr.transform);
+            var currCell = cells[i];
+            if (currCell == this) continue;
+
+            if (Vector3.SqrMagnitude(currCell.transform.position - transform.position) <= squareNeighborRadius)
+            {
+                neighbors.Add(currCell.transform);
+            }
         }
+
         return neighbors;
     }
 

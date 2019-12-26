@@ -8,15 +8,8 @@ public enum OxygenState
 }
 
 [System.Serializable]
-[RequireComponent(typeof(Collider))]
 public class Oxygen : MonoBehaviour
 {
-    private Collider oxygenCollider;
-    public Collider OxygenCollider
-    {
-        get { return oxygenCollider; }
-    }
-
     #region Emotion
     private Renderer rend;
     private int faceID;
@@ -68,7 +61,6 @@ public class Oxygen : MonoBehaviour
 
     private void Awake()
     {
-        oxygenCollider = GetComponent<Collider>();
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
         speed = Random.Range(0.5f, 0.7f);
@@ -76,6 +68,10 @@ public class Oxygen : MonoBehaviour
         state = OxygenState.OxygenArea;
         oxygenGroup = new Dictionary<CreatureTypes, List<Transform>>();
         oxygenGroup.Add(type, null);
+
+        squareMaxSpeed = maxSpeed * maxSpeed;
+        squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
+        squareNeighborRadius = neighborRadius * neighborRadius;
     }
 
     // refactor this based on the oxygen state
@@ -148,16 +144,16 @@ public class Oxygen : MonoBehaviour
     private List<Transform> GetOxygenNeighbors()
     {
         List<Transform> neighbors = new List<Transform>();
-        Collider[] contextColliders = Physics.OverlapSphere(transform.position, neighborRadius);
+        var oxygens = OxygenController.Instance.oxygenList;
 
-        for (int i = 0; i < contextColliders.Length; i++)
+        for (int i = 0; i < oxygens.Count; i++)
         {
-            var curr = contextColliders[i];
-            var oxygens = OxygenController.Instance.oxygenMap;
-            // 1. not self, 2. only oxygen, 3. exclude the ones are being carried
-            if (curr == oxygenCollider || !oxygens.ContainsKey(curr.transform)
-                || oxygens[curr.transform].master != null) continue;
-            neighbors.Add(curr.transform);
+            var curr = oxygens[i];
+            if (curr == this || curr.master != null) continue;
+            if (Vector3.SqrMagnitude(curr.transform.position - transform.position) <= squareNeighborRadius)
+            {
+                neighbors.Add(curr.transform);
+            }
         }
         return neighbors;
     }

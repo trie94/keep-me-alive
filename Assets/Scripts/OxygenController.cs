@@ -20,15 +20,15 @@ public class OxygenController : MonoBehaviour
     [SerializeField]
     private Oxygen oxygenPrefab;
     public int initialOxygenNumber;
-    public Dictionary<Transform, Oxygen> oxygenMap;
     public Stack<Oxygen> oxygens;
+    public List<Oxygen> oxygenList;
     private float density = 0.03f;
 
     private void Awake()
     {
         instance = this;
-        oxygenMap = new Dictionary<Transform, Oxygen>();
         oxygens = new Stack<Oxygen>();
+        oxygenList = new List<Oxygen>();
     }
 
     private void Start()
@@ -46,7 +46,7 @@ public class OxygenController : MonoBehaviour
                 + Random.insideUnitSphere * initialOxygenNumber * density,
                 Random.rotation
             );
-            oxygenMap.Add(oxygen.transform, oxygen);
+            oxygenList.Add(oxygen);
             oxygens.Push(oxygen);
         }
     }

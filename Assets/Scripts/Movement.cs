@@ -14,3 +14,6 @@ public abstract class CellMovement : Movement<Cell> { }
 
 [System.Serializable]
 public abstract class OxygenMovement : Movement<Oxygen> { }
+
+[System.Serializable]
+public abstract class GermMovement : Movement<Germ> { }

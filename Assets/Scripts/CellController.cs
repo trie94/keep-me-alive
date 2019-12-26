@@ -22,8 +22,13 @@ public class CellController : MonoBehaviour
 
     [SerializeField]
     private int cellNum = 3;
-    public Dictionary<Transform, Cell> cellMap;
-    public HashSet<Cell> cells;
+
+    public List<Cell> entireCells;
+    public List<Cell> erythrocytes;
+    public List<Cell> leukocytes;
+    public List<Cell> platelets;
+    // this is internal helper
+    private Dictionary<CellType, List<Cell>> cellDictionary;
 
     #region targets
     public Transform oxygenExitNode;
@@ -39,8 +44,15 @@ public class CellController : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        cells = new HashSet<Cell>();
-        cellMap = new Dictionary<Transform, Cell>();
+        entireCells = new List<Cell>();
+        erythrocytes = new List<Cell>();
+        leukocytes = new List<Cell>();
+        platelets = new List<Cell>();
+
+        cellDictionary = new Dictionary<CellType, List<Cell>>();
+        cellDictionary.Add(CellType.Erythrocyte, erythrocytes);
+        cellDictionary.Add(CellType.Leukocyte, leukocytes);
+        cellDictionary.Add(CellType.Platelet, platelets);
     }
 
     private void Start()
@@ -53,12 +65,12 @@ public class CellController : MonoBehaviour
         int typeIndex = 0;
         for (int i = 0; i < cellNum; i++)
         {
-            typeIndex = (i % 5 == 0) ? 0 : 1;
-            typeIndex = (i % 7 == 0) ? 2 : typeIndex;
+            typeIndex = (i % 5 == 0) ? (int)CellType.Leukocyte : (int)CellType.Erythrocyte;
+            typeIndex = (i % 7 == 0) ? (int)CellType.Platelet : (int)CellType.Erythrocyte;
 
             Cell cell = Instantiate(cellPrefabs[typeIndex]);
-            cellMap.Add(cell.transform, cell);
-            cells.Add(cell);
+            cellDictionary[(CellType)typeIndex].Add(cell);
+            entireCells.Add(cell);
         }
     }
 

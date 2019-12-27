@@ -22,8 +22,11 @@ public class StayOnLine : CellMovement
             (cellToStartPoint - Vector3.Dot(cellToStartPoint, segDir) * segDir);
 
         debugVelocity = cellToClosestPointOnLine;
-        float dist = cellToClosestPointOnLine.magnitude;
+        float distFactor = cellToClosestPointOnLine.magnitude;
+        distFactor = Mathf.Pow(Mathf.Clamp01(distFactor), 3f) * distFactor;
 
-        return cellToClosestPointOnLine * dist;
+        Vector3 velocity = Vector3.Lerp(cellToClosestPointOnLine, creature.transform.forward, 0.5f);
+
+        return velocity * distFactor;
     }
 }

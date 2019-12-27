@@ -22,28 +22,62 @@ public class GermController : MonoBehaviour
 
     #region worm
     [SerializeField]
-    private int wormNumber;
+    private int maxWormNumber = 10;
     private int currWormNumber;
+    private Stack<Worm> wormPool;
     public List<Worm> worms;
+    [SerializeField]
+    private float wormInstantiateInterval = 10f;
+    private float intervalTick = 0f;
     #endregion
 
     private void Awake()
     {
         instance = this;
+        wormPool = new Stack<Worm>();
         worms = new List<Worm>();
     }
 
     private void Start()
     {
-        SpawnGerms();
+        CreateWormPool();
     }
 
-    private void SpawnGerms()
+    private void Update()
     {
-        for (int i = 0; i < wormNumber; i++)
+        SpawnGermsConstantly();
+    }
+
+    private void CreateWormPool()
+    {
+        for (int i = 0; i < maxWormNumber; i++)
         {
-            Germ germ = Instantiate(germPrefabs[0]);
-            worms.Add((Worm)germ);
+            int segIndex = Random.Range(0, Path.Instance.segments.Count);
+            Segment currSeg = Path.Instance.segments[segIndex];
+            float progress = Random.Range(0f, 1f);
+
+            Germ germ = Instantiate(
+                germPrefabs[0],
+                Path.Instance.GetPoint(currSeg, progress),
+                Random.rotation
+            );
+            germ.gameObject.SetActive(false);
+            wormPool.Push((Worm)germ);
         }
+    }
+
+    private void SpawnGermsConstantly()
+    {
+        if (wormPool.Count <= 0) return;
+        if (intervalTick > wormInstantiateInterval)
+        {
+            Worm worm = wormPool.Pop();
+            worm.gameObject.SetActive(true);
+            worms.Add(worm);
+            currWormNumber++;
+
+            intervalTick = 0f;
+        }
+        intervalTick += Time.deltaTime;
     }
 }

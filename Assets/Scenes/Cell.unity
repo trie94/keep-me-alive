@@ -5484,8 +5484,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   germPrefabs:
   - {fileID: 57419392, guid: 78b73f3da012440afbf3f392936ad0fc, type: 3}
-  wormNumber: 20
+  maxWormNumber: 10
   worms: []
+  wormInstantiateInterval: 10
 --- !u!21 &1486204305
 Material:
   serializedVersion: 6

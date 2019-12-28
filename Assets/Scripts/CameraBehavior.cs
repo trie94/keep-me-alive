@@ -1,22 +1,42 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
+[RequireComponent(typeof(Camera))]
 public class CameraBehavior : MonoBehaviour
 {
-    Vector3 offset;
+    private CommandBuffer commandBuffer;
     [SerializeField]
-    private GameObject player;
+    private Material material;
 
-    private void Start()
+    private static CameraBehavior s_instance;
+    public static CameraBehavior Instance
     {
-        offset = this.transform.position - Vector3.zero;
+        get
+        {
+            if (s_instance == null)
+            {
+                s_instance = FindObjectOfType<CameraBehavior>();
+            }
+            return s_instance;
+        }
     }
 
-    private void LateUpdate()
+    private void Awake()
     {
-        // this.transform.position = targetPos + offset;
-        transform.position = player.transform.position;
-        transform.rotation = player.transform.rotation;
+        s_instance = this;
+        commandBuffer = new CommandBuffer();
+        commandBuffer.name = "command buffer";
+        commandBuffer.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
+
+        BuildCommandBuffer();
+        this.GetComponent<Camera>().AddCommandBuffer(CameraEvent.BeforeForwardOpaque, commandBuffer);
+    }
+
+    private void BuildCommandBuffer()
+    {
+        commandBuffer.Clear();
+        commandBuffer.Blit(null as RenderTexture, BuiltinRenderTextureType.CurrentActive, material);
     }
 }

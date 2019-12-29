@@ -9,6 +9,7 @@ public class CameraBehavior : MonoBehaviour
     private CommandBuffer commandBuffer;
     [SerializeField]
     private Material material;
+    private Camera mainCamera;
 
     private static CameraBehavior s_instance;
     public static CameraBehavior Instance
@@ -31,7 +32,8 @@ public class CameraBehavior : MonoBehaviour
         commandBuffer.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
 
         BuildCommandBuffer();
-        this.GetComponent<Camera>().AddCommandBuffer(CameraEvent.BeforeForwardOpaque, commandBuffer);
+        mainCamera = this.GetComponent<Camera>();
+        mainCamera.AddCommandBuffer(CameraEvent.BeforeForwardOpaque, commandBuffer);
     }
 
     private void BuildCommandBuffer()

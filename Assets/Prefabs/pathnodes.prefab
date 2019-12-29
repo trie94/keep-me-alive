@@ -746,6 +746,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1744733607688040953}
   - component: {fileID: 1744733607688040952}
+  - component: {fileID: 1744733606956968109}
   m_Layer: 0
   m_Name: pathnodes
   m_TagString: Untagged
@@ -824,6 +825,37 @@ MonoBehaviour:
   - n0: {fileID: 2989354937284863538}
     n1: {fileID: 6232059262851009609}
     weight: 2
+  nodes:
+  - {fileID: 1744733607387678229}
+  - {fileID: 9143663679814473166}
+  - {fileID: 1744733606995955184}
+  - {fileID: 1744733608133129532}
+  - {fileID: 1744733607041646862}
+  - {fileID: 1744733607271642540}
+  - {fileID: 1744733607612198334}
+  - {fileID: 5051724644277841183}
+  - {fileID: 226601619222964672}
+  - {fileID: 7611166827882450612}
+  - {fileID: 1970005630889468328}
+  - {fileID: 2989354937284863538}
+  - {fileID: 6232059262851009609}
+--- !u!114 &1744733606956968109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744733607688040954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5906176630149b8b0ff22cc6596989, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tubePrefab: {fileID: 169413738342954263, guid: 7b352f1fec8e44119a4795579bfb4d05,
+    type: 3}
+  spherePrefab: {fileID: 9109999520576994223, guid: f681f947bf55a456c8e07ee469542da3,
+    type: 3}
+  radius: 2
 --- !u!1 &1744733608133129529
 GameObject:
   m_ObjectHideFlags: 0
@@ -951,7 +983,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2714604239477560338}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.4, y: -2.7, z: -1.4}
+  m_LocalPosition: {x: 7.2, y: -2.7, z: -5.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7924907200330488647}

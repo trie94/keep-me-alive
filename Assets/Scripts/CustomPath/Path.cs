@@ -14,6 +14,7 @@ public class Segment
 public class Path : MonoBehaviour
 {
     public List<Segment> segments = new List<Segment>();
+    public List<Node> nodes = new List<Node>();
 
     private const float HIGH = 10f;
     private const float MID = 5f;

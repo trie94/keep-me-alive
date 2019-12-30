@@ -9,10 +9,9 @@
     SubShader
     {
         Tags { "RenderType"="Transparent" "Queue"= "Transparent+10" }
-        // Blend SrcAlpha OneMinusSrcAlpha
+        Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
-        // Cull Front
-        Cull Off
+        Cull Front
 
         GrabPass
         {
@@ -63,7 +62,7 @@
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex);
                 o.grabPos = ComputeGrabScreenPos(o.vertex);
                 o.uv = v.uv;
-                o.normal = v.normal;
+                o.normal = UnityObjectToWorldNormal(v.normal);
                 return o;
             }
 
@@ -78,7 +77,7 @@
                 return min(max(d.x,d.y),0.0) + length(max(d,0.0));
             }
 
-            float sdSphere(float3 p, float s )
+            float sdSphere(float3 p, float s)
             {
                 return length(p)-s;
             }
@@ -86,25 +85,28 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance * 0.05, 0, 1);
+                viewDistance = clamp(viewDistance * 0.03, 0, 1);
 
                 fixed4 color = lerp(_ColorFront, _ColorBack, viewDistance);
 
                 // fixed4 background = tex2Dproj(_BackgroundTexture, i.grabPos);
                 // color.rgb = lerp(color.rgb, background.rgb, viewDistance);
+                // color.a = min(_ColorFront.a, _ColorBack.a);
+
                 float4 worldPosition = float4(i.worldPos.xyz, 1);
                 float3 normal = i.normal;
+                bool bye = false;
 
                 for (uint i=0; i<_CylinderNum; i++)
                 {
                     fixed overlap = sdCappedCylinder(mul(_CylinderInverseTransform[i], worldPosition), _CylinderDimension[i].z, _CylinderDimension[i].x);
-                    if (overlap < 0) {
-                        // return fixed4(0,0,0,0);
-                        discard;
+                    if (overlap < -0.05) {
+                        bye = true;
                     }
                 }
-                return float4(normal * 0.5 + 0.5, 1);
-                return _ColorFront;
+                if (bye) discard;
+                return color;
+                // return _ColorFront;
             }
             ENDCG
         }

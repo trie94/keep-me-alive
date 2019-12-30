@@ -39,8 +39,6 @@ public class CellController : MonoBehaviour
 
     private float radius = 3f;
 
-    public bool debugMode = true;
-
     private void Awake()
     {
         instance = this;

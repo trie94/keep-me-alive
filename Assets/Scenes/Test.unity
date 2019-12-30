@@ -5507,6 +5507,106 @@ Transform:
   m_Father: {fileID: 963194228}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!1 &946210496
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 946210497}
+  - component: {fileID: 946210499}
+  - component: {fileID: 946210498}
+  - component: {fileID: 946210500}
+  m_Layer: 0
+  m_Name: vein1 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &946210497
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946210496}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -5.2, y: -4.8, z: -13.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6745460921622727958}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &946210498
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946210496}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 70910769}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &946210499
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946210496}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &946210500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946210496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8843bb5cb98844f7943b409f0f2baa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 0
+  type: 0
+  direction: {x: 0, y: 0, z: 0}
+  forward: 0.5
+  backward: 0.5
+  nextSegments:
+  - n0: {fileID: 946210500}
+    n1: {fileID: 222063013}
+    weight: 1.4
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -5710,7 +5810,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1244585362}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.2, y: 3.59, z: -2.6}
+  m_LocalPosition: {x: -5.2, y: -4.8, z: -2.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6745460921622727958}
@@ -5801,7 +5901,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1356003339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5818,7 +5918,7 @@ MonoBehaviour:
   - {fileID: 896347195976248771, guid: b64094b229bac4ff1ad32c1a73988375, type: 3}
   - {fileID: 6651597540179289004, guid: 4841a12e463e0459789f040b49a0a508, type: 3}
   - {fileID: 9026372904065540676, guid: f68cda0e8b6d042dfac2634d4234f6fd, type: 3}
-  cellNum: 0
+  cellNum: 30
   entireCells: []
   erythrocytes: []
   leukocytes: []
@@ -5856,7 +5956,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   oxygenPrefab: {fileID: 3244267922048944490, guid: 904117857346345868710b311aebe1bb,
     type: 3}
-  initialOxygenNumber: 0
+  initialOxygenNumber: 100
   oxygenList: []
 --- !u!114 &1356003342
 MonoBehaviour:
@@ -5872,7 +5972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   germPrefabs:
   - {fileID: 57419392, guid: 78b73f3da012440afbf3f392936ad0fc, type: 3}
-  maxWormNumber: 0
+  maxWormNumber: 10
   worms: []
   wormInstantiateInterval: 10
 --- !u!1 &1471502673
@@ -5927,6 +6027,45 @@ MonoBehaviour:
   - n0: {fileID: 7409081452003900773}
     n1: {fileID: 250946907}
     weight: 20
+  - n0: {fileID: 250946907}
+    n1: {fileID: 1244585367}
+    weight: 20
+  - n0: {fileID: 1244585367}
+    n1: {fileID: 222063013}
+    weight: 20
+  - n0: {fileID: 222063013}
+    n1: {fileID: 2135399687}
+    weight: 20
+  - n0: {fileID: 2135399687}
+    n1: {fileID: 1798440213}
+    weight: 20
+  - n0: {fileID: 1798440213}
+    n1: {fileID: 6786323432333067700}
+    weight: 20
+  - n0: {fileID: 6786323432333067700}
+    n1: {fileID: 1951049300457488747}
+    weight: 20
+  - n0: {fileID: 1951049300457488747}
+    n1: {fileID: 8184942814555055647}
+    weight: 20
+  - n0: {fileID: 8184942814555055647}
+    n1: {fileID: 1717333694}
+    weight: 20
+  - n0: {fileID: 1244585367}
+    n1: {fileID: 946210500}
+    weight: 20
+  nodes:
+  - {fileID: 1717333694}
+  - {fileID: 7409081452003900773}
+  - {fileID: 250946907}
+  - {fileID: 1244585367}
+  - {fileID: 222063013}
+  - {fileID: 2135399687}
+  - {fileID: 1798440213}
+  - {fileID: 6786323432333067700}
+  - {fileID: 1951049300457488747}
+  - {fileID: 8184942814555055647}
+  - {fileID: 946210500}
 --- !u!21 &1486204305
 Material:
   serializedVersion: 6
@@ -6847,6 +6986,7 @@ Transform:
   - {fileID: 138204467334938218}
   - {fileID: 8842449396800512189}
   - {fileID: 4440773720906024145}
+  - {fileID: 946210497}
   m_Father: {fileID: 1471502674}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -32,6 +32,7 @@ public class Path : MonoBehaviour
             return instance;
         }
     }
+    public bool debugMode = true;
 
     private void Start()
     {

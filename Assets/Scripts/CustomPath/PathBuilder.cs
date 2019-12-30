@@ -5,7 +5,6 @@ using UnityEngine;
 public struct Tunnels
 {
     public List<PathJoint> tunnel;
-
     public List<Vector4> dimension;
     public List<Matrix4x4> inverseTransformMatrix;
 
@@ -45,15 +44,20 @@ public class PathBuilder : MonoBehaviour
 
     private void InitPathObjects()
     {
+        var nodes = Path.Instance.nodes;
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            PathJoint joint = Instantiate(spherePrefab, nodes[i].transform.position, Quaternion.identity);
+            joint.transform.localScale = new Vector3(scale, scale, scale);
+            jointOnNode.Add(nodes[i], joint);
+        }
+
         for (int i = 0; i < Path.Instance.segments.Count; i++)
         {
             // put sphere on the node
             Segment currSeg = Path.Instance.segments[i];
             Node startNode = currSeg.n0;
             Node endNode = currSeg.n1;
-
-            PathJoint joint = Instantiate(spherePrefab, startNode.transform.position, Quaternion.identity);
-            joint.transform.localScale = new Vector3(scale, scale, scale);
 
             Vector3 direction = endNode.transform.position - startNode.transform.position;
             Quaternion rotation = Quaternion.LookRotation(direction.normalized);
@@ -67,8 +71,6 @@ public class PathBuilder : MonoBehaviour
             rotation);
             tube.transform.localScale = new Vector3(scale, scale, length);
 
-            if (!jointOnNode.ContainsKey(startNode)) jointOnNode.Add(startNode, joint);
-
             addToDictionary(startNode, tube, dimension, inverseMatrix);
             addToDictionary(endNode, tube, dimension, inverseMatrix);
 
@@ -80,6 +82,18 @@ public class PathBuilder : MonoBehaviour
 
     private void BuildPath()
     {
+        var nodes = Path.Instance.nodes;
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            Node node = nodes[i];
+            var tunnels = tunnelsOnNode[node];
+            var joint = jointOnNode[node];
+            Debug.Log("node: " + node + "/ tunnels: " + tunnels.tunnel.Count);
+            joint.Material.SetInt(joint.cylinderNum, tunnels.tunnel.Count);
+            joint.Material.SetVectorArray(joint.cylinderDimension, tunnels.dimension);
+            joint.Material.SetMatrixArray(joint.cylinderInverseTransform, tunnels.inverseTransformMatrix);
+        }
+
         for (int i = 0; i < entireTunnels.tunnel.Count; i++)
         {
             var currTube = entireTunnels.tunnel[i];
@@ -97,18 +111,6 @@ public class PathBuilder : MonoBehaviour
             currTube.Material.SetVectorArray(currTube.cylinderDimension, dimensions);
             currTube.Material.SetMatrixArray(currTube.cylinderInverseTransform, matrixes);
         }
-        
-        var nodes = Path.Instance.nodes;
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            Node node = nodes[i];
-            var tunnels = tunnelsOnNode[node];
-            var joint = jointOnNode[node];
-            joint.Material.SetInt(joint.cylinderNum, tunnels.tunnel.Count);
-            joint.Material.SetVectorArray(joint.cylinderDimension, tunnels.dimension);
-            joint.Material.SetMatrixArray(joint.cylinderInverseTransform, tunnels.inverseTransformMatrix);
-        }
-
     }
 
     private void addToDictionary(Node keyNode, PathJoint tube, Vector4 dimension, Matrix4x4 inverseMatrix)

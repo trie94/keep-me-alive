@@ -47,15 +47,14 @@ public class Node : MonoBehaviour
     private void ColorWeight()
     {
         Renderer rend = GetComponent<Renderer>();
-        if (CellController.Instance && CellController.Instance.debugMode
-            || CellControllerPathTestVersion.Instance && CellControllerPathTestVersion.Instance.isDebugMode)
+        if (Path.Instance.debugMode)
         {
             rend.material.SetFloat("_Weight", GetWeigthOpac(weight));
             rend.material.SetFloat("_Opacity", 1f);
         }
         else
         {
-            rend.material.SetFloat("_Opacity", 0f);
+            rend.enabled = false;
         }
     }
 

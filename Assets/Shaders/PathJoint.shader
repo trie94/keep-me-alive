@@ -9,9 +9,10 @@
     SubShader
     {
         Tags { "RenderType"="Transparent" "Queue"= "Transparent+10" }
-        Blend SrcAlpha OneMinusSrcAlpha
+        // Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
         // Cull Front
+        Cull Off
 
         GrabPass
         {
@@ -51,9 +52,8 @@
             fixed4 _ColorFront;
             fixed4 _ColorBack;
 
-            uniform float4x4 _CylinderInverseTransform[5];
-            uniform float4 _CylinderPosition[5];
-            uniform float4 _CylinderDimension[5];
+            uniform float4x4 _CylinderInverseTransform[20];
+            uniform float4 _CylinderDimension[20];
             uniform int _CylinderNum;
 
             v2f vert (appdata v)
@@ -99,11 +99,12 @@
                 {
                     fixed overlap = sdCappedCylinder(mul(_CylinderInverseTransform[i], worldPosition), _CylinderDimension[i].z, _CylinderDimension[i].x);
                     if (overlap < 0) {
-                        return fixed4(1,0,0,1);
+                        // return fixed4(0,0,0,0);
+                        discard;
                     }
                 }
-                // return float4(normal * 0.5 + 0.5, 1);
-                return color;
+                return float4(normal * 0.5 + 0.5, 1);
+                return _ColorFront;
             }
             ENDCG
         }

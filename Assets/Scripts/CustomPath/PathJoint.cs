@@ -11,18 +11,25 @@ public class PathJoint : MonoBehaviour
     private Material materialPrefab;
     private Material material;
     public Material Material { get { return material; } }
-    public int cylinderPosition;
+
     public int cylinderDimension;
     public int cylinderInverseTransform;
     public int cylinderNum;
+
+    public int zoneRadius;
+    public int zoneInverseTransform;
+    public int zoneNum;
 
     private void Awake()
     {
         rend = GetComponentInChildren<Renderer>();
         material = rend.material;
         cylinderNum = Shader.PropertyToID("_CylinderNum");
-        cylinderPosition = Shader.PropertyToID("_CylinderPosition");
         cylinderDimension = Shader.PropertyToID("_CylinderDimension");
         cylinderInverseTransform = Shader.PropertyToID("_CylinderInverseTransform");
+
+        zoneNum = Shader.PropertyToID("_ZoneNum");
+        zoneInverseTransform = Shader.PropertyToID("_ZoneInverseTransform");
+        zoneRadius = Shader.PropertyToID("_ZoneRadius");
     }
 }

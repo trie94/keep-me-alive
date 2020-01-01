@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct Tunnels
+public struct TunnelParts
 {
     public List<PathJoint> tunnel;
     public List<Vector4> dimension;
     public List<Matrix4x4> inverseTransformMatrix;
 
-    public Tunnels(List<PathJoint> tunnel, List<Vector4> dimension, List<Matrix4x4> matrix)
+    public TunnelParts(List<PathJoint> tunnel, List<Vector4> dimension, List<Matrix4x4> matrix)
     {
         this.tunnel = tunnel;
         this.dimension = dimension;
@@ -26,24 +26,41 @@ public class PathBuilder : MonoBehaviour
     [SerializeField]
     private float radius = 4f;
     private float scale;
-    private Dictionary<Node, Tunnels> tunnelsOnNode;
+    private Dictionary<Node, TunnelParts> tunnelsOnNode;
     private Dictionary<Node, PathJoint> jointOnNode;
-    private Tunnels entireTunnels;
+    private TunnelParts entireTunnels;
+    private TunnelParts entireZones;
+    private List<float> entireZoneRads;
 
     private void Awake()
     {
         scale = radius * 2;
-        tunnelsOnNode = new Dictionary<Node, Tunnels>();
+        tunnelsOnNode = new Dictionary<Node, TunnelParts>();
         jointOnNode = new Dictionary<Node, PathJoint>();
-        entireTunnels = new Tunnels(
-            new List<PathJoint>(), new List<Vector4>(), new List<Matrix4x4>()
-        );
+        entireTunnels = new TunnelParts(new List<PathJoint>(), new List<Vector4>(), new List<Matrix4x4>());
+        entireZones = new TunnelParts(new List<PathJoint>(), new List<Vector4>(), new List<Matrix4x4>());
+        entireZoneRads = new List<float>();
         InitPathObjects();
         BuildPath();
     }
 
     private void InitPathObjects()
     {
+        var zones = Path.Instance.zones;
+        for (int i = 0; i < zones.Count; i++)
+        {
+            Zone zone = zones[i];
+            PathJoint joint = Instantiate(spherePrefab, zone.transform.position, Quaternion.identity);
+            float scale = zone.Radius * 2f;
+            joint.transform.localScale = new Vector3(scale, scale, scale);
+            entireZoneRads.Add(zone.Radius);
+            Matrix4x4 inverseMatrix = Matrix4x4.TRS(zone.transform.position, zone.transform.rotation, Vector3.one).inverse;
+
+            entireZones.tunnel.Add(joint);
+            entireZones.inverseTransformMatrix.Add(inverseMatrix);
+            jointOnNode.Add(zone, joint);
+        }
+
         var nodes = Path.Instance.nodes;
         for (int i = 0; i < nodes.Count; i++)
         {
@@ -82,16 +99,31 @@ public class PathBuilder : MonoBehaviour
 
     private void BuildPath()
     {
+        var zones = Path.Instance.zones;
+        for (int i = 0; i < zones.Count; i++)
+        {
+            Zone zone = zones[i];
+            var joint = jointOnNode[zone];
+
+            joint.Material.SetInt(joint.cylinderNum, entireTunnels.tunnel.Count);
+            joint.Material.SetVectorArray(joint.cylinderDimension, entireTunnels.dimension);
+            joint.Material.SetMatrixArray(joint.cylinderInverseTransform, entireTunnels.inverseTransformMatrix);
+        }
+
         var nodes = Path.Instance.nodes;
         for (int i = 0; i < nodes.Count; i++)
         {
             Node node = nodes[i];
             var tunnels = tunnelsOnNode[node];
             var joint = jointOnNode[node];
-            Debug.Log("node: " + node + "/ tunnels: " + tunnels.tunnel.Count);
+
             joint.Material.SetInt(joint.cylinderNum, tunnels.tunnel.Count);
             joint.Material.SetVectorArray(joint.cylinderDimension, tunnels.dimension);
             joint.Material.SetMatrixArray(joint.cylinderInverseTransform, tunnels.inverseTransformMatrix);
+
+            joint.Material.SetInt(joint.zoneNum, entireZones.tunnel.Count);
+            joint.Material.SetFloatArray(joint.zoneRadius, entireZoneRads);
+            joint.Material.SetMatrixArray(joint.zoneInverseTransform, entireZones.inverseTransformMatrix);
         }
 
         for (int i = 0; i < entireTunnels.tunnel.Count; i++)
@@ -107,9 +139,15 @@ public class PathBuilder : MonoBehaviour
                 dimensions.Add(entireTunnels.dimension[j]);
                 matrixes.Add(entireTunnels.inverseTransformMatrix[j]);
             }
-            currTube.Material.SetInt(currTube.cylinderNum, entireTunnels.tunnel.Count-1);
+
+            currTube.Material.SetInt(currTube.cylinderNum, entireTunnels.tunnel.Count - 1);
             currTube.Material.SetVectorArray(currTube.cylinderDimension, dimensions);
             currTube.Material.SetMatrixArray(currTube.cylinderInverseTransform, matrixes);
+
+            // zone
+            currTube.Material.SetInt(currTube.zoneNum, entireZones.tunnel.Count);
+            currTube.Material.SetFloatArray(currTube.zoneRadius, entireZoneRads);
+            currTube.Material.SetMatrixArray(currTube.zoneInverseTransform, entireZones.inverseTransformMatrix);
         }
     }
 
@@ -117,7 +155,7 @@ public class PathBuilder : MonoBehaviour
     {
         if (!tunnelsOnNode.ContainsKey(keyNode))
         {
-            tunnelsOnNode.Add(keyNode, new Tunnels(
+            tunnelsOnNode.Add(keyNode, new TunnelParts(
                 new List<PathJoint> { tube },
                 new List<Vector4> { dimension },
                 new List<Matrix4x4> { inverseMatrix }

@@ -55,6 +55,10 @@
             uniform float4 _CylinderDimension[20];
             uniform int _CylinderNum;
 
+            uniform float4x4 _ZoneInverseTransform[5];
+            uniform float _ZoneRadius[5];
+            uniform int _ZoneNum;
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -102,11 +106,21 @@
                     fixed overlap = sdCappedCylinder(mul(_CylinderInverseTransform[i], worldPosition), _CylinderDimension[i].z, _CylinderDimension[i].x);
                     if (overlap < -0.05) {
                         bye = true;
+                        break;
+                    }
+                }
+                if (bye) discard;
+
+                for (uint i=0; i<_ZoneNum; i++)
+                {
+                    fixed overlap = sdSphere(mul(_ZoneInverseTransform[i], worldPosition), _ZoneRadius[i]);
+                    if (overlap < -0.07) {
+                        bye = true;
+                        break;
                     }
                 }
                 if (bye) discard;
                 return color;
-                // return _ColorFront;
             }
             ENDCG
         }

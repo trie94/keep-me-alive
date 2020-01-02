@@ -59,9 +59,9 @@ public class PathTester : MonoBehaviour
         }
         else
         {
-            return currSeg.n1.nextSegments[0];
+            return nextSeg[0];
         }
 
-        return currSeg.n1.nextSegments[0];
+        return nextSeg[0];
     }
 }

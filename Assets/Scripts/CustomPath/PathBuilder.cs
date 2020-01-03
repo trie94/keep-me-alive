@@ -22,9 +22,9 @@ public class PathBuilder : MonoBehaviour
     private PathJoint tubePrefab;
     [SerializeField]
     private PathJoint spherePrefab;
-
     [SerializeField]
-    private float radius = 4f;
+    public float radius = 4f;
+
     private float scale;
     private Dictionary<Node, TunnelParts> tunnelsOnNode;
     private Dictionary<Node, PathJoint> jointOnNode;
@@ -66,7 +66,8 @@ public class PathBuilder : MonoBehaviour
         {
             PathJoint joint = Instantiate(spherePrefab, nodes[i].transform.position, Quaternion.identity);
             joint.transform.localScale = new Vector3(scale, scale, scale);
-            jointOnNode.Add(nodes[i], joint);
+            Node currNode = nodes[i];
+            jointOnNode.Add(currNode, joint);
         }
 
         for (int i = 0; i < Path.Instance.segments.Count; i++)

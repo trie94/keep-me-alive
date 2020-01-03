@@ -8,5 +8,4 @@ public class Zone : Node
     private float radius = 3f;
     public float Radius { get { return radius; }}
     public NodeType nodeType { get { return nodeType; }}
-
 }

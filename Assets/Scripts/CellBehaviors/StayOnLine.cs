@@ -19,7 +19,7 @@ public class StayOnLine : CellMovement
         Vector3 segDir = (creature.currSeg.n1.transform.position 
                           - creature.currSeg.n0.transform.position).normalized;
         Vector3 cellToClosestPointOnLine = 
-            (cellToStartPoint - Vector3.Dot(cellToStartPoint, segDir) * segDir);
+            cellToStartPoint - Vector3.Dot(cellToStartPoint, segDir) * segDir;
 
         debugVelocity = cellToClosestPointOnLine;
         float distFactor = cellToClosestPointOnLine.magnitude;

@@ -23,6 +23,7 @@ public class Node : MonoBehaviour
     public float forward = 0.5f;
     public float backward = 0.5f;
     public List<Segment> nextSegments;
+    public PathJoint jointOnNode;
 
     private void Awake()
     {

@@ -24,6 +24,12 @@ public class PlayerBehavior : MonoBehaviour
     private float progress = 0f;
     private float duration = 10f;
     private Segment currSeg;
+    private float distSqrtThresholdToUpdateSegment = 0.5f;
+
+    [SerializeField]
+    private GameObject debugSphere;
+    private GameObject debugIndicatorOnLine;
+    private Vector3 closestPointOnCurrSeg;
 
     private void Awake()
     {
@@ -36,13 +42,16 @@ public class PlayerBehavior : MonoBehaviour
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
         transform.position = Path.Instance.GetPoint(currSeg, progress);
+        transform.forward = velocity = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
+        closestPointOnCurrSeg = transform.position;
+        debugIndicatorOnLine = Instantiate(debugSphere, transform.position, transform.rotation);
     }
-    // move player using keyboard input
-    // block player when too close to the wall
-    // slow down when player hits something (for now, it's just wall)
 
     private void Update()
     {
+        closestPointOnCurrSeg = GetClosestPointOnLine(currSeg);
+        UpdateCurrSeg();
+
         if (isEditor)
         {
             if (!Input.anyKey)  // no input
@@ -77,11 +86,12 @@ public class PlayerBehavior : MonoBehaviour
             }
 
             // move
-            // Vector3 target = Path.Instance.GetPoint(currSeg, progress);
             velocity *= velocityMultiplier;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
             transform.position += velocity * Time.deltaTime * speed;
             transform.forward = Vector3.SmoothDamp(transform.forward, velocity, ref currVelocity, speed);
+
+            debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
         }
     }
 
@@ -114,35 +124,56 @@ public class PlayerBehavior : MonoBehaviour
 
     private void UpdateCurrSeg()
     {
-        // find nearest node
-        var nodes = Path.Instance.nodes;
-        float shortestDistSqrt = float.MaxValue;
-        Node closest = null;
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            Node curr = nodes[i];
-            float distSqrt = (transform.position - curr.transform.position).sqrMagnitude;
+        Segment potential = currSeg;
+        var nextStartNode = currSeg.n1;
 
-            if (closest == null || distSqrt < shortestDistSqrt)
+        // check in case they ignore curr seg and do sharp turn
+        for (int i = 0; i < nextStartNode.nextSegments.Count; i++)
+        {
+            var seg = nextStartNode.nextSegments[i];
+            if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
             {
-                shortestDistSqrt = distSqrt;
-                closest = curr;
+                potential = seg;
             }
         }
 
-        // compare against segments that have closest node
-        var segments = Path.Instance.segments;
-        shortestDistSqrt = float.MaxValue;
-        Segment closestSegment = null;
-        for (int i = 0; i < segments.Count; i++)
+        // for branching paths, we need to check curr seg as well
+        var currStartNode = currSeg.n0;
+        if (currStartNode.nextSegments.Count > 1)
         {
-            // find closest segment
+            for (int i = 0; i < currStartNode.nextSegments.Count; i++)
+            {
+                var seg = currStartNode.nextSegments[i];
+                if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
+                {
+                    potential = seg;
+                }
+            }
         }
+
+        if (potential != currSeg) currSeg = potential;
+    }
+
+    private Vector3 GetClosestPointOnLine(Segment currSeg)
+    {
+        Vector3 playerToStartPoint = currSeg.n0.transform.position - transform.position;
+        Vector3 segDir = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
+        Vector3 playerToClosestPointOnLine = playerToStartPoint - Vector3.Dot(playerToStartPoint, segDir) * segDir;
+
+        return transform.position + playerToClosestPointOnLine;
     }
 
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying) return;
+        Gizmos.color = Color.white;
         Gizmos.DrawLine(transform.position, transform.position + velocity);
+        // highlight currseg
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(currSeg.n0.transform.position, currSeg.n1.transform.position);
+
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(transform.position, closestPointOnCurrSeg);
     }
+
 }

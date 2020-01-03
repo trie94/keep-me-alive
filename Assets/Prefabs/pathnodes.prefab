@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1604971209145403386}
   - component: {fileID: 4760969234302952126}
   - component: {fileID: 1970005630889468328}
+  - component: {fileID: 2037219559}
   m_Layer: 0
   m_Name: vein_s0
   m_TagString: Untagged
@@ -100,6 +101,20 @@ MonoBehaviour:
   - n0: {fileID: 1970005630889468328}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
+  jointOnNode: {fileID: 0}
+--- !u!135 &2037219559
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13004270762772884}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &132772382051046917
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,6 +124,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7924907200330488647}
+  - component: {fileID: 22075393}
   m_Layer: 0
   m_Name: sub_nodes
   m_TagString: Untagged
@@ -133,6 +149,19 @@ Transform:
   m_Father: {fileID: 1744733607688040953}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &22075393
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132772382051046917}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &468194101113994650
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,6 +174,7 @@ GameObject:
   - component: {fileID: 4796866804044212436}
   - component: {fileID: 7115838080021356478}
   - component: {fileID: 226601619222964672}
+  - component: {fileID: 1111047767}
   m_Layer: 0
   m_Name: vein4
   m_TagString: Untagged
@@ -236,6 +266,20 @@ MonoBehaviour:
   - n0: {fileID: 226601619222964672}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  jointOnNode: {fileID: 0}
+--- !u!135 &1111047767
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468194101113994650}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1744733606995955197
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,6 +292,7 @@ GameObject:
   - component: {fileID: 1744733606995955185}
   - component: {fileID: 1744733606995955186}
   - component: {fileID: 1744733606995955184}
+  - component: {fileID: 320995200}
   m_Layer: 0
   m_Name: vein0
   m_TagString: Untagged
@@ -336,6 +381,20 @@ MonoBehaviour:
   - n0: {fileID: 1744733606995955184}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
+  jointOnNode: {fileID: 0}
+--- !u!135 &320995200
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744733606995955197}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1744733607041646859
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,6 +407,7 @@ GameObject:
   - component: {fileID: 1744733607041646863}
   - component: {fileID: 1744733607041646856}
   - component: {fileID: 1744733607041646862}
+  - component: {fileID: 198633191}
   m_Layer: 0
   m_Name: vein2
   m_TagString: Untagged
@@ -439,6 +499,20 @@ MonoBehaviour:
   - n0: {fileID: 1744733607041646862}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  jointOnNode: {fileID: 0}
+--- !u!135 &198633191
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744733607041646859}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1744733607271642537
 GameObject:
   m_ObjectHideFlags: 0
@@ -451,6 +525,7 @@ GameObject:
   - component: {fileID: 1744733607271642541}
   - component: {fileID: 1744733607271642542}
   - component: {fileID: 1744733607271642540}
+  - component: {fileID: 45021070}
   m_Layer: 0
   m_Name: heart_entrance
   m_TagString: Untagged
@@ -539,6 +614,20 @@ MonoBehaviour:
   - n0: {fileID: 1744733607271642540}
     n1: {fileID: 1744733607387678229}
     weight: 1.1
+  jointOnNode: {fileID: 0}
+--- !u!135 &45021070
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744733607271642537}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1744733607387678226
 GameObject:
   m_ObjectHideFlags: 0
@@ -551,6 +640,7 @@ GameObject:
   - component: {fileID: 1744733607387678230}
   - component: {fileID: 1744733607387678231}
   - component: {fileID: 1744733607387678229}
+  - component: {fileID: 253605284}
   m_Layer: 0
   m_Name: oxygen_entrance
   m_TagString: Untagged
@@ -639,6 +729,20 @@ MonoBehaviour:
   - n0: {fileID: 1744733607387678229}
     n1: {fileID: 1744733606995955184}
     weight: 1.4
+  jointOnNode: {fileID: 0}
+--- !u!135 &253605284
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744733607387678226}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1744733607612198328
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,6 +755,7 @@ GameObject:
   - component: {fileID: 1744733607612198323}
   - component: {fileID: 1744733607612198332}
   - component: {fileID: 1744733607612198334}
+  - component: {fileID: 339019227}
   m_Layer: 0
   m_Name: heart_exit
   m_TagString: Untagged
@@ -736,6 +841,20 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments: []
+  jointOnNode: {fileID: 0}
+--- !u!135 &339019227
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744733607612198328}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1744733607688040954
 GameObject:
   m_ObjectHideFlags: 0
@@ -839,6 +958,10 @@ MonoBehaviour:
   - {fileID: 1970005630889468328}
   - {fileID: 2989354937284863538}
   - {fileID: 6232059262851009609}
+  zones:
+  - {fileID: 0}
+  - {fileID: 0}
+  debugMode: 0
 --- !u!114 &1744733606956968109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -855,7 +978,6 @@ MonoBehaviour:
     type: 3}
   spherePrefab: {fileID: 9109999520576994223, guid: f681f947bf55a456c8e07ee469542da3,
     type: 3}
-  radius: 2
 --- !u!1 &1744733608133129529
 GameObject:
   m_ObjectHideFlags: 0
@@ -868,6 +990,7 @@ GameObject:
   - component: {fileID: 1744733608133129533}
   - component: {fileID: 1744733608133129534}
   - component: {fileID: 1744733608133129532}
+  - component: {fileID: 298010778}
   m_Layer: 0
   m_Name: vein1
   m_TagString: Untagged
@@ -883,7 +1006,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744733608133129529}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.2, y: 3.59, z: -2.6}
+  m_LocalPosition: {x: -5.2, y: -4.8, z: -2.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5019887409668629949}
@@ -956,6 +1079,20 @@ MonoBehaviour:
   - n0: {fileID: 1744733608133129532}
     n1: {fileID: 1744733607041646862}
     weight: 1.4
+  jointOnNode: {fileID: 0}
+--- !u!135 &298010778
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744733608133129529}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2714604239477560338
 GameObject:
   m_ObjectHideFlags: 0
@@ -968,6 +1105,7 @@ GameObject:
   - component: {fileID: 1723059617877474236}
   - component: {fileID: 6351011127002021367}
   - component: {fileID: 6232059262851009609}
+  - component: {fileID: 1671612131}
   m_Layer: 0
   m_Name: vein_s2
   m_TagString: Untagged
@@ -1056,6 +1194,20 @@ MonoBehaviour:
   - n0: {fileID: 6232059262851009609}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
+  jointOnNode: {fileID: 0}
+--- !u!135 &1671612131
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2714604239477560338}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3614598663555632488
 GameObject:
   m_ObjectHideFlags: 0
@@ -1108,6 +1260,7 @@ GameObject:
   - component: {fileID: 4471168432296807475}
   - component: {fileID: 7949616414943039758}
   - component: {fileID: 7611166827882450612}
+  - component: {fileID: 1985137537}
   m_Layer: 0
   m_Name: vein5
   m_TagString: Untagged
@@ -1199,6 +1352,20 @@ MonoBehaviour:
   - n0: {fileID: 7611166827882450612}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  jointOnNode: {fileID: 0}
+--- !u!135 &1985137537
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4688667532006232743}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7573385763328296409
 GameObject:
   m_ObjectHideFlags: 0
@@ -1211,6 +1378,7 @@ GameObject:
   - component: {fileID: 4415237631757375623}
   - component: {fileID: 175155389785850399}
   - component: {fileID: 2989354937284863538}
+  - component: {fileID: 1466165899}
   m_Layer: 0
   m_Name: vein_s1
   m_TagString: Untagged
@@ -1299,6 +1467,20 @@ MonoBehaviour:
   - n0: {fileID: 2989354937284863538}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
+  jointOnNode: {fileID: 0}
+--- !u!135 &1466165899
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7573385763328296409}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7594733687361008929
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,6 +1493,7 @@ GameObject:
   - component: {fileID: 7347197521179602389}
   - component: {fileID: 2156224312595618868}
   - component: {fileID: 5051724644277841183}
+  - component: {fileID: 698105795}
   m_Layer: 0
   m_Name: vein3
   m_TagString: Untagged
@@ -1402,6 +1585,20 @@ MonoBehaviour:
   - n0: {fileID: 5051724644277841183}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  jointOnNode: {fileID: 0}
+--- !u!135 &698105795
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7594733687361008929}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8308772554128042200
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,6 +1611,7 @@ GameObject:
   - component: {fileID: 3035641702040616575}
   - component: {fileID: 2049271916426446693}
   - component: {fileID: 9143663679814473166}
+  - component: {fileID: 1510157726}
   m_Layer: 0
   m_Name: oxygen_exit
   m_TagString: Untagged
@@ -1502,3 +1700,17 @@ MonoBehaviour:
   - n0: {fileID: 9143663679814473166}
     n1: {fileID: 1744733606995955184}
     weight: 1.4
+  jointOnNode: {fileID: 0}
+--- !u!135 &1510157726
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8308772554128042200}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}

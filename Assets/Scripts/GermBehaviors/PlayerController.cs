@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
         player = Instantiate(playerCell);
         mainCam = Camera.main;
         offset = player.transform.forward * zOffset;
-        player.transform.position = mainCam.transform.position - offset;
+        mainCam.transform.position = player.transform.position - offset;
     }
 
     private void LateUpdate()

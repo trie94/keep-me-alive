@@ -46,6 +46,10 @@ public class Erythrocyte : Cell
 
         if (cellState == ErythrocyteState.InVein)
         {
+            if (prevState != cellState)
+            {
+                currSeg = GetNextSegment();
+            }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups);
         }
         else if (cellState == ErythrocyteState.EnterOxygenArea)
@@ -65,7 +69,7 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.WaitOxygen)
         {
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, CellController.Instance.oxygenArea.position);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, CellController.Instance.oxygenCenter.position);
             if (childOxygen.Count < oxygenCapacity)
             {
                 for (int i = 0; i < oxygenCapacity; i++)
@@ -97,8 +101,10 @@ public class Erythrocyte : Cell
             if (target == null || prevState != cellState)
             {
                 prevState = cellState;
-                target = CellController.Instance.oxygenExitNode.position;
+                int targetIndex = Random.Range(0, Path.Instance.OxygenExitSegments.Count);
+                target = Path.Instance.OxygenExitSegments[targetIndex].n0.transform.position;
             }
+
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
             if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
             {
@@ -138,7 +144,7 @@ public class Erythrocyte : Cell
                 prevState = cellState;
                 cellState = ErythrocyteState.ExitHeartArea;
                 oxygenReleaseTick = 0f;
-            } 
+            }
             else if (oxygenReleaseTick >= oxygenReleaseInterval)
             {
                 ReleaseOxygen();
@@ -154,7 +160,8 @@ public class Erythrocyte : Cell
             if (target == null || prevState != cellState)
             {
                 prevState = cellState;
-                target = CellController.Instance.heartExitNode.position;
+                int targetIndex = Random.Range(0, Path.Instance.HeartExitSegments.Count);
+                target = Path.Instance.HeartExitSegments[targetIndex].n0.transform.position;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
             if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
@@ -177,22 +184,21 @@ public class Erythrocyte : Cell
         PlayFaceAnim();
     }
 
-    // check the current node
     public override void UpdateCellState()
     {
         prevState = cellState;
-        var nodeType = currSeg.n0.type;
-        switch (nodeType)
+        var startNode = currSeg.n0.type;
+        if (startNode == NodeType.HeartEntrance)
         {
-            case NodeType.HeartEntrance:
-                cellState = ErythrocyteState.EnterHeartArea;
-                break;
-            case NodeType.OxygenEntrance:
-                cellState = ErythrocyteState.EnterOxygenArea;
-                break;
-            default:
-                cellState = ErythrocyteState.InVein;
-                break;
+            cellState = ErythrocyteState.EnterHeartArea;
+        }
+        else if (startNode == NodeType.OxygenEntrance)
+        {
+            cellState = ErythrocyteState.EnterOxygenArea;
+        }
+        else
+        {
+            cellState = ErythrocyteState.InVein;
         }
     }
 

@@ -14,39 +14,13 @@ public class FollowPath : CellMovement
         if (distSqrt <= 1.5f)
         {
             creature.progress = 0f;
-            creature.currSeg = GetNextSegment(creature);
+            creature.currSeg = creature.GetNextSegment();
             creature.UpdateCellState();
         }
 
+        if (creature.currSeg == null) return Vector3.zero;
         Vector3 velocity = creature.currSeg.n1.transform.position
                                    - creature.currSeg.n0.transform.position;
         return velocity;
-    }
-
-    private Segment GetNextSegment(Cell cell)
-    {
-        var nextSeg = cell.currSeg.n1.nextSegments;
-        if (nextSeg.Count > 1)
-        {
-            float weightSum = 0f;
-            for (int i = 0; i < nextSeg.Count; i++)
-            {
-                weightSum += nextSeg[i].weight;
-            }
-
-            float rnd = Random.Range(0, weightSum);
-            for (int i = 0; i < nextSeg.Count; i++)
-            {
-                if (rnd < nextSeg[i].weight)
-                    return nextSeg[i];
-                rnd -= nextSeg[i].weight;
-            }
-        }
-        else
-        {
-            return cell.currSeg.n1.nextSegments[0];
-        }
-
-        return cell.currSeg.n1.nextSegments[0];
     }
 }

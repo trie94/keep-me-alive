@@ -16,6 +16,16 @@ public class Path : MonoBehaviour
     public List<Segment> segments = new List<Segment>();
     public List<Node> nodes = new List<Node>();
     public List<Zone> zones = new List<Zone>();
+    public Zone OxygenZone { get { return zones[0]; } }
+    public Zone HeartZone { get { return zones[1]; } }
+
+    private HashSet<Node> oxygenExitNodes;
+    private HashSet<Node> heartExitNodes;
+
+    private List<Segment> oxygenExitSegments;
+    public List<Segment> OxygenExitSegments { get { return oxygenExitSegments; } }
+    private List<Segment> heartExitSegments;
+    public List<Segment> HeartExitSegments { get {return heartExitSegments; } }
 
     private const float HIGH = 10f;
     private const float MID = 5f;
@@ -35,9 +45,46 @@ public class Path : MonoBehaviour
     }
     public bool debugMode = true;
 
+    private void Awake()
+    {
+        // build exit node segment lists
+        oxygenExitNodes = new HashSet<Node>();
+        heartExitNodes = new HashSet<Node>();
+        oxygenExitSegments = new List<Segment>();
+        heartExitSegments = new List<Segment>();
+
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            Node node = nodes[i];
+            if (node.type == NodeType.OxyenExit)
+            {
+                oxygenExitNodes.Add(node);
+            }
+            else if (node.type == NodeType.HeartExit)
+            {
+                heartExitNodes.Add(node);
+            }
+        }
+
+        BuildExitSegments(oxygenExitNodes, oxygenExitSegments);
+        BuildExitSegments(heartExitNodes, heartExitSegments);
+    }
+
     private void Start()
     {
         CalculateWeight();
+    }
+
+    private void BuildExitSegments(HashSet<Node> exitNode, List<Segment> exitSegments)
+    {
+        for (int i = 0; i < segments.Count; i++)
+        {
+            var currSeg = segments[i];
+            if (exitNode.Contains(currSeg.n0))
+            {
+                exitSegments.Add(currSeg);
+            }
+        }
     }
 
     private void CalculateWeight()
@@ -52,7 +99,7 @@ public class Path : MonoBehaviour
 
     private float GetWeight(NodeWeight weight)
     {
-        switch(weight)
+        switch (weight)
         {
             case NodeWeight.High:
                 return HIGH;

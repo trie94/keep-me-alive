@@ -11,7 +11,8 @@ public enum NodeWeight
 [System.Serializable]
 public enum NodeType
 {
-    Vein, OxygenEntrance, OxyenExit, HeartEntrance, HeartExit
+    Vein, OxygenEntrance, OxyenExit, HeartEntrance, HeartExit,
+    Oxygen, Heart
 }
 
 [System.Serializable]

@@ -23,7 +23,7 @@ public class PathEditor : Editor
             for (int j = 1; j <= lineSteps; j++)
             {
                 Vector3 p1 = path.GetPoint(currSeg, j / (float)lineSteps);
-                // Handles.DrawLine(p0, p1);
+                Handles.DrawLine(p0, p1);
                 p0 = p1;
             }
         }

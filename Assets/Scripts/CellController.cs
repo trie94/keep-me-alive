@@ -31,10 +31,9 @@ public class CellController : MonoBehaviour
     private Dictionary<CellType, List<Cell>> cellDictionary;
 
     #region targets
-    public Transform oxygenExitNode;
-    public Transform heartExitNode;
     public Transform heart;
-    public Transform oxygenArea;
+    public Transform oxygenCenter;
+    public Transform heartCenter;
     #endregion
 
     private float radius = 3f;
@@ -64,7 +63,7 @@ public class CellController : MonoBehaviour
         for (int i = 0; i < cellNum; i++)
         {
             typeIndex = (i % 5 == 0) ? (int)CellType.Leukocyte : (int)CellType.Erythrocyte;
-            typeIndex = (i % 7 == 0) ? (int)CellType.Platelet : (int)CellType.Erythrocyte;
+            typeIndex = (i % 7 == 0 && i % 5 != 0) ? (int)CellType.Platelet : typeIndex;
 
             Cell cell = Instantiate(cellPrefabs[typeIndex]);
             cellDictionary[(CellType)typeIndex].Add(cell);
@@ -74,7 +73,7 @@ public class CellController : MonoBehaviour
 
     public Vector3 GetRandomPositionInOxygenArea()
     {
-        return oxygenArea.position
+        return oxygenCenter.position
                          + Random.insideUnitSphere * radius;
     }
 

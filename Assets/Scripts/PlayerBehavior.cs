@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayerZoneState
+{
+    Vein, OxygenArea, HeartArea
+}
+
 public class PlayerBehavior : MonoBehaviour
 {
     private bool isEditor;
@@ -24,12 +29,16 @@ public class PlayerBehavior : MonoBehaviour
     private float progress = 0f;
     private float duration = 10f;
     private Segment currSeg;
-    private float distSqrtThresholdToUpdateSegment = 0.5f;
+    [SerializeField]
+    private float maxDistFromCenter = 3f;
+    private float maxDistFromCenterSqrt;
+    [SerializeField]  // for debugging
+    private PlayerZoneState currZoneState;
+    private Zone currZone;
 
     [SerializeField]
     private GameObject debugSphere;
     private GameObject debugIndicatorOnLine;
-    private Vector3 closestPointOnCurrSeg;
 
     private void Awake()
     {
@@ -43,13 +52,15 @@ public class PlayerBehavior : MonoBehaviour
         currSeg = Path.Instance.segments[segIndex];
         transform.position = Path.Instance.GetPoint(currSeg, progress);
         transform.forward = velocity = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
-        closestPointOnCurrSeg = transform.position;
         debugIndicatorOnLine = Instantiate(debugSphere, transform.position, transform.rotation);
+        currZoneState = PlayerZoneState.Vein;
+
+        maxDistFromCenterSqrt = maxDistFromCenter * maxDistFromCenter;
     }
 
     private void Update()
     {
-        closestPointOnCurrSeg = GetClosestPointOnLine(currSeg);
+        // update curr seg and zone state
         UpdateCurrSeg();
 
         if (isEditor)
@@ -85,41 +96,26 @@ public class PlayerBehavior : MonoBehaviour
                 velocity += transform.up * -pressTime;
             }
 
+            PushBackFromWall();
             // move
             velocity *= velocityMultiplier;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
             transform.position += velocity * Time.deltaTime * speed;
             transform.forward = Vector3.SmoothDamp(transform.forward, velocity, ref currVelocity, speed);
 
-            debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
-        }
-    }
-
-    private Segment GetNextSegment()
-    {
-        var nextSeg = currSeg.n1.nextSegments;
-        if (nextSeg.Count > 1)
-        {
-            float weightSum = 0f;
-            for (int i = 0; i < nextSeg.Count; i++)
+            if (currZoneState == PlayerZoneState.Vein)
             {
-                weightSum += nextSeg[i].weight;
+                debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
             }
-
-            float rnd = Random.Range(0, weightSum);
-            for (int i = 0; i < nextSeg.Count; i++)
+            else if (currZoneState == PlayerZoneState.OxygenArea)
             {
-                if (rnd < nextSeg[i].weight)
-                    return nextSeg[i];
-                rnd -= nextSeg[i].weight;
+                debugIndicatorOnLine.transform.position = CellController.Instance.oxygenCenter.position;
+            }
+            else if (currZoneState == PlayerZoneState.HeartArea)
+            {
+                debugIndicatorOnLine.transform.position = CellController.Instance.heartCenter.position;
             }
         }
-        else
-        {
-            return nextSeg[0];
-        }
-
-        return nextSeg[0];
     }
 
     private void UpdateCurrSeg()
@@ -127,7 +123,6 @@ public class PlayerBehavior : MonoBehaviour
         Segment potential = currSeg;
         var nextStartNode = currSeg.n1;
 
-        // check in case they ignore curr seg and do sharp turn
         for (int i = 0; i < nextStartNode.nextSegments.Count; i++)
         {
             var seg = nextStartNode.nextSegments[i];
@@ -151,13 +146,60 @@ public class PlayerBehavior : MonoBehaviour
             }
         }
 
-        if (potential != currSeg) currSeg = potential;
+        // when updating segment, update zone state and target zone
+        if (potential != currSeg)
+        {
+            currSeg = potential;
+            switch (currSeg.n0.type)
+            {
+                case NodeType.HeartEntrance:
+                case NodeType.Heart:
+                    currZoneState = PlayerZoneState.HeartArea;
+                    currZone = Path.Instance.HeartZone;
+                    break;
+                case NodeType.OxygenEntrance:
+                case NodeType.Oxygen:
+                    currZoneState = PlayerZoneState.OxygenArea;
+                    currZone = Path.Instance.OxygenZone;
+                    break;
+                default:
+                    currZoneState = PlayerZoneState.Vein;
+                    currZone = null;
+                    break;
+            }
+        }
     }
 
-    private Vector3 GetClosestPointOnLine(Segment currSeg)
+    private void PushBackFromWall()
     {
-        Vector3 playerToStartPoint = currSeg.n0.transform.position - transform.position;
-        Vector3 segDir = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
+        if (currZoneState == PlayerZoneState.Vein)
+        {
+            Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
+            Vector3 playerToPoint = pointOnLine - transform.position;
+            if (playerToPoint.sqrMagnitude > maxDistFromCenterSqrt)
+            {
+                // push back
+                velocity = playerToPoint * playerToPoint.magnitude;
+            }
+        }
+        else
+        {
+            // zone
+            Debug.Assert(currZone != null);
+            float maxDistSqrt = currZone.Radius * currZone.Radius;
+            Vector3 playerToCenter = currZone.transform.position - transform.position;
+
+            if (playerToCenter.sqrMagnitude > maxDistSqrt)
+            {
+                velocity = playerToCenter * playerToCenter.magnitude;
+            }
+        }
+    }
+
+    private Vector3 GetClosestPointOnLine(Segment seg)
+    {
+        Vector3 playerToStartPoint = seg.n0.transform.position - transform.position;
+        Vector3 segDir = (seg.n1.transform.position - seg.n0.transform.position).normalized;
         Vector3 playerToClosestPointOnLine = playerToStartPoint - Vector3.Dot(playerToStartPoint, segDir) * segDir;
 
         return transform.position + playerToClosestPointOnLine;
@@ -173,7 +215,14 @@ public class PlayerBehavior : MonoBehaviour
         Gizmos.DrawLine(currSeg.n0.transform.position, currSeg.n1.transform.position);
 
         Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(transform.position, closestPointOnCurrSeg);
+        if (currZoneState == PlayerZoneState.Vein)
+        {
+            Gizmos.DrawLine(transform.position, GetClosestPointOnLine(currSeg));
+        }
+        else
+        {
+            Vector3 zoneCenter = (currZoneState == PlayerZoneState.OxygenArea) ? Path.Instance.zones[0].transform.position : Path.Instance.zones[1].transform.position;
+            Gizmos.DrawLine(transform.position, zoneCenter);
+        }
     }
-
 }

@@ -174,6 +174,33 @@ public abstract class Cell : MonoBehaviour
 
     public virtual void UpdateCellState(){}
 
+    public Segment GetNextSegment()
+    {
+        var nextSeg = currSeg.n1.nextSegments;
+        if (nextSeg.Count > 1)
+        {
+            float weightSum = 0f;
+            for (int i = 0; i < nextSeg.Count; i++)
+            {
+                weightSum += nextSeg[i].weight;
+            }
+
+            float rnd = Random.Range(0, weightSum);
+            for (int i = 0; i < nextSeg.Count; i++)
+            {
+                if (rnd < nextSeg[i].weight)
+                    return nextSeg[i];
+                rnd -= nextSeg[i].weight;
+            }
+        }
+        else
+        {
+            return nextSeg[0];
+        }
+
+        return null;
+    }
+
     //private void OnDrawGizmos()
     //{
     //    if (!Application.isPlaying) return;

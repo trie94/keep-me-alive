@@ -42,7 +42,7 @@ public class OxygenController : MonoBehaviour
         {
             Oxygen oxygen = Instantiate(
                 oxygenPrefab,
-                CellController.Instance.oxygenCenter.position
+                Path.Instance.OxygenZone.transform.position
                 + Random.insideUnitSphere * initialOxygenNumber * density,
                 Random.rotation
             );
@@ -53,7 +53,7 @@ public class OxygenController : MonoBehaviour
 
     public Vector3 GetRandomPositionInOxygenArea()
     {
-        return CellController.Instance.oxygenCenter.position
+        return Path.Instance.OxygenZone.transform.position
                          + Random.insideUnitSphere
                          * initialOxygenNumber * density;
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public enum PlayerZoneState
 {
@@ -10,8 +11,8 @@ public enum PlayerZoneState
 public class PlayerBehavior : MonoBehaviour
 {
     private bool isEditor;
-    private Quaternion currRotation;
-    private Quaternion prevRotation;
+    private Quaternion currAttitude;
+    private Quaternion prevAttitude;
 
     private Vector3 prevPosition;
     private Vector3 velocity;
@@ -30,15 +31,18 @@ public class PlayerBehavior : MonoBehaviour
     private float duration = 10f;
     private Segment currSeg;
     [SerializeField]
-    private float maxDistFromCenter = 3f;
+    private float maxDistFromCenter = 3.9f;
     private float maxDistFromCenterSqrt;
     [SerializeField]  // for debugging
     private PlayerZoneState currZoneState;
     private Zone currZone;
 
+    #region Debug
+
     [SerializeField]
     private GameObject debugSphere;
     private GameObject debugIndicatorOnLine;
+    #endregion
 
     private void Awake()
     {
@@ -47,11 +51,15 @@ public class PlayerBehavior : MonoBehaviour
 #else
         isEditor = false;
         Input.gyro.enabled = true;
+
+        currAttitude = Input.gyro.attitude;
+        prevAttitude = currAttitude;
 #endif
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
         transform.position = Path.Instance.GetPoint(currSeg, progress);
-        transform.forward = velocity = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
+        transform.forward = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
+        velocity = Vector3.zero;
         debugIndicatorOnLine = Instantiate(debugSphere, transform.position, transform.rotation);
         currZoneState = PlayerZoneState.Vein;
 
@@ -96,49 +104,84 @@ public class PlayerBehavior : MonoBehaviour
                 velocity += transform.up * -pressTime;
             }
 
-            PushBackFromWall();
-            // move
-            velocity *= velocityMultiplier;
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-            transform.position += velocity * Time.deltaTime * speed;
-            transform.forward = Vector3.SmoothDamp(transform.forward, velocity, ref currVelocity, speed);
-
+            // debug indicator
             if (currZoneState == PlayerZoneState.Vein)
             {
                 debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
             }
             else if (currZoneState == PlayerZoneState.OxygenArea)
             {
-                debugIndicatorOnLine.transform.position = CellController.Instance.oxygenCenter.position;
+                debugIndicatorOnLine.transform.position = Path.Instance.OxygenZone.transform.position;
             }
             else if (currZoneState == PlayerZoneState.HeartArea)
             {
-                debugIndicatorOnLine.transform.position = CellController.Instance.heartCenter.position;
+                debugIndicatorOnLine.transform.position = Path.Instance.HeartZone.transform.position;
             }
         }
+        else
+        {
+            // UIController.Instance.SetDebugText("attitude: " + Input.gyro.attitude);
+            currAttitude = Input.gyro.attitude;
+            UIController.Instance.SetDebugText("ATTITUDE : " + Input.gyro.attitude);
+            velocity += transform.up * -(currAttitude.x - prevAttitude.x) * 5f;
+            velocity += transform.right * (currAttitude.z - prevAttitude.z) * 5f;
+            velocity += transform.forward;
+        }
+
+        PushBackFromWall();
+        // move
+        velocity *= velocityMultiplier;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        transform.position += velocity * Time.deltaTime * speed;
+        transform.forward = Vector3.SmoothDamp(transform.forward, velocity, ref currVelocity, speed);
     }
 
     private void UpdateCurrSeg()
     {
         Segment potential = currSeg;
-        var nextStartNode = currSeg.n1;
-
-        for (int i = 0; i < nextStartNode.nextSegments.Count; i++)
+        if (currZoneState == PlayerZoneState.Vein)
         {
-            var seg = nextStartNode.nextSegments[i];
-            if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
+            var nextStartNode = currSeg.n1;
+
+            for (int i = 0; i < nextStartNode.nextSegments.Count; i++)
             {
-                potential = seg;
+                var seg = nextStartNode.nextSegments[i];
+                if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
+                {
+                    potential = seg;
+                }
+            }
+
+            // for branching paths, we need to check curr seg as well
+            var currStartNode = currSeg.n0;
+            if (currStartNode.nextSegments.Count > 1)
+            {
+                for (int i = 0; i < currStartNode.nextSegments.Count; i++)
+                {
+                    var seg = currStartNode.nextSegments[i];
+                    if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
+                    {
+                        potential = seg;
+                    }
+                }
             }
         }
-
-        // for branching paths, we need to check curr seg as well
-        var currStartNode = currSeg.n0;
-        if (currStartNode.nextSegments.Count > 1)
+        else if (currZoneState == PlayerZoneState.HeartArea)
         {
-            for (int i = 0; i < currStartNode.nextSegments.Count; i++)
+            for (int i = 0; i < Path.Instance.HeartExitSegments.Count; i++)
             {
-                var seg = currStartNode.nextSegments[i];
+                var seg = Path.Instance.HeartExitSegments[i];
+                if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
+                {
+                    potential = seg;
+                }
+            }
+        }
+        else if (currZoneState == PlayerZoneState.OxygenArea)
+        {
+            for (int i = 0; i < Path.Instance.OxygenExitSegments.Count; i++)
+            {
+                var seg = Path.Instance.OxygenExitSegments[i];
                 if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
                 {
                     potential = seg;
@@ -146,27 +189,32 @@ public class PlayerBehavior : MonoBehaviour
             }
         }
 
-        // when updating segment, update zone state and target zone
-        if (potential != currSeg)
+        currSeg = potential;
+        switch (currSeg.n0.type)
         {
-            currSeg = potential;
-            switch (currSeg.n0.type)
-            {
-                case NodeType.HeartEntrance:
-                case NodeType.Heart:
-                    currZoneState = PlayerZoneState.HeartArea;
-                    currZone = Path.Instance.HeartZone;
-                    break;
-                case NodeType.OxygenEntrance:
-                case NodeType.Oxygen:
-                    currZoneState = PlayerZoneState.OxygenArea;
-                    currZone = Path.Instance.OxygenZone;
-                    break;
-                default:
+            case NodeType.HeartEntrance:
+            case NodeType.Heart:
+                currZoneState = PlayerZoneState.HeartArea;
+                currZone = Path.Instance.HeartZone;
+                break;
+            case NodeType.OxygenEntrance:
+            case NodeType.Oxygen:
+                currZoneState = PlayerZoneState.OxygenArea;
+                currZone = Path.Instance.OxygenZone;
+                break;
+            case NodeType.OxyenExit:
+            case NodeType.HeartExit:
+                float maxDistSqrt = (currZone.Radius - 0.5f) * (currZone.Radius - 0.5f);
+                Vector3 playerToCenter = currZone.transform.position - transform.position;
+                if (playerToCenter.sqrMagnitude > maxDistSqrt)
+                {
                     currZoneState = PlayerZoneState.Vein;
-                    currZone = null;
-                    break;
-            }
+                }
+                break;
+            default:
+                currZoneState = PlayerZoneState.Vein;
+                currZone = null;
+                break;
         }
     }
 

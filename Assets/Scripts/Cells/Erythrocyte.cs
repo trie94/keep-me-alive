@@ -69,7 +69,7 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.WaitOxygen)
         {
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, CellController.Instance.oxygenCenter.position);
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, Path.Instance.OxygenZone.transform.position);
             if (childOxygen.Count < oxygenCapacity)
             {
                 for (int i = 0; i < oxygenCapacity; i++)

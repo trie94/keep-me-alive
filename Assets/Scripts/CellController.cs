@@ -29,13 +29,7 @@ public class CellController : MonoBehaviour
     public List<Cell> platelets;
     // this is internal helper
     private Dictionary<CellType, List<Cell>> cellDictionary;
-
-    #region targets
     public Transform heart;
-    public Transform oxygenCenter;
-    public Transform heartCenter;
-    #endregion
-
     private float radius = 3f;
 
     private void Awake()
@@ -73,7 +67,7 @@ public class CellController : MonoBehaviour
 
     public Vector3 GetRandomPositionInOxygenArea()
     {
-        return oxygenCenter.position
+        return Path.Instance.OxygenZone.transform.position
                          + Random.insideUnitSphere * radius;
     }
 

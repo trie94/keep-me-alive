@@ -102,7 +102,7 @@ public class Oxygen : MonoBehaviour
         {
             oxygenGroup[type] = neighbors;
             velocity = oxygenBehavior.CalculateVelocity(this, oxygenGroup,
-                                                        CellController.Instance.oxygenCenter.position);
+                                                        Path.Instance.OxygenZone.transform.position);
         }
         else if (state == OxygenState.HeartArea)
         {

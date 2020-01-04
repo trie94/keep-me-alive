@@ -289,6 +289,7 @@ GameObject:
   - component: {fileID: 3527910879991629609}
   - component: {fileID: 7133043900440683633}
   - component: {fileID: 960334602292624808}
+  - component: {fileID: 7151828879017224683}
   m_Layer: 0
   m_Name: player-erythrocyte
   m_TagString: Untagged
@@ -386,5 +387,20 @@ MonoBehaviour:
   velocityMultiplier: 0.5
   maxSpeed: 3
   speed: 1
+  maxDistFromCenter: 3.9
+  currZoneState: 0
   debugSphere: {fileID: 5674710467707232475, guid: f242972502aac44a390f16efd1d6918f,
     type: 3}
+--- !u!114 &7151828879017224683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2939019097871037429}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03c3368d5bffa4a85bff6331ced7dc5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1.5

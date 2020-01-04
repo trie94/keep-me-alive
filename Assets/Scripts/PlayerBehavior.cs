@@ -11,8 +11,8 @@ public enum PlayerZoneState
 public class PlayerBehavior : MonoBehaviour
 {
     private bool isEditor;
-    private Quaternion currAttitude;
-    private Quaternion prevAttitude;
+    private Vector3 currRotationRate;
+    private Vector3 prevRotationRate;
 
     private Vector3 prevPosition;
     private Vector3 velocity;
@@ -26,9 +26,7 @@ public class PlayerBehavior : MonoBehaviour
     private float speed = 1f;
     private float pressTime = 0f;
 
-    private Vector3 targetPositionOnSegment;
     private float progress = 0f;
-    private float duration = 10f;
     private Segment currSeg;
     [SerializeField]
     private float maxDistFromCenter = 3.9f;
@@ -52,8 +50,7 @@ public class PlayerBehavior : MonoBehaviour
         isEditor = false;
         Input.gyro.enabled = true;
 
-        currAttitude = Input.gyro.attitude;
-        prevAttitude = currAttitude;
+        currRotationRate = Input.gyro.rotationRate;
 #endif
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
@@ -120,11 +117,11 @@ public class PlayerBehavior : MonoBehaviour
         }
         else
         {
-            // UIController.Instance.SetDebugText("attitude: " + Input.gyro.attitude);
-            currAttitude = Input.gyro.attitude;
-            UIController.Instance.SetDebugText("ATTITUDE : " + Input.gyro.attitude);
-            velocity += transform.up * -(currAttitude.x - prevAttitude.x) * 5f;
-            velocity += transform.right * (currAttitude.z - prevAttitude.z) * 5f;
+            currRotationRate = Input.gyro.rotationRate;
+            UIController.Instance.SetDebugText("attitude: " + Input.gyro.attitude);
+            // velocity += transform.up * (currRotationRate.x) * 5f;
+            // velocity += transform.right * -(currRotationRate.z) * 5f;
+            transform.rotation = new Quaternion(Input.gyro.attitude.y, -Input.gyro.attitude.x, Input.gyro.attitude.z, Input.gyro.attitude.w);
             velocity += transform.forward;
         }
 

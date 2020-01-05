@@ -34,6 +34,7 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField]  // for debugging
     private PlayerZoneState currZoneState;
     private Zone currZone;
+    private Quaternion correctionQuaternion;
 
     #region Debug
 
@@ -58,7 +59,7 @@ public class PlayerBehavior : MonoBehaviour
         transform.forward = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
         velocity = Vector3.zero;
         debugIndicatorOnLine = Instantiate(debugSphere, transform.position, transform.rotation);
-        currZoneState = PlayerZoneState.Vein;
+        correctionQuaternion = Quaternion.Euler(90f, 0f, 0f);
 
         maxDistFromCenterSqrt = maxDistFromCenter * maxDistFromCenter;
     }
@@ -119,10 +120,12 @@ public class PlayerBehavior : MonoBehaviour
         {
             currRotationRate = Input.gyro.rotationRate;
             UIController.Instance.SetDebugText("attitude: " + Input.gyro.attitude);
-            // velocity += transform.up * (currRotationRate.x) * 5f;
+            // velocity += transform.up * -(Input.gyro.attitude.x) * 5f;
             // velocity += transform.right * -(currRotationRate.z) * 5f;
-            transform.rotation = new Quaternion(Input.gyro.attitude.y, -Input.gyro.attitude.x, Input.gyro.attitude.z, Input.gyro.attitude.w);
-            velocity += transform.forward;
+            // velocity += transform.forward;
+            Quaternion gyroQuaternion = GyroToUnity(Input.gyro.attitude);
+            Quaternion calculatedRotation = correctionQuaternion * gyroQuaternion;
+            velocity = calculatedRotation * Vector3.forward;
         }
 
         PushBackFromWall();
@@ -131,6 +134,7 @@ public class PlayerBehavior : MonoBehaviour
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         transform.position += velocity * Time.deltaTime * speed;
         transform.forward = Vector3.SmoothDamp(transform.forward, velocity, ref currVelocity, speed);
+        // if(velocity != Vector3.zero) transform.forward = velocity.normalized;
     }
 
     private void UpdateCurrSeg()
@@ -200,12 +204,23 @@ public class PlayerBehavior : MonoBehaviour
                 currZone = Path.Instance.OxygenZone;
                 break;
             case NodeType.OxyenExit:
-            case NodeType.HeartExit:
+                if (currZone == null) currZone = Path.Instance.OxygenZone;
                 float maxDistSqrt = (currZone.Radius - 0.5f) * (currZone.Radius - 0.5f);
                 Vector3 playerToCenter = currZone.transform.position - transform.position;
                 if (playerToCenter.sqrMagnitude > maxDistSqrt)
                 {
                     currZoneState = PlayerZoneState.Vein;
+                    currZone = null;
+                }
+                break;
+            case NodeType.HeartExit:
+                if (currZone == null) currZone = Path.Instance.HeartZone;
+                maxDistSqrt = (currZone.Radius - 0.5f) * (currZone.Radius - 0.5f);
+                playerToCenter = currZone.transform.position - transform.position;
+                if (playerToCenter.sqrMagnitude > maxDistSqrt)
+                {
+                    currZoneState = PlayerZoneState.Vein;
+                    currZone = null;
                 }
                 break;
             default:
@@ -269,5 +284,10 @@ public class PlayerBehavior : MonoBehaviour
             Vector3 zoneCenter = (currZoneState == PlayerZoneState.OxygenArea) ? Path.Instance.zones[0].transform.position : Path.Instance.zones[1].transform.position;
             Gizmos.DrawLine(transform.position, zoneCenter);
         }
+    }
+
+    private static Quaternion GyroToUnity(Quaternion q)
+    {
+        return new Quaternion(q.x, q.y, -q.z, -q.w);
     }
 }

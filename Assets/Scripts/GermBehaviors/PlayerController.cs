@@ -8,7 +8,9 @@ public class PlayerController : MonoBehaviour
     private GameObject playerCell;
     private GameObject player;
     [SerializeField]
-    private float zOffset = 2f;
+    private float zOffset = -2f;
+    [SerializeField]
+    private float yOffset = 3f;
     private Vector3 offset;
     private Camera mainCam;
 
@@ -16,14 +18,17 @@ public class PlayerController : MonoBehaviour
     {
         player = Instantiate(playerCell);
         mainCam = Camera.main;
-        offset = player.transform.forward * zOffset;
-        mainCam.transform.position = player.transform.position - offset;
+        offset = player.transform.forward * zOffset + player.transform.up * yOffset;
+        mainCam.transform.position = player.transform.position + offset;
     }
 
     private void LateUpdate()
     {
-        offset = player.transform.forward * zOffset;
-        mainCam.transform.position = player.transform.position - offset;
-        mainCam.transform.LookAt(player.transform);
+        offset = player.transform.forward * zOffset + player.transform.up * yOffset;
+        mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, player.transform.position + offset, 0.1f);
+
+        Vector3 target = player.transform.position + new Vector3(0f, yOffset / 2, 0f);
+        Quaternion look = Quaternion.LookRotation(target - mainCam.transform.position, Vector3.up);
+        mainCam.transform.rotation = Quaternion.Slerp(mainCam.transform.rotation, look, 0.1f);
     }
 }

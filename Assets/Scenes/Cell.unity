@@ -411,7 +411,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 1e-45, y: 8.962436e-19, z: 1e-45, w: -6.783228e+22}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 4e-45}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -5527,7 +5527,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCell: {fileID: 2939019097871037429, guid: a407b3486eadb43968d5699cf1eb6e4e,
     type: 3}
-  zOffset: 2
+  zOffset: -2
+  yOffset: 1
 --- !u!114 &1356003344
 MonoBehaviour:
   m_ObjectHideFlags: 0

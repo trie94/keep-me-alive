@@ -137,6 +137,7 @@ public class PlayerBehavior : MonoBehaviour
             {
                 // maybe i need to prevent this position to be updated
                 transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
+                velocity = Vector3.zero;
             }
             else
             {
@@ -152,7 +153,8 @@ public class PlayerBehavior : MonoBehaviour
 
             if (playerToCenter.sqrMagnitude >= maxDistSqrt)
             {
-                transform.position = Vector3.Lerp(currZone.transform.position, transform.position, 0.9f);
+                transform.position = Vector3.Lerp(currZone.transform.position, transform.position, 0.95f);
+                velocity = Vector3.zero;
             }
             else
             {

@@ -135,7 +135,8 @@ public class PlayerBehavior : MonoBehaviour
             Vector3 playerToPoint = pointOnLine - transform.position;
             if (playerToPoint.sqrMagnitude >= maxDistFromCenterSqrt)
             {
-                transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.9f);
+                // maybe i need to prevent this position to be updated
+                transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
             }
             else
             {
@@ -146,7 +147,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             // zone
             Debug.Assert(currZone != null);
-            float maxDistSqrt = currZone.Radius * currZone.Radius;
+            float maxDistSqrt = (currZone.Radius - 0.6f) * (currZone.Radius - 0.6f);
             Vector3 playerToCenter = currZone.transform.position - transform.position;
 
             if (playerToCenter.sqrMagnitude >= maxDistSqrt)
@@ -228,6 +229,17 @@ public class PlayerBehavior : MonoBehaviour
     private void UpdateZoneState()
     {
         // check if the player is in the zone area
+        if (currSeg.n0.type == NodeType.OxygenEntrance || currSeg.n0.type == NodeType.Oxygen)
+        {
+            currZoneState = PlayerZoneState.OxygenArea;
+            currZone = Path.Instance.OxygenZone;
+        }
+        else if (currSeg.n0.type == NodeType.Heart || currSeg.n0.type == NodeType.Heart)
+        {
+            currZoneState = PlayerZoneState.HeartArea;
+            currZone = Path.Instance.HeartZone;
+        }
+
         for (int i = 0; i < Path.Instance.zones.Count; i++)
         {
             var curr = Path.Instance.zones[i];
@@ -235,8 +247,8 @@ public class PlayerBehavior : MonoBehaviour
             if ((curr.transform.position - transform.position).sqrMagnitude < maxDistSqrt)
             {
                 // vein seg is close enough and the direction is pretty much the same
-                if (Vector3.Dot(transform.forward, (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized) > 0
-                && (GetClosestPointOnLine(currSeg) - transform.position).sqrMagnitude < maxDistFromCenterSqrt)
+                if (Vector3.Dot(transform.forward, (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized) > 0.3f
+                && (GetClosestPointOnLine(currSeg) - transform.position).sqrMagnitude < maxDistFromCenterSqrt && !isSegmentInTheZone(currSeg))
                 {
                     currZoneState = PlayerZoneState.Vein;
                     currZone = null;
@@ -248,6 +260,14 @@ public class PlayerBehavior : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool isSegmentInTheZone(Segment segment)
+    {
+        var startNode = segment.n0;
+        var endNode = segment.n1;
+        if (startNode.type == NodeType.OxygenEntrance || endNode.type == NodeType.Oxygen || startNode.type == NodeType.HeartEntrance || endNode.type == NodeType.Heart) return true;
+        return false;
     }
 
     private Vector3 GetClosestPointOnLine(Segment seg)

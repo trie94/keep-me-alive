@@ -15,7 +15,7 @@ public class PlayerBehavior : MonoBehaviour
     private Vector3 prevRotationRate;
 
     private Vector3 prevPosition;
-    private Vector3 velocity;
+    private Vector3 direction;
     private Vector3 currVelocity;
 
     [SerializeField]
@@ -23,6 +23,7 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField]
     private float maxSpeed = 3f;
     [SerializeField]
+    private float moveSpeed = 1f;
     private float speed = 1f;
     private float pressTime = 0f;
 
@@ -35,6 +36,12 @@ public class PlayerBehavior : MonoBehaviour
     private PlayerZoneState currZoneState;
     private Zone currZone;
     private Quaternion correctionQuaternion;
+    [SerializeField]
+    private float pitchRotationSpeed = 1f;
+    [SerializeField]
+    private float rollRotationSpeed = 1f;
+    private float pitch;
+    private float yaw;
 
     #region Debug
 
@@ -47,17 +54,24 @@ public class PlayerBehavior : MonoBehaviour
     {
 #if UNITY_EDITOR
         isEditor = true;
+        moveSpeed = 1f;
 #else
         isEditor = false;
         Input.gyro.enabled = true;
 
         currRotationRate = Input.gyro.rotationRate;
 #endif
+        speed = moveSpeed;
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
         transform.position = Path.Instance.GetPoint(currSeg, progress);
         transform.forward = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
-        velocity = Vector3.zero;
+        direction = transform.forward;
+        pitch = Vector3.Angle(direction, Vector3.ProjectOnPlane(direction, Vector3.up));
+        if (direction.y > 0) pitch *= -1f;
+        yaw = Vector3.Angle(Vector3.forward, Vector3.ProjectOnPlane(direction, Vector3.up));
+        if (direction.x > 0) yaw *= -1f;
+
         debugIndicatorOnLine = Instantiate(debugSphere, transform.position, transform.rotation);
         correctionQuaternion = Quaternion.Euler(90f, 0f, 0f);
         maxDistFromCenterSqrt = maxDistFromCenter * maxDistFromCenter;
@@ -83,24 +97,24 @@ public class PlayerBehavior : MonoBehaviour
 
             if (Input.GetKey(KeyCode.UpArrow))
             {
-                velocity += transform.forward * pressTime;
+                direction += transform.forward * pressTime;
             }
             if (Input.GetKey(KeyCode.LeftArrow))
             {
-                velocity += transform.right * -pressTime;
+                direction += transform.right * -pressTime;
             }
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                velocity += transform.right * pressTime;
+                direction += transform.right * pressTime;
             }
 
             if (Input.GetKey(KeyCode.A))
             {
-                velocity += transform.up * pressTime;
+                direction += transform.up * pressTime;
             }
             if (Input.GetKey(KeyCode.Z))
             {
-                velocity += transform.up * -pressTime;
+                direction += transform.up * -pressTime;
             }
 
             // debug indicator
@@ -116,61 +130,116 @@ public class PlayerBehavior : MonoBehaviour
             {
                 debugIndicatorOnLine.transform.position = Path.Instance.HeartZone.transform.position;
             }
+
+            if (currZoneState == PlayerZoneState.Vein)
+            {
+                Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
+                Vector3 playerToPoint = pointOnLine - transform.position;
+                if (playerToPoint.sqrMagnitude >= maxDistFromCenterSqrt)
+                {
+                    // maybe i need to prevent this position to be updated
+                    transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
+                    speed = 0f;
+                }
+                else
+                {
+                    Move();
+                }
+            }
+            else
+            {
+                // zone
+                Debug.Assert(currZone != null);
+                float maxDistSqrt = (currZone.Radius - 0.6f) * (currZone.Radius - 0.6f);
+                Vector3 playerToCenter = currZone.transform.position - transform.position;
+
+                if (playerToCenter.sqrMagnitude >= maxDistSqrt)
+                {
+                    transform.position = Vector3.Lerp(currZone.transform.position, transform.position, 0.95f);
+                    speed = 0f;
+                }
+                else
+                {
+                    Move();
+                }
+            }
         }
         else
         {
             currRotationRate = Input.gyro.rotationRate;
-            UIController.Instance.SetDebugText("attitude: " + Input.gyro.attitude);
-            // velocity += transform.up * -(Input.gyro.attitude.x) * 5f;
-            // velocity += transform.right * -(currRotationRate.z) * 5f;
-            // velocity += transform.forward;
             Quaternion gyroQuaternion = GyroToUnity(Input.gyro.attitude);
             Quaternion calculatedRotation = correctionQuaternion * gyroQuaternion;
-            velocity = calculatedRotation * Vector3.forward;
-        }
+            Vector3 right = calculatedRotation * Vector3.right;
+            float dRoll = Vector3.Angle(right, Vector3.ProjectOnPlane(right, Vector3.up));
+            if (right.y > 0) dRoll *= -1f;
 
-        if (currZoneState == PlayerZoneState.Vein)
-        {
-            Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
-            Vector3 playerToPoint = pointOnLine - transform.position;
-            if (playerToPoint.sqrMagnitude >= maxDistFromCenterSqrt)
+            Vector3 forward = calculatedRotation * Vector3.forward;
+            float dPitch = Vector3.Angle(forward, Vector3.ProjectOnPlane(forward, Vector3.up));
+            if (forward.y > 0) dPitch *= -1f;
+
+            // Quaternion dRotation = Quaternion.Euler(dPitch * pitchRotationSpeed * Time.deltaTime, dRoll * pitchRotationSpeed * Time.deltaTime, 0f);
+            // direction = dRotation * direction;
+            if (currZoneState == PlayerZoneState.Vein)
             {
-                // maybe i need to prevent this position to be updated
-                transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
-                velocity = Vector3.zero;
-                Debug.Log("wae");
+                Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
+                Vector3 playerToPoint = pointOnLine - transform.position;
+                if (playerToPoint.sqrMagnitude >= maxDistFromCenterSqrt)
+                {
+                    // maybe i need to prevent this position to be updated
+                    transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
+                    speed = 0f;
+                }
+                else
+                {
+                    Move(dRoll, dPitch);
+                }
             }
             else
             {
-                Move();
-            }
-        }
-        else
-        {
-            // zone
-            Debug.Assert(currZone != null);
-            float maxDistSqrt = (currZone.Radius - 0.6f) * (currZone.Radius - 0.6f);
-            Vector3 playerToCenter = currZone.transform.position - transform.position;
+                // zone
+                Debug.Assert(currZone != null);
+                float maxDistSqrt = (currZone.Radius - 0.6f) * (currZone.Radius - 0.6f);
+                Vector3 playerToCenter = currZone.transform.position - transform.position;
 
-            if (playerToCenter.sqrMagnitude >= maxDistSqrt)
-            {
-                transform.position = Vector3.Lerp(currZone.transform.position, transform.position, 0.95f);
-                velocity = Vector3.zero;
-            }
-            else
-            {
-                Move();
+                if (playerToCenter.sqrMagnitude >= maxDistSqrt)
+                {
+                    transform.position = Vector3.Lerp(currZone.transform.position, transform.position, 0.95f);
+                    speed = 0f;
+                }
+                else
+                {
+                    Move(dRoll, dPitch);
+                }
             }
         }
     }
 
+    private void Move(float dRoll, float dPitch)
+    {
+        pitch += dPitch * Time.deltaTime * pitchRotationSpeed;
+        yaw += dRoll * Time.deltaTime * rollRotationSpeed;
+
+        pitch = Mathf.Clamp(pitch, -89f, 89f);
+        if (yaw > 180f) yaw -= 360f;
+        if (yaw < -180f) yaw += 360f;
+
+        UIController.Instance.SetDebugText("pitch: " + pitch + " | yaw: " + yaw);
+        Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
+        direction = rot * Vector3.forward;
+        speed = moveSpeed;
+        transform.position += direction * Time.deltaTime * speed;
+
+        transform.rotation = rot;
+        // if (direction != Vector3.zero) transform.forward = direction;
+    }
+
     private void Move()
     {
-        velocity *= velocityMultiplier;
-        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        speed = moveSpeed;
+        direction *= velocityMultiplier;
+        Vector3 velocity = Vector3.ClampMagnitude(direction, maxSpeed);
         transform.position += velocity * Time.deltaTime * speed;
         transform.forward = Vector3.SmoothDamp(transform.forward, velocity, ref currVelocity, speed);
-        // if(velocity != Vector3.zero) transform.forward = velocity.normalized;
     }
 
     private void UpdateCurrSeg()
@@ -286,7 +355,7 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (!Application.isPlaying) return;
         Gizmos.color = Color.white;
-        Gizmos.DrawLine(transform.position, transform.position + velocity);
+        Gizmos.DrawLine(transform.position, transform.position + direction);
         // highlight currseg
         Gizmos.color = Color.red;
         Gizmos.DrawLine(currSeg.n0.transform.position, currSeg.n1.transform.position);

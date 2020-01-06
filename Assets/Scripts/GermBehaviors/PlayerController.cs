@@ -27,8 +27,8 @@ public class PlayerController : MonoBehaviour
         offset = player.transform.forward * zOffset + player.transform.up * yOffset;
         mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, player.transform.position + offset, 0.1f);
 
-        Vector3 target = player.transform.position + new Vector3(0f, yOffset / 2, 0f);
-        Quaternion look = Quaternion.LookRotation(target - mainCam.transform.position, Vector3.up);
+        Vector3 target = player.transform.position + player.transform.up * yOffset/2f;
+        Quaternion look = Quaternion.LookRotation(target - mainCam.transform.position, player.transform.up);
         mainCam.transform.rotation = Quaternion.Slerp(mainCam.transform.rotation, look, 0.1f);
     }
 }

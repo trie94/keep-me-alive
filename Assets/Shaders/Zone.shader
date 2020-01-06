@@ -2,7 +2,7 @@
 {
     Properties
     {
-        _BumpMap ("Bump Map", 2D) = "white" {}
+        _MainTex ("Texture", 2D) = "white" {}
         _ColorFront ("Color Front", color) = (1,0,0,1)
         _ColorBack ("Color Back", color) = (1,0,0,1)
         _VeinColor ("Vein Color", color) = (1,0,0,1)
@@ -40,11 +40,11 @@
                 float4 vertex : SV_POSITION;
                 float4 worldPos : TEXCOORD1;
                 float4 grabPos: TEXCOORD2;
-                float3 worldNormal : TEXCOORD3;
+                float3 normal : TEXCOORD3;
             };
 
-            sampler2D _BumpMap;
-            float4 _BumpMap_ST;
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
 
             sampler2D _BackgroundTexture;
 
@@ -67,7 +67,7 @@
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex);
                 o.grabPos = ComputeGrabScreenPos(o.vertex);
                 o.uv = v.uv;
-                o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                o.normal = UnityObjectToWorldNormal(v.normal);
                 return o;
             }
 
@@ -90,12 +90,20 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance * 0.03, 0, 0.5);
+                viewDistance = clamp(viewDistance * 0.03, 0, 1);
 
                 fixed4 color = lerp(_ColorFront, _ColorBack, viewDistance);
+                fixed4 bump = tex2D(_MainTex, i.uv);
+                color = color * bump.a + _VeinColor * (1-bump.a);
+
                 // fixed4 background = tex2Dproj(_BackgroundTexture, i.grabPos);
                 // color.rgb = lerp(color.rgb, background.rgb, viewDistance);
                 // color.a = min(_ColorFront.a, _ColorBack.a);
+
+                float4 worldPosition = float4(i.worldPos.xyz, 1);
+                float3 normal = i.normal;
+                float2 uv = i.uv;
+
                 bool bye = false;
 
                 for (uint i=0; i<_CylinderNum; i++)
@@ -118,6 +126,7 @@
                 }
                 if (bye) discard;
 
+                // if (uv.y > 0.9) return fixed4(1,0,0,1);
                 return color;
             }
             ENDCG

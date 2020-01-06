@@ -386,9 +386,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocityMultiplier: 0.5
   maxSpeed: 3
-  speed: 1
+  moveSpeed: 1.5
   maxDistFromCenter: 3.8
   currZoneState: 0
+  pitchRotationSpeed: 1.5
+  rollRotationSpeed: 1.5
   debugSphere: {fileID: 5674710467707232475, guid: f242972502aac44a390f16efd1d6918f,
     type: 3}
 --- !u!114 &7151828879017224683

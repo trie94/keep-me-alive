@@ -7,8 +7,6 @@ public class PathJoint : MonoBehaviour
     private Renderer rend;
     public Renderer Rend { get { return rend; } }
 
-    [SerializeField]
-    private Material materialPrefab;
     private Material material;
     public Material Material { get { return material; } }
 

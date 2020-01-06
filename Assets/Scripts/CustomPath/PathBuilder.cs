@@ -23,6 +23,9 @@ public class PathBuilder : MonoBehaviour
     [SerializeField]
     private PathJoint spherePrefab;
     [SerializeField]
+    private PathJoint zonePrefab;
+
+    [SerializeField]
     public float radius = 4f;
 
     private float scale;
@@ -50,7 +53,7 @@ public class PathBuilder : MonoBehaviour
         for (int i = 0; i < zones.Count; i++)
         {
             Zone zone = zones[i];
-            PathJoint joint = Instantiate(spherePrefab, zone.transform.position, Quaternion.identity);
+            PathJoint joint = Instantiate(zonePrefab, zone.transform.position, Quaternion.identity);
             float scale = zone.Radius * 2f;
             joint.transform.localScale = new Vector3(scale, scale, scale);
             entireZoneRads.Add(zone.Radius);

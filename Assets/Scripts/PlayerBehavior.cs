@@ -138,6 +138,7 @@ public class PlayerBehavior : MonoBehaviour
                 // maybe i need to prevent this position to be updated
                 transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
                 velocity = Vector3.zero;
+                Debug.Log("wae");
             }
             else
             {

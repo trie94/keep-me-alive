@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 333408047}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -37.1, y: 5, z: 9.9}
+  m_LocalPosition: {x: -33, y: 5, z: 9.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4541979320624467975}
@@ -50,7 +50,6 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments: []
-  jointOnNode: {fileID: 0}
   radius: 10
 --- !u!23 &333408049
 MeshRenderer:
@@ -140,7 +139,6 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments: []
-  jointOnNode: {fileID: 0}
   radius: 12
 --- !u!23 &1232306307
 MeshRenderer:
@@ -207,7 +205,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1298469328}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 31.5, y: -10.6, z: 16.4}
+  m_LocalPosition: {x: 31.5, y: -10.6, z: 14.77}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5019887409668629949}
@@ -277,7 +275,6 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments: []
-  jointOnNode: {fileID: 0}
 --- !u!1 &1958153947
 GameObject:
   m_ObjectHideFlags: 0
@@ -381,7 +378,6 @@ MonoBehaviour:
   - n0: {fileID: 1958153948}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
-  jointOnNode: {fileID: 0}
 --- !u!1 &2059411983
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,7 +481,6 @@ MonoBehaviour:
   - n0: {fileID: 2059411984}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
-  jointOnNode: {fileID: 0}
 --- !u!1 &13004270762772884
 GameObject:
   m_ObjectHideFlags: 0
@@ -513,7 +508,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 13004270762772884}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.3, y: -4.5, z: -21.9}
+  m_LocalPosition: {x: -6.3, y: -4.5, z: -19.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7924907200330488647}
@@ -586,7 +581,6 @@ MonoBehaviour:
   - n0: {fileID: 1970005630889468328}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
-  jointOnNode: {fileID: 0}
 --- !u!1 &132772382051046917
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,7 +717,6 @@ MonoBehaviour:
   - n0: {fileID: 226601619222964672}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
-  jointOnNode: {fileID: 0}
 --- !u!1 &1744733606995955197
 GameObject:
   m_ObjectHideFlags: 0
@@ -824,7 +817,6 @@ MonoBehaviour:
   - n0: {fileID: 1744733606995955184}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
-  jointOnNode: {fileID: 0}
 --- !u!1 &1744733607041646859
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,7 +920,6 @@ MonoBehaviour:
   - n0: {fileID: 1744733607041646862}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
-  jointOnNode: {fileID: 0}
 --- !u!1 &1744733607271642537
 GameObject:
   m_ObjectHideFlags: 0
@@ -1029,7 +1020,6 @@ MonoBehaviour:
   - n0: {fileID: 1744733607271642540}
     n1: {fileID: 1744733607387678229}
     weight: 1.1
-  jointOnNode: {fileID: 0}
 --- !u!1 &1744733607387678226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1057,7 +1047,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744733607387678226}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -29.5, y: 5.62, z: 14.4}
+  m_LocalPosition: {x: -29.5, y: 5.62, z: 12.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5019887409668629949}
@@ -1130,7 +1120,6 @@ MonoBehaviour:
   - n0: {fileID: 1744733607387678229}
     n1: {fileID: 1744733606995955184}
     weight: 1.4
-  jointOnNode: {fileID: 0}
 --- !u!1 &1744733607612198328
 GameObject:
   m_ObjectHideFlags: 0
@@ -1228,7 +1217,6 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments: []
-  jointOnNode: {fileID: 0}
 --- !u!1 &1744733607688040954
 GameObject:
   m_ObjectHideFlags: 0
@@ -1360,7 +1348,7 @@ MonoBehaviour:
   zones:
   - {fileID: 333408048}
   - {fileID: 1232306310}
-  debugMode: 0
+  debugMode: 1
 --- !u!114 &1744733606956968109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1376,6 +1364,8 @@ MonoBehaviour:
   tubePrefab: {fileID: 169413738342954263, guid: 7b352f1fec8e44119a4795579bfb4d05,
     type: 3}
   spherePrefab: {fileID: 9109999520576994223, guid: f681f947bf55a456c8e07ee469542da3,
+    type: 3}
+  zonePrefab: {fileID: 9109999520576994223, guid: 16b5ed5562b024df6a9fca987867060c,
     type: 3}
   radius: 4
 --- !u!1 &1744733608133129529
@@ -1405,7 +1395,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744733608133129529}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.6, y: -4.8, z: -7.6}
+  m_LocalPosition: {x: -12.3, y: -4.8, z: -7.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5019887409668629949}
@@ -1478,7 +1468,6 @@ MonoBehaviour:
   - n0: {fileID: 1744733608133129532}
     n1: {fileID: 1744733607041646862}
     weight: 1.4
-  jointOnNode: {fileID: 0}
 --- !u!1 &2714604239477560338
 GameObject:
   m_ObjectHideFlags: 0
@@ -1579,7 +1568,6 @@ MonoBehaviour:
   - n0: {fileID: 6232059262851009609}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
-  jointOnNode: {fileID: 0}
 --- !u!1 &3614598663555632488
 GameObject:
   m_ObjectHideFlags: 0
@@ -1682,7 +1670,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4688667532006232743}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -16.9, y: -0.39, z: 22.6}
+  m_LocalPosition: {x: -21.1, y: -0.39, z: 28.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5019887409668629949}
@@ -1758,7 +1746,6 @@ MonoBehaviour:
   - n0: {fileID: 7611166827882450612}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
-  jointOnNode: {fileID: 0}
 --- !u!1 &7573385763328296409
 GameObject:
   m_ObjectHideFlags: 0
@@ -1859,7 +1846,6 @@ MonoBehaviour:
   - n0: {fileID: 2989354937284863538}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
-  jointOnNode: {fileID: 0}
 --- !u!1 &7594733687361008929
 GameObject:
   m_ObjectHideFlags: 0
@@ -1963,7 +1949,6 @@ MonoBehaviour:
   - n0: {fileID: 5051724644277841183}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
-  jointOnNode: {fileID: 0}
 --- !u!1 &8308772554128042200
 GameObject:
   m_ObjectHideFlags: 0
@@ -2064,4 +2049,3 @@ MonoBehaviour:
   - n0: {fileID: 9143663679814473166}
     n1: {fileID: 1744733606995955184}
     weight: 1.4
-  jointOnNode: {fileID: 0}

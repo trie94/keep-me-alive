@@ -49,7 +49,6 @@
                 float3 worldNormal : NORMAL;
                 float3 smearVal : TEXCOORD1;
                 float4 worldPos : TEXCOORD2;
-                SHADOW_COORDS(3)
             };
 
             sampler2D _Face;
@@ -72,7 +71,6 @@
                 v2f o;
                 o.uv = TRANSFORM_TEX(v.uv, _Face);
                 o.worldNormal = mul((float3x3)unity_ObjectToWorld, v.normal);
-                TRANSFER_SHADOW(o);
 
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
                 float3 localOffset = _Position.xyz - worldPos.xyz;
@@ -101,7 +99,6 @@
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
                 float ramp = saturate(dot(normalize(i.worldNormal), lightDir));
                 float4 lighting = float4(tex2D(_Ramp, float2(ramp, 0.5)).rgb, 1.0);
-                float attenuation = SHADOW_ATTENUATION(i);
                 fixed4 col = _Color;
                 fixed4 face = tex2D(_Face, i.uv);
 
@@ -109,7 +106,7 @@
                 viewDistance = clamp(viewDistance/15, 0, 1);
 
                 col.rgb = face.rgb * face.a + col * (1-face.a);
-                col = col * lighting * attenuation;
+                col = col * lighting;
 
                 fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
                 col.rgb = lerp(col.rgb, background.rgb, viewDistance);

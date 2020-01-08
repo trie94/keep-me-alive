@@ -111,15 +111,11 @@ public class PlayerBehavior : MonoBehaviour
             {
                 direction += transform.right * pressTime;
             }
-            if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space))
             {
                 direction += transform.forward * pressTime;
             }
-            // if (Input.GetKey(KeyCode.X))
-            // {
-            //     direction += transform.forward * -pressTime;
-            // }
-
+            
             // debug indicator
             if (currZoneState == PlayerZoneState.Vein)
             {

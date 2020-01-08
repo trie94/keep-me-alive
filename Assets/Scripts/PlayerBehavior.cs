@@ -10,7 +10,7 @@ public enum PlayerZoneState
 
 public class PlayerBehavior : MonoBehaviour
 {
-    private bool isEditor;
+    private bool isUsingKeyboard;
     private Vector3 currRotationRate;
     private Vector3 prevRotationRate;
 
@@ -52,11 +52,11 @@ public class PlayerBehavior : MonoBehaviour
 
     private void Awake()
     {
-#if UNITY_EDITOR
-        isEditor = true;
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+        isUsingKeyboard = true;
         moveSpeed = 1f;
 #else
-        isEditor = false;
+        isUsingKeyboard = false;
         Input.gyro.enabled = true;
 
         currRotationRate = Input.gyro.rotationRate;
@@ -84,7 +84,7 @@ public class PlayerBehavior : MonoBehaviour
         UpdateZoneState();
         UpdateCurrSeg();
 
-        if (isEditor)
+        if (isUsingKeyboard)
         {
             if (!Input.anyKey)  // no input
             {

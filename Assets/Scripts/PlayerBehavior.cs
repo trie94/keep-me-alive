@@ -97,7 +97,11 @@ public class PlayerBehavior : MonoBehaviour
 
             if (Input.GetKey(KeyCode.UpArrow))
             {
-                direction += transform.forward * pressTime;
+                direction += transform.up * pressTime;
+            }
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                direction += transform.up * -pressTime;
             }
             if (Input.GetKey(KeyCode.LeftArrow))
             {
@@ -107,15 +111,14 @@ public class PlayerBehavior : MonoBehaviour
             {
                 direction += transform.right * pressTime;
             }
-
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.Space))
             {
-                direction += transform.up * pressTime;
+                direction += transform.forward * pressTime;
             }
-            if (Input.GetKey(KeyCode.Z))
-            {
-                direction += transform.up * -pressTime;
-            }
+            // if (Input.GetKey(KeyCode.X))
+            // {
+            //     direction += transform.forward * -pressTime;
+            // }
 
             // debug indicator
             if (currZoneState == PlayerZoneState.Vein)

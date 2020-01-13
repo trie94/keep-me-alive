@@ -16,6 +16,7 @@ public class PlayerBehavior : MonoBehaviour
 
     private Vector3 prevPosition;
     private Vector3 direction;
+    public Vector3 Direction { get { return direction; } }
     private Vector3 currVelocity;
 
     [SerializeField]
@@ -115,7 +116,7 @@ public class PlayerBehavior : MonoBehaviour
             {
                 direction += transform.forward * pressTime;
             }
-            
+
             // debug indicator
             if (currZoneState == PlayerZoneState.Vein)
             {

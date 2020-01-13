@@ -13,6 +13,10 @@ public class PathJoint : MonoBehaviour
     public int cylinderDimension;
     public int cylinderInverseTransform;
     public int cylinderNum;
+    public int pulseDirection;
+    public int veinTiling;
+    public int veinScale;
+    public int veinWarpTiling;
 
     public int zoneRadius;
     public int zoneInverseTransform;
@@ -29,5 +33,10 @@ public class PathJoint : MonoBehaviour
         zoneNum = Shader.PropertyToID("_ZoneNum");
         zoneInverseTransform = Shader.PropertyToID("_ZoneInverseTransform");
         zoneRadius = Shader.PropertyToID("_ZoneRadius");
+
+        pulseDirection = Shader.PropertyToID("_PulseDirection");
+        veinTiling = Shader.PropertyToID("_Tiling");
+        veinScale = Shader.PropertyToID("_WarpScale");
+        veinWarpTiling = Shader.PropertyToID("_WarpTiling");
     }
 }

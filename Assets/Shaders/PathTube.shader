@@ -9,15 +9,14 @@
         _PulseColor ("Pulse Color", color) = (1,0,0,1)
         _Ramp ("Toon Ramp (RGB)", 2D) = "white" {}
         
-        _Direction ("Direction", Range(0, 3)) = 1
         _Tiling ("Tiling", Range(0, 20)) = 1
 		_WarpScale ("Warp Scale", Range(0, 1)) = 0
 		_WarpTiling ("Warp Tiling", Range(0, 10)) = 1
         _DistanceBetweenLines ("Distance Between Lines", Range(0, 1)) = 0.5
-        _NoiseScale ("Noise Scale", Range(0, 1)) = 0.5
 
-        _PulseSpeed ("Pulse Speed", Range(0, 10)) = 0.5
-        _PulseScale ("Pulse Scale", Range(0, 1)) = 0.5
+        _PulseFreq ("Pulse Freq", Range(0, 10)) = 0.5
+        _PulseBrightness ("Pulse Brightness", Range(0, 1)) = 0.5
+        _PulseSpeed ("Pulse Speed", Range(0, 50)) = 0.5
     }
     SubShader
     {
@@ -69,13 +68,13 @@
             sampler2D _Ramp;
 
 			int _Tiling;
-			float _Direction;
 			float _WarpScale;
 			float _WarpTiling;
             float _DistanceBetweenLines;
-            float _NoiseScale;
+            float _PulseFreq;
+            float _PulseBrightness;
+            float4 _PulseDirection;
             float _PulseSpeed;
-            float _PulseScale;
 
             uniform float4x4 _CylinderInverseTransform[20];
             uniform float4 _CylinderDimension[20];
@@ -150,14 +149,20 @@
                 float4 lighting = float4(tex2D(_Ramp, float2(ramp, 0.5)).rgb, 1.0);
 
                 float pos = uv.y * _Tiling;
-                pos += sin(snoise(uv.xyy * _WarpTiling)) * _WarpScale;
+                pos += sin(snoise(uv.xxy * _WarpTiling)) * _WarpScale;
 	            fixed value = floor(frac(pos) + _DistanceBetweenLines);
-                
-                float viewDistance = length(worldPosition.xyz - _WorldSpaceCameraPos);
-                float pulse = saturate(sin(viewDistance - _Time.y * _PulseSpeed) * _PulseScale);
-                fixed4 color = lerp(_Color1 + pulse * _PulseColor, _Color2, value);
 
+                float pulseDir = dot(_PulseDirection, normalize(worldPosition.xyz - _WorldSpaceCameraPos));
+                float pulse = pow(saturate(sin(pulseDir - _Time.y * _PulseFreq) * _PulseBrightness), _PulseSpeed);
+                fixed4 lineColor = lerp(_Color1, _Color2, saturate(abs(0.5-uv.x) *_Tiling - 1));
+                lineColor = lineColor + pulse * _PulseColor;
+
+                // if (abs(uv.x-0.5)>0.2) 
+                fixed4 color = lerp(lineColor, _Color2, value);
+
+                float viewDistance = length(worldPosition.xyz - _WorldSpaceCameraPos);
                 viewDistance = clamp(viewDistance * 0.03, 0, 1);
+
                 fixed4 background = tex2Dproj(_BackgroundTexture, grabPosition);
                 color.rgb = lerp(color.rgb, background.rgb, viewDistance);
 

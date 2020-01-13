@@ -49,6 +49,7 @@ MonoBehaviour:
   cylinderDimension: 0
   cylinderInverseTransform: 0
   cylinderNum: 0
+  pulseDirection: 0
   zoneRadius: 0
   zoneInverseTransform: 0
   zoneNum: 0

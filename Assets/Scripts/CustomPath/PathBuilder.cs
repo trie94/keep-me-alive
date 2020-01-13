@@ -92,6 +92,12 @@ public class PathBuilder : MonoBehaviour
             rotation);
             tube.transform.localScale = new Vector3(scale, scale, length);
 
+            // pulse
+            tube.Material.SetVector(tube.pulseDirection, direction.normalized);
+            tube.Material.SetInt(tube.veinTiling, Random.Range(5, 8));
+            tube.Material.SetFloat(tube.veinWarpTiling, Random.Range(2f, 2.5f));
+            tube.Material.SetFloat(tube.veinScale, Random.Range(0.2f, 0.65f));
+
             addToDictionary(startNode, tube, dimension, inverseMatrix);
             addToDictionary(endNode, tube, dimension, inverseMatrix);
 

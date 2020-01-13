@@ -3,9 +3,21 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _ColorFront ("Color Front", color) = (1,0,0,1)
-        _ColorBack ("Color Back", color) = (1,0,0,1)
-        _VeinColor ("Vein Color", color) = (1,0,0,1)
+
+        _Color1 ("Color1", color) = (1,0,0,1)
+        _Color2 ("Color2", color) = (0,1,0,1)
+        _PulseColor ("Pulse Color", color) = (1,0,0,1)
+        _Ramp ("Toon Ramp (RGB)", 2D) = "white" {}
+        
+        _Direction ("Direction", Range(0, 3)) = 1
+        _Tiling ("Tiling", Range(0, 20)) = 1
+		_WarpScale ("Warp Scale", Range(0, 1)) = 0
+		_WarpTiling ("Warp Tiling", Range(0, 10)) = 1
+        _DistanceBetweenLines ("Distance Between Lines", Range(0, 1)) = 0.5
+        _NoiseScale ("Noise Scale", Range(0, 1)) = 0.5
+
+        _PulseSpeed ("Pulse Speed", Range(0, 10)) = 0.5
+        _PulseScale ("Pulse Scale", Range(0, 1)) = 0.5
     }
     SubShader
     {
@@ -26,6 +38,7 @@
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+            #include "Noise.cginc"
 
             struct appdata
             {
@@ -41,6 +54,8 @@
                 float4 worldPos : TEXCOORD1;
                 float4 grabPos: TEXCOORD2;
                 float3 normal : TEXCOORD3;
+                float3 localPos : TEXCOORD4;
+                float3 worldNormal : NORMAL;
             };
 
             sampler2D _MainTex;
@@ -48,9 +63,19 @@
 
             sampler2D _BackgroundTexture;
 
-            fixed4 _ColorFront;
-            fixed4 _ColorBack;
-            fixed4 _VeinColor;
+            fixed4 _Color1;
+			fixed4 _Color2;
+            fixed4 _PulseColor;
+            sampler2D _Ramp;
+
+			int _Tiling;
+			float _Direction;
+			float _WarpScale;
+			float _WarpTiling;
+            float _DistanceBetweenLines;
+            float _NoiseScale;
+            float _PulseSpeed;
+            float _PulseScale;
 
             uniform float4x4 _CylinderInverseTransform[20];
             uniform float4 _CylinderDimension[20];
@@ -64,10 +89,12 @@
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
+                o.localPos = v.vertex.xyz;
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex);
                 o.grabPos = ComputeGrabScreenPos(o.vertex);
                 o.uv = v.uv;
                 o.normal = UnityObjectToWorldNormal(v.normal);
+                o.worldNormal = mul((float3x3)unity_ObjectToWorld, v.normal);
                 return o;
             }
 
@@ -89,20 +116,12 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance * 0.03, 0, 1);
-
-                fixed4 color = lerp(_ColorFront, _ColorBack, viewDistance);
-                fixed4 bump = tex2D(_MainTex, i.uv);
-                color = color * bump.a + _VeinColor * (1-bump.a);
-
-                // fixed4 background = tex2Dproj(_BackgroundTexture, i.grabPos);
-                // color.rgb = lerp(color.rgb, background.rgb, viewDistance);
-                // color.a = min(_ColorFront.a, _ColorBack.a);
-
                 float4 worldPosition = float4(i.worldPos.xyz, 1);
                 float3 normal = i.normal;
                 float2 uv = i.uv;
+                float3 localPosition = i.localPos;
+                float3 worldNormal = i.worldNormal;
+                float4 grabPosition = i.grabPos;
 
                 bool bye = false;
 
@@ -126,8 +145,23 @@
                 }
                 if (bye) discard;
 
-                // if (uv.y > 0.9) return fixed4(1,0,0,1);
-                return color;
+                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+                float ramp = saturate(dot(normalize(worldNormal), lightDir));
+                float4 lighting = float4(tex2D(_Ramp, float2(ramp, 0.5)).rgb, 1.0);
+
+                float pos = uv.y * _Tiling;
+                pos += sin(snoise(uv.xyy * _WarpTiling)) * _WarpScale;
+	            fixed value = floor(frac(pos) + _DistanceBetweenLines);
+                
+                float viewDistance = length(worldPosition.xyz - _WorldSpaceCameraPos);
+                float pulse = saturate(sin(viewDistance - _Time.y * _PulseSpeed) * _PulseScale);
+                fixed4 color = lerp(_Color1 + pulse * _PulseColor, _Color2, value);
+
+                viewDistance = clamp(viewDistance * 0.03, 0, 1);
+                fixed4 background = tex2Dproj(_BackgroundTexture, grabPosition);
+                color.rgb = lerp(color.rgb, background.rgb, viewDistance);
+
+				return color;
             }
             ENDCG
         }

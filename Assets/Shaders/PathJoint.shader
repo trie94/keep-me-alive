@@ -92,13 +92,12 @@
                 float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
                 viewDistance = clamp(viewDistance * 0.03, 0, 1);
 
-                fixed4 color = lerp(_ColorFront, _ColorBack, viewDistance);
-                fixed4 bump = tex2D(_MainTex, i.uv);
-                color = color * bump.a + _VeinColor * (1-bump.a);
+                // fixed4 color = lerp(_ColorFront, _ColorBack, viewDistance);
+                fixed4 color = _ColorBack;
 
-                // fixed4 background = tex2Dproj(_BackgroundTexture, i.grabPos);
-                // color.rgb = lerp(color.rgb, background.rgb, viewDistance);
-                // color.a = min(_ColorFront.a, _ColorBack.a);
+                fixed4 background = tex2Dproj(_BackgroundTexture, i.grabPos);
+                color.rgb = lerp(color.rgb, background.rgb, viewDistance);
+                color.a = min(_ColorFront.a, _ColorBack.a);
 
                 float4 worldPosition = float4(i.worldPos.xyz, 1);
                 float3 normal = i.normal;
@@ -126,7 +125,6 @@
                 }
                 if (bye) discard;
 
-                // if (uv.y > 0.9) return fixed4(1,0,0,1);
                 return color;
             }
             ENDCG

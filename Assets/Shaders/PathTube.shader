@@ -17,6 +17,9 @@
         _PulseFreq ("Pulse Freq", Range(0, 10)) = 0.5
         _PulseBrightness ("Pulse Brightness", Range(0, 1)) = 0.5
         _PulseSpeed ("Pulse Speed", Range(0, 50)) = 0.5
+
+        _WiggleSpeed ("Wiggle Speed", Range(0, 20)) = 0.5
+        _WiggleAmount ("Wiggle Amount", Range(0, 2)) = 0.2
     }
     SubShader
     {
@@ -76,6 +79,9 @@
             float4 _PulseDirection;
             float _PulseSpeed;
 
+            float _WiggleSpeed;
+            float _WiggleAmount;
+
             uniform float4x4 _CylinderInverseTransform[20];
             uniform float4 _CylinderDimension[20];
             uniform int _CylinderNum;
@@ -87,9 +93,14 @@
             v2f vert (appdata v)
             {
                 v2f o;
+                float4 worldPos = mul(unity_ObjectToWorld, float4(v.vertex.xyz, 1.0));
+                float pulseDir = dot(_PulseDirection, normalize(worldPos.xyz - _WorldSpaceCameraPos));
+                float pulse = pow(saturate(sin(pulseDir - _Time.y * _PulseFreq) * _PulseBrightness), _PulseSpeed);
+                float amount = sin(v.vertex.z + (_Time.x * _WiggleSpeed) * pulse) * _WiggleAmount + 1;
+                v.vertex.xz *= amount;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.localPos = v.vertex.xyz;
-                o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+                o.worldPos = worldPos;
                 o.grabPos = ComputeGrabScreenPos(o.vertex);
                 o.uv = v.uv;
                 o.normal = UnityObjectToWorldNormal(v.normal);
@@ -156,8 +167,6 @@
                 float pulse = pow(saturate(sin(pulseDir - _Time.y * _PulseFreq) * _PulseBrightness), _PulseSpeed);
                 fixed4 lineColor = lerp(_Color1, _Color2, saturate(abs(0.5-uv.x) *_Tiling - 1));
                 lineColor = lineColor + pulse * _PulseColor;
-
-                // if (abs(uv.x-0.5)>0.2) 
                 fixed4 color = lerp(lineColor, _Color2, value);
 
                 float viewDistance = length(worldPosition.xyz - _WorldSpaceCameraPos);

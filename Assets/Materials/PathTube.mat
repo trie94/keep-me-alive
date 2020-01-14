@@ -78,15 +78,18 @@ Material:
     - _PulseFreq: 4.7
     - _PulsePower: 0.5
     - _PulseScale: 1
-    - _PulseSpeed: 37
+    - _PulseSpeed: 50
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _Speed: 0.1
     - _SrcBlend: 1
     - _Tiling: 6.8
     - _UVSec: 0
     - _WarpScale: 0.56
     - _WarpTiling: 2.6
     - _WidthShift: 0.962
+    - _WiggleAmount: 0.032
+    - _WiggleSpeed: 10.7
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

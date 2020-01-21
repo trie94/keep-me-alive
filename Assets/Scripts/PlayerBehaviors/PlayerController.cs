@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     private float yOffset = 3f;
     private Vector3 offset;
     private Camera mainCam;
+    private bool isEditor;
 
     private void Awake()
     {
@@ -20,6 +21,14 @@ public class PlayerController : MonoBehaviour
         mainCam = Camera.main;
         offset = player.transform.forward * zOffset + player.transform.up * yOffset;
         mainCam.transform.position = player.transform.position + offset;
+
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+        isEditor = true;
+#else
+        isEditor = false;
+#endif
+        player.GetComponent<PlayerEditorBehavior>().enabled = isEditor;
+        player.GetComponent<PlayerBehavior>().enabled = !isEditor;
     }
 
     private void Update()
@@ -29,10 +38,15 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
+        CameraFollowPlayer();
+    }
+
+    private void CameraFollowPlayer()
+    {
         offset = player.transform.forward * zOffset + player.transform.up * yOffset;
         mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, player.transform.position + offset, 0.1f);
 
-        Vector3 target = player.transform.position + player.transform.up * yOffset/2f;
+        Vector3 target = player.transform.position + player.transform.up * yOffset / 2f;
         Quaternion look = Quaternion.LookRotation(target - mainCam.transform.position, player.transform.up);
         mainCam.transform.rotation = Quaternion.Slerp(mainCam.transform.rotation, look, 0.1f);
     }

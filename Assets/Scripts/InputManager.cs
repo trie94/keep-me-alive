@@ -18,6 +18,7 @@ public class InputManager : MonoBehaviour
         }
 
     }
+    #region navigation controller
     [SerializeField]
     private GameObject controllerParent;
     [SerializeField]
@@ -31,6 +32,30 @@ public class InputManager : MonoBehaviour
     private float controllerDirectionOriginalOpac;
     private Image controllerExpansionImage;
     private Image controllerDirectionImage;
+    #endregion
+
+    #region accelerator
+    [SerializeField]
+    private GameObject accelCenter;
+    [SerializeField]
+    private GameObject accelExpansion;
+    private Image accelExpansionImage;
+    private float accelExpansionOriginalSize;
+    private float accelExpansionMaxSize = 180f;
+    #endregion
+
+    #region player movement
+    private Vector2 turn;
+    public Vector2 Turn { get { return turn; } }
+    private float speed;
+    public float Speed { get { return speed; } }
+    #endregion
+
+    private float pressTime;
+    [SerializeField]
+    private float maxPressTime = 2f;
+    [SerializeField]
+    private float sensitivity = 1f;
 
     private void Awake()
     {
@@ -43,6 +68,8 @@ public class InputManager : MonoBehaviour
         controllerExpansionImage = controllerExpansion.GetComponent<Image>();
         controllerDirectionImage = controllerDirection.GetComponent<Image>();
         controllerDirectionOriginalOpac = controllerDirectionImage.color.a;
+        accelExpansionImage = accelExpansion.GetComponent<Image>();
+        accelExpansionOriginalSize = accelExpansion.transform.localScale.x;
     }
 
     private void Update()
@@ -61,6 +88,8 @@ public class InputManager : MonoBehaviour
                 Vector2 dir = Input.mousePosition - initTouch.Value;
                 float angle = Mathf.Rad2Deg * Mathf.Atan2(dir.y, dir.x);
                 float length = dir.magnitude;
+                turn = dir * sensitivity;
+
                 controllerCenter.transform.localRotation = Quaternion.Euler(0, 0, angle);
                 if (length < controllerCenter.transform.localScale.x)
                 {
@@ -76,7 +105,23 @@ public class InputManager : MonoBehaviour
                 initTouch = null;
                 controllerDirection.SetActive(false);
                 controllerExpansion.SetActive(false);
+                turn = Vector2.zero;
             }
+
+            if (Input.GetKey(KeyCode.Space))
+            {
+                pressTime += Time.deltaTime;
+                if (pressTime > maxPressTime) pressTime = maxPressTime;
+            }
+            else
+            {
+                pressTime -= Time.deltaTime;
+                if (pressTime < 0) pressTime = 0;
+            }
+
+            float size = Mathf.Clamp(pressTime * 100f, 0f, accelExpansionMaxSize);
+            accelExpansion.transform.localScale = new Vector3(size, size, size);
+            speed = pressTime;
         }
         else
         {
@@ -89,12 +134,31 @@ public class InputManager : MonoBehaviour
                     {
                         initTouch = touch.position;
                         controllerParent.transform.position = initTouch.Value;
+                        controllerDirection.SetActive(true);
+                        controllerExpansion.SetActive(true);
+                    }
+                    else
+                    {
+                        Vector2 dir = Input.mousePosition - initTouch.Value;
+                        float angle = Mathf.Rad2Deg * Mathf.Atan2(dir.y, dir.x);
+                        float length = dir.magnitude;
+                        controllerCenter.transform.localRotation = Quaternion.Euler(0, 0, angle);
+                        if (length < controllerCenter.transform.localScale.x)
+                        {
+                            controllerDirectionImage.color = new Color(1, 1, 1, length / controllerCenter.transform.localScale.x);
+                        }
+                        else
+                        {
+                            controllerDirectionImage.color = new Color(1, 1, 1, controllerDirectionOriginalOpac);
+                        }
                     }
                 }
             }
             else
             {
                 initTouch = null;
+                controllerDirection.SetActive(false);
+                controllerExpansion.SetActive(false);
             }
         }
     }

@@ -5,35 +5,29 @@ using UnityEngine;
 public class PlayerEditorBehavior : MonoBehaviour
 {
     private Vector3 direction;
-    private Vector3 currVelocity;
-
-    [SerializeField]
-    private float velocityMultiplier = 0.5f;
-    [SerializeField]
-    private float maxSpeed = 3f;
-    [SerializeField]
-    private float moveSpeed = 1f;
-    private float speed = 1f;
-    private float pressTime = 0f;
-
+    private float speed;
     private Segment currSeg;
+    private Zone currZone;
+    private PlayerZoneState currZoneState;
+
     [SerializeField]
     private float maxDistFromCenter = 3.9f;
     private float maxDistFromCenterSqrt;
-    [SerializeField]  // for debugging
-    private PlayerZoneState currZoneState;
-    private Zone currZone;
+
+    private float pitchRotationSpeed = 0.3f;
+    private float rollRotationSpeed = 0.2f;
+    private float pitch;
+    private float yaw;
 
     #region Debug
-
     [SerializeField]
     private GameObject debugSphere;
     private GameObject debugIndicatorOnLine;
     #endregion
 
+
     private void Awake()
     {
-        speed = moveSpeed;
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
@@ -50,49 +44,8 @@ public class PlayerEditorBehavior : MonoBehaviour
         UpdateZoneState();
         UpdateCurrSeg();
 
-        if (!Input.anyKey)  // no input
-        {
-            pressTime = 0f;
-        }
-        else
-        {
-            pressTime += Time.deltaTime;
-        }
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            direction += transform.up * pressTime;
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            direction += transform.up * -pressTime;
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            direction += transform.right * -pressTime;
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            direction += transform.right * pressTime;
-        }
-        if (Input.GetKey(KeyCode.Space))
-        {
-            direction += transform.forward * pressTime;
-        }
-
-        // debug indicator
-        if (currZoneState == PlayerZoneState.Vein)
-        {
-            debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
-        }
-        else if (currZoneState == PlayerZoneState.OxygenArea)
-        {
-            debugIndicatorOnLine.transform.position = Path.Instance.OxygenZone.transform.position;
-        }
-        else if (currZoneState == PlayerZoneState.HeartArea)
-        {
-            debugIndicatorOnLine.transform.position = Path.Instance.HeartZone.transform.position;
-        }
+        Vector2 turn = InputManager.Instance.Turn;
+        speed = InputManager.Instance.Speed;
 
         if (currZoneState == PlayerZoneState.Vein)
         {
@@ -100,13 +53,12 @@ public class PlayerEditorBehavior : MonoBehaviour
             Vector3 playerToPoint = pointOnLine - transform.position;
             if (playerToPoint.sqrMagnitude >= maxDistFromCenterSqrt)
             {
-                // maybe i need to prevent this position to be updated
                 transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
                 speed = 0f;
             }
             else
             {
-                Move();
+                Move(turn.x, -turn.y);
             }
         }
         else
@@ -123,20 +75,27 @@ public class PlayerEditorBehavior : MonoBehaviour
             }
             else
             {
-                Move();
+                Move(turn.x, -turn.y);
             }
         }
+
+        MoveDebugIndicator();
     }
 
-    private void Move()
+    private void Move(float dRoll, float dPitch)
     {
-        speed = moveSpeed;
-        direction *= velocityMultiplier;
-        Vector3 velocity = Vector3.ClampMagnitude(direction, maxSpeed);
-        transform.position += velocity * Time.deltaTime * speed;
-        transform.forward = Vector3.SmoothDamp(transform.forward, velocity, ref currVelocity, speed);
-    }
+        pitch += dPitch * Time.deltaTime * pitchRotationSpeed;
+        yaw += dRoll * Time.deltaTime * rollRotationSpeed;
 
+        pitch = Mathf.Clamp(pitch, -45f, 45f);
+        if (yaw > 180f) yaw -= 360f;
+        if (yaw < -180f) yaw += 360f;
+
+        Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
+        direction = rot * Vector3.forward;
+        transform.position += direction * Time.deltaTime * speed;
+        transform.rotation = rot;
+    }
 
     private void UpdateCurrSeg()
     {
@@ -245,6 +204,22 @@ public class PlayerEditorBehavior : MonoBehaviour
         Vector3 playerToClosestPointOnLine = playerToStartPoint - Vector3.Dot(playerToStartPoint, segDir) * segDir;
 
         return transform.position + playerToClosestPointOnLine;
+    }
+
+    private void MoveDebugIndicator()
+    {
+        if (currZoneState == PlayerZoneState.Vein)
+        {
+            debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
+        }
+        else if (currZoneState == PlayerZoneState.OxygenArea)
+        {
+            debugIndicatorOnLine.transform.position = Path.Instance.OxygenZone.transform.position;
+        }
+        else if (currZoneState == PlayerZoneState.HeartArea)
+        {
+            debugIndicatorOnLine.transform.position = Path.Instance.HeartZone.transform.position;
+        }
     }
 
     private void OnDrawGizmos()

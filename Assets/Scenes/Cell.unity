@@ -5274,6 +5274,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &862730019 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4438652281933363875, guid: f1b1cf15dc47a4372aba8e03d16d067d,
+    type: 3}
+  m_PrefabInstance: {fileID: 5853100136195709413}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &959222489 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5853100137557263265, guid: f1b1cf15dc47a4372aba8e03d16d067d,
@@ -5500,9 +5512,11 @@ MonoBehaviour:
   controllerCenter: {fileID: 5853100136195709414}
   controllerDirection: {fileID: 5853100136195709415}
   controllerExpansion: {fileID: 5853100136195709416}
+  eventTrigger: {fileID: 862730019}
   accelCenter: {fileID: 309478345}
   accelExpansion: {fileID: 1722877908}
-  accelExpansionMaxSize: 200
+  maxPressTime: 2
+  sensitivity: 1
 --- !u!21 &1486204305
 Material:
   serializedVersion: 6
@@ -5988,11 +6002,6 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2017289443}
-    - target: {fileID: 1744733607688040952, guid: e7d3f5456ef3849818d8596687776d95,
-        type: 3}
-      propertyPath: debugMode
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1298469330, guid: e7d3f5456ef3849818d8596687776d95, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -6116,51 +6125,31 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5853100137557263264, guid: f1b1cf15dc47a4372aba8e03d16d067d,
+    - target: {fileID: 5853100137162817446, guid: f1b1cf15dc47a4372aba8e03d16d067d,
         type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
+      propertyPath: m_Color.r
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5853100137557263264, guid: f1b1cf15dc47a4372aba8e03d16d067d,
+    - target: {fileID: 5853100137162817446, guid: f1b1cf15dc47a4372aba8e03d16d067d,
         type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
+      propertyPath: m_Color.g
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5853100137557263264, guid: f1b1cf15dc47a4372aba8e03d16d067d,
+    - target: {fileID: 5853100137162817446, guid: f1b1cf15dc47a4372aba8e03d16d067d,
         type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
+      propertyPath: m_Color.b
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5853100137150189417, guid: f1b1cf15dc47a4372aba8e03d16d067d,
+    - target: {fileID: 1187509427906634235, guid: f1b1cf15dc47a4372aba8e03d16d067d,
         type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5853100137150189417, guid: f1b1cf15dc47a4372aba8e03d16d067d,
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1356003345}
+    - target: {fileID: 1187509427906634235, guid: f1b1cf15dc47a4372aba8e03d16d067d,
         type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5853100137150189417, guid: f1b1cf15dc47a4372aba8e03d16d067d,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5853100136012211578, guid: f1b1cf15dc47a4372aba8e03d16d067d,
-        type: 3}
-      propertyPath: m_Name
-      value: accelerator-center
-      objectReference: {fileID: 0}
-    - target: {fileID: 5853100136682631278, guid: f1b1cf15dc47a4372aba8e03d16d067d,
-        type: 3}
-      propertyPath: m_Name
-      value: accelerator-expand
-      objectReference: {fileID: 0}
-    - target: {fileID: 5853100136682631278, guid: f1b1cf15dc47a4372aba8e03d16d067d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1356003345}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1b1cf15dc47a4372aba8e03d16d067d, type: 3}
 --- !u!1 &5853100136195709414 stripped

@@ -27,8 +27,6 @@ public class PlayerController : MonoBehaviour
 #else
         isEditor = false;
 #endif
-        player.GetComponent<PlayerEditorBehavior>().enabled = isEditor;
-        player.GetComponent<PlayerBehavior>().enabled = !isEditor;
     }
 
     private void Update()

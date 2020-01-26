@@ -61,6 +61,8 @@ public class InputManager : MonoBehaviour
     private float maxPressTime = 2f;
     [SerializeField]
     private float sensitivity = 1f;
+    private delegate void PointerEventDelegate(PointerEventData data);
+    private PointerEventDelegate pointerEventDelegate;
 
     private void Awake()
     {
@@ -76,21 +78,13 @@ public class InputManager : MonoBehaviour
         accelExpansionImage = accelExpansion.GetComponent<Image>();
         accelExpansionOriginalSize = accelExpansion.transform.localScale.x;
 
-        // register callbacks
-        EventTrigger.Entry drag = new EventTrigger.Entry();
-        drag.eventID = EventTriggerType.Drag;
-        drag.callback.AddListener((data) => { Dragging((PointerEventData)data); });
-        eventTrigger.triggers.Add(drag);
+        pointerEventDelegate += BeginDrag;
+        pointerEventDelegate += Dragging;
+        pointerEventDelegate += EndDrag;
 
-        EventTrigger.Entry beginDrag = new EventTrigger.Entry();
-        beginDrag.eventID = EventTriggerType.BeginDrag;
-        beginDrag.callback.AddListener((data) => { BeginDrag((PointerEventData)data); });
-        eventTrigger.triggers.Add(beginDrag);
-
-        EventTrigger.Entry endDrag = new EventTrigger.Entry();
-        endDrag.eventID = EventTriggerType.EndDrag;
-        endDrag.callback.AddListener((data) => { EndDrag((PointerEventData)data); });
-        eventTrigger.triggers.Add(endDrag);
+        RegisterCallbacks(eventTrigger, EventTriggerType.BeginDrag, BeginDrag);
+        RegisterCallbacks(eventTrigger, EventTriggerType.Drag, Dragging);
+        RegisterCallbacks(eventTrigger, EventTriggerType.EndDrag, EndDrag);
     }
 
     private void Update()
@@ -171,5 +165,13 @@ public class InputManager : MonoBehaviour
         {
             if (isHoldingAccel) isHoldingAccel = false;
         }
+    }
+
+    private void RegisterCallbacks(EventTrigger trigger, EventTriggerType eventTriggerType, PointerEventDelegate callback)
+    {
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = eventTriggerType;
+        entry.callback.AddListener((data) => { callback((PointerEventData)data); });
+        trigger.triggers.Add(entry);
     }
 }

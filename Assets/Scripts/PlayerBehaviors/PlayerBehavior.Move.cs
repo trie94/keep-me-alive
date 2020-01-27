@@ -32,7 +32,7 @@ public partial class PlayerBehavior : MonoBehaviour
         transform.forward = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
         direction = transform.forward;
 
-        debugIndicatorOnLine = Instantiate(debugSphere, transform.position, transform.rotation);
+        //debugIndicatorOnLine = Instantiate(debugSphere, transform.position, transform.rotation);
         maxDistFromCenterSqrt = maxDistFromCenter * maxDistFromCenter;
         UpdateZoneState();
     }
@@ -76,7 +76,7 @@ public partial class PlayerBehavior : MonoBehaviour
             }
         }
 
-        MoveDebugIndicator();
+        //MoveDebugIndicator();
     }
 
     private void Move(float dRoll, float dPitch)

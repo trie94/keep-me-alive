@@ -50,6 +50,7 @@ public class Oxygen : MonoBehaviour
 
     #region Delivery
     public Cell master;
+    public PlayerBehavior playerMaster;
     public OxygenHolder hopOnHolder;
     public OxygenState state;
     private float resetTime = 1f;
@@ -96,7 +97,6 @@ public class Oxygen : MonoBehaviour
         {
             oxygenGroup[type] = neighbors;
             velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, oxygenGroup);
-            return;
         }
         else if (state == OxygenState.OxygenArea)
         {
@@ -148,7 +148,7 @@ public class Oxygen : MonoBehaviour
         for (int i = 0; i < oxygens.Count; i++)
         {
             var curr = oxygens[i];
-            if (curr == this || curr.master != null) continue;
+            if (curr == this || curr.master != null || curr.playerMaster != null) continue;
             if (Vector3.SqrMagnitude(curr.transform.position - transform.position) <= squareNeighborRadius)
             {
                 neighbors.Add(curr.transform);

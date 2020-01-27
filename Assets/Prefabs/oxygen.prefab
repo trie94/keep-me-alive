@@ -102,8 +102,8 @@ MonoBehaviour:
   speed: 0
   neighborRadius: 1.5
   avoidanceRadius: 0.5
-  velocityMultiplier: 10
-  maxSpeed: 5
+  velocityMultiplier: 2
+  maxSpeed: 3
   squareAvoidanceRadius: 0
   master: {fileID: 0}
   hopOnHolder: {fileID: 0}

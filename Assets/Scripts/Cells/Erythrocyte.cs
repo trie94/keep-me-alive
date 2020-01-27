@@ -11,7 +11,8 @@ public enum ErythrocyteState
 
 public class Erythrocyte : Cell
 {
-    public int oxygenCapacity = 3;
+    [SerializeField]
+    private int oxygenCapacity = 3;
     public float oxygenReleaseInterval = 2f;
     public float oxygenReleaseTick = 0f;
     public Stack<Oxygen> childOxygen;

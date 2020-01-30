@@ -22,6 +22,8 @@ public partial class PlayerBehavior : MonoBehaviour
     [SerializeField]
     private GameObject debugSphere;
     private GameObject debugIndicatorOnLine;
+    [SerializeField]
+    private bool keepInTunnel;
     #endregion
 
     private void InitMovement()
@@ -47,12 +49,19 @@ public partial class PlayerBehavior : MonoBehaviour
 
         if (currZoneState == PlayerZoneState.Vein)
         {
-            Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
-            Vector3 playerToPoint = pointOnLine - transform.position;
-            if (playerToPoint.sqrMagnitude >= maxDistFromCenterSqrt)
+            if (keepInTunnel)
             {
-                transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
-                speed = 0f;
+                Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
+                Vector3 playerToPoint = pointOnLine - transform.position;
+                if (playerToPoint.sqrMagnitude >= maxDistFromCenterSqrt)
+                {
+                    transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
+                    speed = 0f;
+                }
+                else
+                {
+                    Move(turn.x, -turn.y);
+                }
             }
             else
             {
@@ -65,10 +74,17 @@ public partial class PlayerBehavior : MonoBehaviour
             float maxDistSqrt = (currZone.Radius - 0.6f) * (currZone.Radius - 0.6f);
             Vector3 playerToCenter = currZone.transform.position - transform.position;
 
-            if (playerToCenter.sqrMagnitude >= maxDistSqrt)
+            if (keepInTunnel)
             {
-                transform.position = Vector3.Lerp(currZone.transform.position, transform.position, 0.95f);
-                speed = 0f;
+                if (playerToCenter.sqrMagnitude >= maxDistSqrt)
+                {
+                    transform.position = Vector3.Lerp(currZone.transform.position, transform.position, 0.95f);
+                    speed = 0f;
+                }
+                else
+                {
+                    Move(turn.x, -turn.y);
+                }
             }
             else
             {

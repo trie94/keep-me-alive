@@ -88,5 +88,5 @@ Material:
     m_Colors:
     - _Color: {r: 0.754717, g: 0.046279836, b: 0.046279836, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Position: {r: -33.74546, g: 5.190744, b: 9.681227, a: 0}
+    - _Position: {r: 11.542852, g: -4.704397, b: 16.368252, a: 0}
     - _PrevPosition: {r: 0, g: 0, b: 0, a: 0}

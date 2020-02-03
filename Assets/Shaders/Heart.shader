@@ -61,7 +61,8 @@
             v2f vert (appdata v)
             {
                 v2f o;
-                float pulseInterval = 1+sin(_Time.x * _PulseSpeed);
+                float pulseInterval = sin(_Time.x * _PulseSpeed);
+                pulseInterval *= sign(pulseInterval);
                 float pulseAmount = tex2Dlod(_Pulse, float4(pulseInterval, 0, 0, 0)).x;
                 pulseAmount = clamp(pulseAmount, 0, _MaxSize);
                 o.pulse = pulseAmount;

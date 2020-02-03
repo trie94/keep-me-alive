@@ -49,6 +49,7 @@ public class InputManager : MonoBehaviour
     #endregion
 
     #region player movement
+    private Vector2 direction;
     private Vector2 turn;
     public Vector2 Turn { get { return turn; } }
     private float speed;
@@ -85,6 +86,16 @@ public class InputManager : MonoBehaviour
         RegisterCallbacks(eventTrigger, EventTriggerType.BeginDrag, BeginDrag);
         RegisterCallbacks(eventTrigger, EventTriggerType.Drag, Dragging);
         RegisterCallbacks(eventTrigger, EventTriggerType.EndDrag, EndDrag);
+    }
+
+    private void OnDisable()
+    {
+        if (pointerEventDelegate != null)
+        {
+            pointerEventDelegate -= BeginDrag;
+            pointerEventDelegate -= Dragging;
+            pointerEventDelegate -= EndDrag;
+        }
     }
 
     private void Update()
@@ -136,12 +147,12 @@ public class InputManager : MonoBehaviour
 
     public void Dragging(PointerEventData data)
     {
-        Vector2 dir = (isEditor) ?
+        direction = (isEditor) ?
             new Vector2(Input.mousePosition.x, Input.mousePosition.y) - initTouch.Value
             : data.position - initTouch.Value;
-        float angle = Mathf.Rad2Deg * Mathf.Atan2(dir.y, dir.x);
-        float length = dir.magnitude;
-        turn = dir * sensitivity;
+        float angle = Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x);
+        float length = direction.magnitude;
+        turn = direction * sensitivity;
         controllerCenter.transform.localRotation = Quaternion.Euler(0, 0, angle);
         if (length < controllerCenter.transform.localScale.x)
         {

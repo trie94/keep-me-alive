@@ -39,18 +39,21 @@ public partial class PlayerBehavior : MonoBehaviour
         }
         else if (currZoneState == PlayerZoneState.HeartArea)
         {
-            if (childOxygen.Count <= 0)
+            if (Vector3.SqrMagnitude(CellController.Instance.heart.position - transform.position) < 1f)
             {
-                oxygenReleaseTick = 0f;
-            }
-            else if (oxygenReleaseTick >= oxygenReleaseInterval)
-            {
-                ReleaseOxygen();
-                oxygenReleaseTick = 0f;
-            }
-            else
-            {
-                oxygenReleaseTick += Time.deltaTime;
+                if (childOxygen.Count <= 0)
+                {
+                    oxygenReleaseTick = 0f;
+                }
+                else if (oxygenReleaseTick >= oxygenReleaseInterval)
+                {
+                    ReleaseOxygen();
+                    oxygenReleaseTick = 0f;
+                }
+                else
+                {
+                    oxygenReleaseTick += Time.deltaTime;
+                }
             }
         }
     }

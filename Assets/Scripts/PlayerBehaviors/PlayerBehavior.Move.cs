@@ -32,9 +32,13 @@ public partial class PlayerBehavior : MonoBehaviour
         currSeg = Path.Instance.segments[segIndex];
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
         transform.forward = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
-        direction = transform.forward;
 
-        //debugIndicatorOnLine = Instantiate(debugSphere, transform.position, transform.rotation);
+        direction = transform.forward;
+        yaw = transform.rotation.eulerAngles.y;
+        pitch = transform.rotation.eulerAngles.x;
+        if (pitch > 180f) pitch -= 360f;
+        if (pitch < -180f) pitch += 360f;
+
         maxDistFromCenterSqrt = maxDistFromCenter * maxDistFromCenter;
         UpdateZoneState();
     }

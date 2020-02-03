@@ -11,12 +11,16 @@ public partial class PlayerBehavior : MonoBehaviour
     private OxygenHolder[] oxygenHolders;
     [SerializeField]
     private float oxygenReleaseInterval = 1f;
+    private float oxygenReleaseTick = 0f;
+
     [SerializeField]
-    public float oxygenReleaseTick = 0f;
+    private float oxygenReleaseDist = 8f;
+    private float oxygenReleaseDistSqrt;
 
     private void InitOxygenBehavior()
     {
         childOxygen = new Stack<Oxygen>();
+        oxygenReleaseDistSqrt = oxygenReleaseDist * oxygenReleaseDist;
     }
 
     private void UpdateOxygenBehavior()
@@ -39,7 +43,8 @@ public partial class PlayerBehavior : MonoBehaviour
         }
         else if (currZoneState == PlayerZoneState.HeartArea)
         {
-            if (Vector3.SqrMagnitude(CellController.Instance.heart.position - transform.position) < 1f)
+            float distSqrt = Vector3.SqrMagnitude(CellController.Instance.heart.position - transform.position);
+            if (distSqrt < oxygenReleaseDistSqrt)
             {
                 if (childOxygen.Count <= 0)
                 {

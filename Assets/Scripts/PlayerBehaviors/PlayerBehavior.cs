@@ -9,10 +9,20 @@ public enum PlayerZoneState
 
 public partial class PlayerBehavior : MonoBehaviour
 {
+    private static PlayerBehavior instance;
+    public static PlayerBehavior Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
     private PlayerZoneState currZoneState;
 
     private void Awake()
     {
+        instance = this;
         InitMovement();
         InitOxygenBehavior();
     }
@@ -20,6 +30,5 @@ public partial class PlayerBehavior : MonoBehaviour
     private void Update()
     {
         UpdateMovement();
-        UpdateOxygenBehavior();
     }
 }

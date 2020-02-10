@@ -8,9 +8,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 632937572431612491}
+  - component: {fileID: 350523424680286505}
   - component: {fileID: 8472295512774013053}
   - component: {fileID: 2787493467562708100}
+  - component: {fileID: 4579854851452098787}
+  - component: {fileID: 4579854851452098791}
   m_Layer: 0
   m_Name: heart
   m_TagString: Untagged
@@ -18,7 +20,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &632937572431612491
+--- !u!4 &350523424680286505
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -78,3 +80,30 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &4579854851452098787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4509225306772355160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3042d1d9e91143eb98f287697c30ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoveringUIPrefab: {fileID: 1593215134683537758, guid: 2e4f93ce6518344afbdb6ad417a67b5e,
+    type: 3}
+--- !u!114 &4579854851452098791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4509225306772355160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f83c5879087a546b9ae74ceb3eb32e83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiRevealDist: 8

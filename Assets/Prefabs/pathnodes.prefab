@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 333408051}
   - component: {fileID: 333408048}
   - component: {fileID: 333408049}
+  - component: {fileID: 3379563393231520623}
+  - component: {fileID: 1993574145}
   m_Layer: 0
   m_Name: oxygen area center
   m_TagString: Untagged
@@ -89,6 +91,33 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &3379563393231520623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 333408047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3042d1d9e91143eb98f287697c30ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoveringUIPrefab: {fileID: 1593215134683537758, guid: 2e4f93ce6518344afbdb6ad417a67b5e,
+    type: 3}
+--- !u!114 &1993574145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 333408047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3a2bea56bdd143058e3a5f41d1f9af8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiRevealDist: 10
 --- !u!1 &1232306306
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,6 +19,8 @@ public class InputManager : MonoBehaviour
         }
 
     }
+    public Canvas canvas;
+
     #region navigation controller
     [SerializeField]
     private GameObject controllerParent;

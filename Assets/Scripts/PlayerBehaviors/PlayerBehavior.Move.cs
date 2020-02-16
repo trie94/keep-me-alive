@@ -11,7 +11,7 @@ public partial class PlayerBehavior : MonoBehaviour
 
     [SerializeField]
     private float maxDistFromCenter = 3.9f;
-    private float maxDistFromCenterSqrt;
+    private float maxDistFromCenterSqr;
 
     private float pitchRotationSpeed = 0.3f;
     private float rollRotationSpeed = 0.2f;
@@ -39,7 +39,7 @@ public partial class PlayerBehavior : MonoBehaviour
         if (pitch > 180f) pitch -= 360f;
         if (pitch < -180f) pitch += 360f;
 
-        maxDistFromCenterSqrt = maxDistFromCenter * maxDistFromCenter;
+        maxDistFromCenterSqr = maxDistFromCenter * maxDistFromCenter;
         UpdateZoneState();
     }
 
@@ -57,9 +57,9 @@ public partial class PlayerBehavior : MonoBehaviour
             {
                 Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
                 Vector3 playerToPoint = pointOnLine - transform.position;
-                if (playerToPoint.sqrMagnitude >= maxDistFromCenterSqrt)
+                if (playerToPoint.sqrMagnitude > maxDistFromCenterSqr)
                 {
-                    transform.position = Vector3.Lerp(pointOnLine, transform.position, 0.85f);
+                    transform.position = pointOnLine - playerToPoint.normalized * (maxDistFromCenter - 0.001f);
                     speed = 0f;
                 }
                 else
@@ -75,14 +75,14 @@ public partial class PlayerBehavior : MonoBehaviour
         else
         {
             Debug.Assert(currZone != null);
-            float maxDistSqrt = (currZone.Radius - 0.6f) * (currZone.Radius - 0.6f);
             Vector3 playerToCenter = currZone.transform.position - transform.position;
+            float maxDistSqr = currZone.Radius * currZone.Radius;
 
             if (keepInTunnel)
             {
-                if (playerToCenter.sqrMagnitude >= maxDistSqrt)
+                if (playerToCenter.sqrMagnitude > maxDistSqr)
                 {
-                    transform.position = Vector3.Lerp(currZone.transform.position, transform.position, 0.95f);
+                    transform.position = currZone.transform.position - playerToCenter.normalized * (currZone.Radius - 0.001f);
                     speed = 0f;
                 }
                 else
@@ -117,30 +117,32 @@ public partial class PlayerBehavior : MonoBehaviour
     private void UpdateCurrSeg()
     {
         Segment potential = currSeg;
+        float min = (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude;
+
         if (currZoneState == PlayerZoneState.Vein)
         {
-            var nextStartNode = currSeg.n1;
+            var currStartNode = currSeg.n0;
+            var currEndNode = currSeg.n1;
 
-            for (int i = 0; i < nextStartNode.nextSegments.Count; i++)
+            for (int i = 0; i < currStartNode.prevSegments.Count; i++)
             {
-                var seg = nextStartNode.nextSegments[i];
-                if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
+                var seg = currStartNode.prevSegments[i];
+                float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+                if (distSqr < min)
                 {
                     potential = seg;
+                    min = distSqr;
                 }
             }
 
-            // for branching paths, we need to check curr seg as well
-            var currStartNode = currSeg.n0;
-            if (currStartNode.nextSegments.Count > 1)
+            for (int i = 0; i < currEndNode.nextSegments.Count; i++)
             {
-                for (int i = 0; i < currStartNode.nextSegments.Count; i++)
+                var seg = currEndNode.nextSegments[i];
+                float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+                if (distSqr < min)
                 {
-                    var seg = currStartNode.nextSegments[i];
-                    if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
-                    {
-                        potential = seg;
-                    }
+                    potential = seg;
+                    min = distSqr;
                 }
             }
         }
@@ -192,7 +194,7 @@ public partial class PlayerBehavior : MonoBehaviour
             {
                 // vein seg is close enough and the direction is pretty much the same
                 if (Vector3.Dot(transform.forward, (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized) > 0.3f
-                && (GetClosestPointOnLine(currSeg) - transform.position).sqrMagnitude < maxDistFromCenterSqrt && !isSegmentInTheZone(currSeg))
+                && (GetClosestPointOnLine(currSeg) - transform.position).sqrMagnitude < maxDistFromCenterSqr && !isSegmentInTheZone(currSeg))
                 {
                     currZoneState = PlayerZoneState.Vein;
                     currZone = null;

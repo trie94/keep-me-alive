@@ -51,4 +51,9 @@ public partial class PlayerBehavior : MonoBehaviour
     {
         return childOxygen.Count < oxygenCapacity;
     }
+
+    public bool CanReleaseOxygen()
+    {
+        return childOxygen.Count > 0;
+    }
 }

@@ -24,6 +24,7 @@ public class Node : MonoBehaviour
     public float forward = 0.5f;
     public float backward = 0.5f;
     public List<Segment> nextSegments;
+    public List<Segment> prevSegments;
 
     private void Awake()
     {
@@ -34,6 +35,8 @@ public class Node : MonoBehaviour
     private void GetSegments()
     {
         nextSegments = new List<Segment>();
+        prevSegments = new List<Segment>();
+
         var segments = Path.Instance.segments;
         for (int i = 0; i < segments.Count; i++)
         {
@@ -42,11 +45,16 @@ public class Node : MonoBehaviour
             {
                 nextSegments.Add(segment);
             }
+
+            if (segment.n1 == this)
+            {
+                prevSegments.Add(segment);
+            }
         }
     }
 
     private void ColorWeight()
-    {
+    {  
         Renderer rend = GetComponent<Renderer>();
         if (Path.Instance.debugMode)
         {

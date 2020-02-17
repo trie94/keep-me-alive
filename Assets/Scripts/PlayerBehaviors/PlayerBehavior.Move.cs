@@ -12,7 +12,7 @@ public partial class PlayerBehavior : MonoBehaviour
     [SerializeField]
     private float maxDistFromCenter = 3.9f;
     private float maxDistFromCenterSqr;
-    private float bufferInZoneWhenCollide = 0.2f;
+    private float zoneCollisionRadiusFactor = 0f;
 
     private float pitchRotationSpeed = 0.3f;
     private float rollRotationSpeed = 0.2f;
@@ -66,7 +66,7 @@ public partial class PlayerBehavior : MonoBehaviour
                 {
                     Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
                     Vector3 playerToPoint = pointOnLine - transform.position;
-                    transform.position = pointOnLine - playerToPoint.normalized * (maxDistFromCenter - 0.001f);
+                    transform.position = pointOnLine - playerToPoint.normalized * (maxDistFromCenter - 0.0001f);
                     speed = 0f;
                 }
             }
@@ -87,7 +87,7 @@ public partial class PlayerBehavior : MonoBehaviour
                 else
                 {
                     Vector3 playerToCenter = currZone.transform.position - transform.position;
-                    transform.position = currZone.transform.position - playerToCenter.normalized * (currZone.Radius - bufferInZoneWhenCollide - 0.001f);
+                    transform.position = currZone.transform.position - playerToCenter.normalized * (currZone.Radius - zoneCollisionRadiusFactor - 0.0001f);
                     speed = 0f;
                 }
             }
@@ -115,9 +115,15 @@ public partial class PlayerBehavior : MonoBehaviour
         transform.rotation = rot;
     }
 
+    // we need to check all the possible segments nearby because this does not
+    // reflect the direction of the cell. If we don't count each node's prev and
+    // next segments, it will cause an issue especially in the zone, where start
+    // and end node is mixed up. In order to avoid the same computation,
+    // HashSet is used.
     private void UpdateCurrSeg()
     {
         Segment potential = currSeg;
+        HashSet<Segment> computedSegments = new HashSet<Segment>();
         float min = (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude;
         var currStartNode = currSeg.n0;
         var currEndNode = currSeg.n1;
@@ -125,22 +131,60 @@ public partial class PlayerBehavior : MonoBehaviour
         for (int i = 0; i < currStartNode.prevSegments.Count; i++)
         {
             var seg = currStartNode.prevSegments[i];
-            float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-            if (distSqr < min)
+            if (!computedSegments.Contains(seg))
             {
-                potential = seg;
-                min = distSqr;
+                float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+                if (distSqr < min)
+                {
+                    potential = seg;
+                    min = distSqr;
+                }
+                computedSegments.Add(seg);
+            }
+        }
+
+        for (int i = 0; i < currStartNode.nextSegments.Count; i++)
+        {
+            var seg = currStartNode.nextSegments[i];
+            if (!computedSegments.Contains(seg))
+            {
+                float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+                if (distSqr < min)
+                {
+                    potential = seg;
+                    min = distSqr;
+                }
+                computedSegments.Add(seg);
+            }
+        }
+
+        for (int i = 0; i < currEndNode.prevSegments.Count; i++)
+        {
+            var seg = currEndNode.prevSegments[i];
+            if (!computedSegments.Contains(seg))
+            {
+                float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+                if (sqrDist < min)
+                {
+                    potential = seg;
+                    min = sqrDist;
+                }
+                computedSegments.Add(seg);
             }
         }
 
         for (int i = 0; i < currEndNode.nextSegments.Count; i++)
         {
             var seg = currEndNode.nextSegments[i];
-            float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-            if (sqrDist < min)
+            if (!computedSegments.Contains(seg))
             {
-                potential = seg;
-                min = sqrDist;
+                float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+                if (sqrDist < min)
+                {
+                    potential = seg;
+                    min = sqrDist;
+                }
+                computedSegments.Add(seg);
             }
         }
 
@@ -174,7 +218,7 @@ public partial class PlayerBehavior : MonoBehaviour
         return seg.n0.transform.position + t * segDir;
     }
 
-    // collision detection
+    #region collision detection
     private bool IsInsideTheBody()
     {
         float sqrDistBetweenPlayerAndStartNode = (transform.position - currSeg.n0.transform.position).sqrMagnitude;
@@ -184,26 +228,31 @@ public partial class PlayerBehavior : MonoBehaviour
 
     private bool IsInside(Node node)
     {
-        bool isInside = false;
-
+        // zone
         if (currZone)
         {
-            float maxDistSqr = (currZone.Radius - bufferInZoneWhenCollide) * (currZone.Radius - bufferInZoneWhenCollide);
-            isInside = isInside || isInSphere(currZone.transform.position, maxDistSqr);
+            float maxDistSqr = (currZone.Radius - zoneCollisionRadiusFactor) * (currZone.Radius - zoneCollisionRadiusFactor);
+            if (isInSphere(currZone.transform.position, maxDistSqr)) return true;
+        }
+        else
+        {
+            // joint
+            if (isInSphere(node.transform.position, maxDistFromCenterSqr)) return true;
         }
 
-        isInside = isInside || isInSphere(node.transform.position, maxDistFromCenterSqr);
+        // next tubes
         for (int i=0; i < node.nextSegments.Count; i++)
         {
-            isInside = isInside || IsInSegment(node.nextSegments[i]);
+            if (IsInSegment(node.nextSegments[i])) return true;
         }
 
+        // prev tubes
         for (int i = 0; i < node.prevSegments.Count; i++)
         {
-            isInside = isInside || IsInSegment(node.prevSegments[i]);
+            if (IsInSegment(node.prevSegments[i])) return true;
         }
 
-        return isInside;
+        return false;
     }
 
     private bool IsInSegment(Segment seg)
@@ -226,8 +275,9 @@ public partial class PlayerBehavior : MonoBehaviour
         }
         return false;
     }
+    #endregion
 
-    // debug
+    #region debug
     private void MoveDebugIndicator()
     {
         debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
@@ -243,14 +293,7 @@ public partial class PlayerBehavior : MonoBehaviour
         Gizmos.DrawLine(currSeg.n0.transform.position, currSeg.n1.transform.position);
 
         Gizmos.color = Color.cyan;
-        if (currZoneState == PlayerZoneState.Vein)
-        {
-            Gizmos.DrawLine(transform.position, GetClosestPointOnLine(currSeg));
-        }
-        else
-        {
-            Vector3 zoneCenter = (currZoneState == PlayerZoneState.OxygenArea) ? Path.Instance.zones[0].transform.position : Path.Instance.zones[1].transform.position;
-            Gizmos.DrawLine(transform.position, zoneCenter);
-        }
+        Gizmos.DrawLine(transform.position, GetClosestPointOnLine(currSeg));
     }
+    #endregion
 }

@@ -123,8 +123,11 @@ public partial class PlayerBehavior : MonoBehaviour
     private void UpdateCurrSeg()
     {
         Segment potential = currSeg;
-        HashSet<Segment> computedSegments = new HashSet<Segment>();
         float min = (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude;
+
+        HashSet<Segment> computedSegments = new HashSet<Segment>();
+        computedSegments.Add(potential);
+
         var currStartNode = currSeg.n0;
         var currEndNode = currSeg.n1;
 

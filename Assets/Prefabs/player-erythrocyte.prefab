@@ -384,18 +384,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e3f827a4648f418ca70473315ee5760, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxDistFromCenter: 3.8
+  maxDistFromCenter: 3.6
   debugSphere: {fileID: 5674710467707232475, guid: f242972502aac44a390f16efd1d6918f,
     type: 3}
   keepInTunnel: 1
+  isInsideTheBody: 0
   oxygenCapacity: 4
   oxygenHolders:
   - {fileID: 549693878477945836}
   - {fileID: 7411679815106521551}
   - {fileID: 778786956631589185}
   - {fileID: 8675230490814123596}
-  oxygenReleaseInterval: 1
-  oxygenReleaseTick: 0
 --- !u!1 &7194870527306487799
 GameObject:
   m_ObjectHideFlags: 0

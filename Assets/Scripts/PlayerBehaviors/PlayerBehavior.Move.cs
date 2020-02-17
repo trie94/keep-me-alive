@@ -12,6 +12,7 @@ public partial class PlayerBehavior : MonoBehaviour
     [SerializeField]
     private float maxDistFromCenter = 3.9f;
     private float maxDistFromCenterSqr;
+    private float bufferInZoneWhenCollide = 0.2f;
 
     private float pitchRotationSpeed = 0.3f;
     private float rollRotationSpeed = 0.2f;
@@ -24,6 +25,8 @@ public partial class PlayerBehavior : MonoBehaviour
     private GameObject debugIndicatorOnLine;
     [SerializeField]
     private bool keepInTunnel;
+    [SerializeField]
+    private bool isInsideTheBody;
     #endregion
 
     private void InitMovement()
@@ -32,21 +35,21 @@ public partial class PlayerBehavior : MonoBehaviour
         currSeg = Path.Instance.segments[segIndex];
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
         transform.forward = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
-
         direction = transform.forward;
         yaw = transform.rotation.eulerAngles.y;
         pitch = transform.rotation.eulerAngles.x;
         if (pitch > 180f) pitch -= 360f;
         if (pitch < -180f) pitch += 360f;
-
         maxDistFromCenterSqr = maxDistFromCenter * maxDistFromCenter;
         UpdateZoneState();
+        debugIndicatorOnLine = Instantiate(debugSphere);
     }
 
     private void UpdateMovement()
     {
-        UpdateZoneState();
         UpdateCurrSeg();
+        UpdateZoneState();
+        isInsideTheBody = IsInsideTheBody();
 
         Vector2 turn = InputManager.Instance.Turn;
         speed = InputManager.Instance.Speed;
@@ -55,16 +58,16 @@ public partial class PlayerBehavior : MonoBehaviour
         {
             if (keepInTunnel)
             {
-                Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
-                Vector3 playerToPoint = pointOnLine - transform.position;
-                if (playerToPoint.sqrMagnitude > maxDistFromCenterSqr)
+                if (isInsideTheBody)
                 {
-                    transform.position = pointOnLine - playerToPoint.normalized * (maxDistFromCenter - 0.001f);
-                    speed = 0f;
+                    Move(turn.x, -turn.y);
                 }
                 else
                 {
-                    Move(turn.x, -turn.y);
+                    Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
+                    Vector3 playerToPoint = pointOnLine - transform.position;
+                    transform.position = pointOnLine - playerToPoint.normalized * (maxDistFromCenter - 0.001f);
+                    speed = 0f;
                 }
             }
             else
@@ -75,19 +78,17 @@ public partial class PlayerBehavior : MonoBehaviour
         else
         {
             Debug.Assert(currZone != null);
-            Vector3 playerToCenter = currZone.transform.position - transform.position;
-            float maxDistSqr = currZone.Radius * currZone.Radius;
-
             if (keepInTunnel)
             {
-                if (playerToCenter.sqrMagnitude > maxDistSqr)
+                if (isInsideTheBody)
                 {
-                    transform.position = currZone.transform.position - playerToCenter.normalized * (currZone.Radius - 0.001f);
-                    speed = 0f;
+                    Move(turn.x, -turn.y);
                 }
                 else
                 {
-                    Move(turn.x, -turn.y);
+                    Vector3 playerToCenter = currZone.transform.position - transform.position;
+                    transform.position = currZone.transform.position - playerToCenter.normalized * (currZone.Radius - bufferInZoneWhenCollide - 0.001f);
+                    speed = 0f;
                 }
             }
             else
@@ -96,7 +97,7 @@ public partial class PlayerBehavior : MonoBehaviour
             }
         }
 
-        //MoveDebugIndicator();
+        MoveDebugIndicator();
     }
 
     private void Move(float dRoll, float dPitch)
@@ -135,11 +136,11 @@ public partial class PlayerBehavior : MonoBehaviour
         for (int i = 0; i < currEndNode.nextSegments.Count; i++)
         {
             var seg = currEndNode.nextSegments[i];
-            float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-            if (distSqr < min)
+            float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+            if (sqrDist < min)
             {
                 potential = seg;
-                min = distSqr;
+                min = sqrDist;
             }
         }
 
@@ -167,27 +168,69 @@ public partial class PlayerBehavior : MonoBehaviour
 
     private Vector3 GetClosestPointOnLine(Segment seg)
     {
-        Vector3 playerToStartPoint = seg.n0.transform.position - transform.position;
-        Vector3 segDir = (seg.n1.transform.position - seg.n0.transform.position).normalized;
-        Vector3 playerToClosestPointOnLine = playerToStartPoint - Vector3.Dot(playerToStartPoint, segDir) * segDir;
-
-        return transform.position + playerToClosestPointOnLine;
+        Vector3 StartPointToPlayer = transform.position - seg.n0.transform.position;
+        Vector3 segDir = (seg.n1.transform.position - seg.n0.transform.position);
+        float t = Mathf.Clamp01(Vector3.Dot(StartPointToPlayer, segDir) / segDir.sqrMagnitude);
+        return seg.n0.transform.position + t * segDir;
     }
 
+    // collision detection
+    private bool IsInsideTheBody()
+    {
+        float sqrDistBetweenPlayerAndStartNode = (transform.position - currSeg.n0.transform.position).sqrMagnitude;
+        float sqrDistBetweenPlayerAndEndNode = (transform.position - currSeg.n1.transform.position).sqrMagnitude;
+        return sqrDistBetweenPlayerAndStartNode <= sqrDistBetweenPlayerAndEndNode ? IsInside(currSeg.n0) : IsInside(currSeg.n1);
+    }
+
+    private bool IsInside(Node node)
+    {
+        bool isInside = false;
+
+        if (currZone)
+        {
+            float maxDistSqr = (currZone.Radius - bufferInZoneWhenCollide) * (currZone.Radius - bufferInZoneWhenCollide);
+            isInside = isInside || isInSphere(currZone.transform.position, maxDistSqr);
+        }
+
+        isInside = isInside || isInSphere(node.transform.position, maxDistFromCenterSqr);
+        for (int i=0; i < node.nextSegments.Count; i++)
+        {
+            isInside = isInside || IsInSegment(node.nextSegments[i]);
+        }
+
+        for (int i = 0; i < node.prevSegments.Count; i++)
+        {
+            isInside = isInside || IsInSegment(node.prevSegments[i]);
+        }
+
+        return isInside;
+    }
+
+    private bool IsInSegment(Segment seg)
+    {
+        Vector3 pointOnLine = GetClosestPointOnLine(seg);
+        Vector3 playerToPoint = pointOnLine - transform.position;
+        if (playerToPoint.sqrMagnitude <= maxDistFromCenterSqr)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private bool isInSphere(Vector3 center, float maxDistSqr)
+    {
+        Vector3 playerToCenter = center - transform.position;
+        if (playerToCenter.sqrMagnitude <= maxDistSqr)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    // debug
     private void MoveDebugIndicator()
     {
-        if (currZoneState == PlayerZoneState.Vein)
-        {
-            debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
-        }
-        else if (currZoneState == PlayerZoneState.OxygenArea)
-        {
-            debugIndicatorOnLine.transform.position = Path.Instance.OxygenZone.transform.position;
-        }
-        else if (currZoneState == PlayerZoneState.HeartArea)
-        {
-            debugIndicatorOnLine.transform.position = Path.Instance.HeartZone.transform.position;
-        }
+        debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
     }
 
     private void OnDrawGizmos()

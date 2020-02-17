@@ -81,8 +81,8 @@ public class Oxygen : MonoBehaviour
         Vector3 velocity = Vector3.zero;
         if (state == OxygenState.HopOnCell)
         {
-            float distSqrt = Vector3.SqrMagnitude(hopOnHolder.transform.position - transform.position);
-            if (distSqrt < 0.01f)
+            float sqrDist = Vector3.SqrMagnitude(hopOnHolder.transform.position - transform.position);
+            if (sqrDist < 0.01f)
             {
                 hopOnHolder.isOccupied = true;
                 state = OxygenState.BeingCarried;
@@ -136,7 +136,14 @@ public class Oxygen : MonoBehaviour
     private void Move(Vector3 velocity)
     {
         if (velocity != Vector3.zero) currVelocity = velocity;
-        transform.position += currVelocity * Time.deltaTime * speed;
+        if (state == OxygenState.HopOnCell)
+        {
+            transform.position += currVelocity * Time.deltaTime * speed * 5f;
+        }
+        else
+        {
+            transform.position += currVelocity * Time.deltaTime * speed;
+        }
         if (currVelocity != Vector3.zero) transform.forward = currVelocity;
     }
 

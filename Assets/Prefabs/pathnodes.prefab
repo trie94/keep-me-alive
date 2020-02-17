@@ -52,6 +52,7 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments: []
+  prevSegments: []
   radius: 10
 --- !u!23 &333408049
 MeshRenderer:
@@ -168,6 +169,7 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments: []
+  prevSegments: []
   radius: 12
 --- !u!23 &1232306307
 MeshRenderer:
@@ -304,6 +306,7 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments: []
+  prevSegments: []
 --- !u!1 &1958153947
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,6 +410,7 @@ MonoBehaviour:
   - n0: {fileID: 1958153948}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  prevSegments: []
 --- !u!1 &2059411983
 GameObject:
   m_ObjectHideFlags: 0
@@ -510,6 +514,7 @@ MonoBehaviour:
   - n0: {fileID: 2059411984}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  prevSegments: []
 --- !u!1 &13004270762772884
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,6 +615,7 @@ MonoBehaviour:
   - n0: {fileID: 1970005630889468328}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
+  prevSegments: []
 --- !u!1 &132772382051046917
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,6 +752,7 @@ MonoBehaviour:
   - n0: {fileID: 226601619222964672}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  prevSegments: []
 --- !u!1 &1744733606995955197
 GameObject:
   m_ObjectHideFlags: 0
@@ -846,6 +853,7 @@ MonoBehaviour:
   - n0: {fileID: 1744733606995955184}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
+  prevSegments: []
 --- !u!1 &1744733607041646859
 GameObject:
   m_ObjectHideFlags: 0
@@ -949,6 +957,7 @@ MonoBehaviour:
   - n0: {fileID: 1744733607041646862}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  prevSegments: []
 --- !u!1 &1744733607271642537
 GameObject:
   m_ObjectHideFlags: 0
@@ -1049,6 +1058,7 @@ MonoBehaviour:
   - n0: {fileID: 1744733607271642540}
     n1: {fileID: 1744733607387678229}
     weight: 1.1
+  prevSegments: []
 --- !u!1 &1744733607387678226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1149,6 +1159,7 @@ MonoBehaviour:
   - n0: {fileID: 1744733607387678229}
     n1: {fileID: 1744733606995955184}
     weight: 1.4
+  prevSegments: []
 --- !u!1 &1744733607612198328
 GameObject:
   m_ObjectHideFlags: 0
@@ -1246,6 +1257,7 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments: []
+  prevSegments: []
 --- !u!1 &1744733607688040954
 GameObject:
   m_ObjectHideFlags: 0
@@ -1497,6 +1509,7 @@ MonoBehaviour:
   - n0: {fileID: 1744733608133129532}
     n1: {fileID: 1744733607041646862}
     weight: 1.4
+  prevSegments: []
 --- !u!1 &2714604239477560338
 GameObject:
   m_ObjectHideFlags: 0
@@ -1597,6 +1610,7 @@ MonoBehaviour:
   - n0: {fileID: 6232059262851009609}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
+  prevSegments: []
 --- !u!1 &3614598663555632488
 GameObject:
   m_ObjectHideFlags: 0
@@ -1775,6 +1789,7 @@ MonoBehaviour:
   - n0: {fileID: 7611166827882450612}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  prevSegments: []
 --- !u!1 &7573385763328296409
 GameObject:
   m_ObjectHideFlags: 0
@@ -1875,6 +1890,7 @@ MonoBehaviour:
   - n0: {fileID: 2989354937284863538}
     n1: {fileID: 1744733608133129532}
     weight: 1.4
+  prevSegments: []
 --- !u!1 &7594733687361008929
 GameObject:
   m_ObjectHideFlags: 0
@@ -1978,6 +1994,7 @@ MonoBehaviour:
   - n0: {fileID: 5051724644277841183}
     n1: {fileID: 1744733607271642540}
     weight: 1.1
+  prevSegments: []
 --- !u!1 &8308772554128042200
 GameObject:
   m_ObjectHideFlags: 0
@@ -2078,3 +2095,4 @@ MonoBehaviour:
   - n0: {fileID: 9143663679814473166}
     n1: {fileID: 1744733606995955184}
     weight: 1.4
+  prevSegments: []

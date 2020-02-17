@@ -118,54 +118,28 @@ public partial class PlayerBehavior : MonoBehaviour
     {
         Segment potential = currSeg;
         float min = (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude;
+        var currStartNode = currSeg.n0;
+        var currEndNode = currSeg.n1;
 
-        if (currZoneState == PlayerZoneState.Vein)
+        for (int i = 0; i < currStartNode.prevSegments.Count; i++)
         {
-            var currStartNode = currSeg.n0;
-            var currEndNode = currSeg.n1;
-
-            for (int i = 0; i < currStartNode.prevSegments.Count; i++)
+            var seg = currStartNode.prevSegments[i];
+            float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+            if (distSqr < min)
             {
-                var seg = currStartNode.prevSegments[i];
-                float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-                if (distSqr < min)
-                {
-                    potential = seg;
-                    min = distSqr;
-                }
-            }
-
-            for (int i = 0; i < currEndNode.nextSegments.Count; i++)
-            {
-                var seg = currEndNode.nextSegments[i];
-                float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-                if (distSqr < min)
-                {
-                    potential = seg;
-                    min = distSqr;
-                }
+                potential = seg;
+                min = distSqr;
             }
         }
-        else if (currZoneState == PlayerZoneState.HeartArea)
+
+        for (int i = 0; i < currEndNode.nextSegments.Count; i++)
         {
-            for (int i = 0; i < Path.Instance.HeartExitSegments.Count; i++)
+            var seg = currEndNode.nextSegments[i];
+            float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+            if (distSqr < min)
             {
-                var seg = Path.Instance.HeartExitSegments[i];
-                if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
-                {
-                    potential = seg;
-                }
-            }
-        }
-        else if (currZoneState == PlayerZoneState.OxygenArea)
-        {
-            for (int i = 0; i < Path.Instance.OxygenExitSegments.Count; i++)
-            {
-                var seg = Path.Instance.OxygenExitSegments[i];
-                if ((GetClosestPointOnLine(seg) - transform.position).sqrMagnitude < (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude)
-                {
-                    potential = seg;
-                }
+                potential = seg;
+                min = distSqr;
             }
         }
 
@@ -174,46 +148,21 @@ public partial class PlayerBehavior : MonoBehaviour
 
     private void UpdateZoneState()
     {
-        // check if the player is in the zone area
         if (currSeg.n0.type == NodeType.OxygenEntrance || currSeg.n0.type == NodeType.Oxygen)
         {
             currZoneState = PlayerZoneState.OxygenArea;
             currZone = Path.Instance.OxygenZone;
         }
-        else if (currSeg.n0.type == NodeType.Heart || currSeg.n0.type == NodeType.Heart)
+        else if (currSeg.n0.type == NodeType.HeartEntrance || currSeg.n0.type == NodeType.Heart)
         {
             currZoneState = PlayerZoneState.HeartArea;
             currZone = Path.Instance.HeartZone;
         }
-
-        for (int i = 0; i < Path.Instance.zones.Count; i++)
+        else
         {
-            var curr = Path.Instance.zones[i];
-            float maxDistSqrt = (curr.Radius) * (curr.Radius);
-            if ((curr.transform.position - transform.position).sqrMagnitude < maxDistSqrt)
-            {
-                // vein seg is close enough and the direction is pretty much the same
-                if (Vector3.Dot(transform.forward, (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized) > 0.3f
-                && (GetClosestPointOnLine(currSeg) - transform.position).sqrMagnitude < maxDistFromCenterSqr && !isSegmentInTheZone(currSeg))
-                {
-                    currZoneState = PlayerZoneState.Vein;
-                    currZone = null;
-                }
-                else
-                {
-                    currZone = curr;
-                    currZoneState = (currZone == Path.Instance.OxygenZone) ? PlayerZoneState.OxygenArea : PlayerZoneState.HeartArea;
-                }
-            }
+            currZoneState = PlayerZoneState.Vein;
+            currZone = null;
         }
-    }
-
-    private bool isSegmentInTheZone(Segment segment)
-    {
-        var startNode = segment.n0;
-        var endNode = segment.n1;
-        if (startNode.type == NodeType.OxygenEntrance || endNode.type == NodeType.Oxygen || startNode.type == NodeType.HeartEntrance || endNode.type == NodeType.Heart) return true;
-        return false;
     }
 
     private Vector3 GetClosestPointOnLine(Segment seg)

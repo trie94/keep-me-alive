@@ -41,7 +41,7 @@ public partial class PlayerBehavior : MonoBehaviour
         if (pitch < -180f) pitch += 360f;
         maxDistFromCenterSqr = maxDistFromCenter * maxDistFromCenter;
         UpdateZoneState();
-        debugIndicatorOnLine = Instantiate(debugSphere);
+        //debugIndicatorOnLine = Instantiate(debugSphere);
     }
 
     private void UpdateMovement()
@@ -61,7 +61,7 @@ public partial class PlayerBehavior : MonoBehaviour
         {
             Move(turn.x, -turn.y, false);
         }
-        MoveDebugIndicator();
+        //MoveDebugIndicator();
     }
 
     private void Move(float dRoll, float dPitch, bool isColliding)

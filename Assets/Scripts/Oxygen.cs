@@ -136,9 +136,9 @@ public class Oxygen : MonoBehaviour
     private void Move(Vector3 velocity)
     {
         if (velocity != Vector3.zero) currVelocity = velocity;
-        if (state == OxygenState.HopOnCell)
+        if (state == OxygenState.HopOnCell || state == OxygenState.HeartArea)
         {
-            transform.position += currVelocity * Time.deltaTime * speed * 5f;
+            transform.position += currVelocity * Time.deltaTime * speed * 8f;
         }
         else
         {

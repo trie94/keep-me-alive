@@ -25,7 +25,6 @@ public partial class PlayerBehavior : MonoBehaviour
     private GameObject debugIndicatorOnLine;
     [SerializeField]
     private bool keepInTunnel;
-    [SerializeField]
     private bool isInsideTheBody;
     #endregion
 
@@ -54,53 +53,18 @@ public partial class PlayerBehavior : MonoBehaviour
         Vector2 turn = InputManager.Instance.Turn;
         speed = InputManager.Instance.Speed;
 
-        if (currZoneState == PlayerZoneState.Vein)
+        if (keepInTunnel)
         {
-            if (keepInTunnel)
-            {
-                if (isInsideTheBody)
-                {
-                    Move(turn.x, -turn.y);
-                }
-                else
-                {
-                    Vector3 pointOnLine = GetClosestPointOnLine(currSeg);
-                    Vector3 playerToPoint = pointOnLine - transform.position;
-                    transform.position = pointOnLine - playerToPoint.normalized * (maxDistFromCenter - 0.0001f);
-                    speed = 0f;
-                }
-            }
-            else
-            {
-                Move(turn.x, -turn.y);
-            }
+            Move(turn.x, -turn.y, !isInsideTheBody);
         }
         else
         {
-            Debug.Assert(currZone != null);
-            if (keepInTunnel)
-            {
-                if (isInsideTheBody)
-                {
-                    Move(turn.x, -turn.y);
-                }
-                else
-                {
-                    Vector3 playerToCenter = currZone.transform.position - transform.position;
-                    transform.position = currZone.transform.position - playerToCenter.normalized * (currZone.Radius - zoneCollisionRadiusFactor - 0.0001f);
-                    speed = 0f;
-                }
-            }
-            else
-            {
-                Move(turn.x, -turn.y);
-            }
+            Move(turn.x, -turn.y, false);
         }
-
         MoveDebugIndicator();
     }
 
-    private void Move(float dRoll, float dPitch)
+    private void Move(float dRoll, float dPitch, bool isColliding)
     {
         pitch += dPitch * Time.deltaTime * pitchRotationSpeed;
         yaw += dRoll * Time.deltaTime * rollRotationSpeed;
@@ -111,6 +75,18 @@ public partial class PlayerBehavior : MonoBehaviour
 
         Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
         direction = rot * Vector3.forward;
+        if (isColliding)
+        {
+            // cancel out the direction by adding the opposite vector
+            Vector3 wallToPlayer = (currZoneState == PlayerZoneState.Vein) ?
+                    GetClosestPointOnLine(currSeg) - transform.position
+                    : currZone.transform.position - transform.position;
+            wallToPlayer.Normalize();
+
+            // lerp to avoid jitter
+            float dot = Vector3.Dot(wallToPlayer, direction);
+            direction = Vector3.Lerp(direction, Vector3.Project(direction, wallToPlayer) * Mathf.Sign(dot), 0.5f);
+        }
         transform.position += direction * Time.deltaTime * speed;
         transform.rotation = rot;
     }

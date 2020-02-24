@@ -24,6 +24,7 @@ public class Erythrocyte : Cell
     private ErythrocyteState cellState;
     [SerializeField]
     private ErythrocyteState prevState;
+    // TODO change this with direction
     private Vector3 velocity;
     public Vector3 Velocity { get { return velocity; } }
 
@@ -211,7 +212,6 @@ public class Erythrocyte : Cell
         var holder = oxygenHolders[childOxygen.Count];
         o.hopOnHolder = holder;
         childOxygen.Push(o);
-        o.transform.parent = holder.transform;
         o.master = this;
         o.state = OxygenState.HopOnCell;
     }

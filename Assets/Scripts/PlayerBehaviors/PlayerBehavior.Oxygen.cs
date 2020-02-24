@@ -22,7 +22,6 @@ public partial class PlayerBehavior : MonoBehaviour
         var holder = oxygenHolders[childOxygen.Count];
         o.hopOnHolder = holder;
         childOxygen.Push(o);
-        o.transform.parent = holder.transform;
         o.playerMaster = this;
         o.state = OxygenState.HopOnCell;
     }

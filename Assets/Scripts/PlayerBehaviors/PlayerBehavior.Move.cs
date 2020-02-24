@@ -5,6 +5,7 @@ using UnityEngine;
 public partial class PlayerBehavior : MonoBehaviour
 {
     private Vector3 direction;
+    public Vector3 Direction { get { return direction; } }
     private float speed;
     private Segment currSeg;
     private Zone currZone;

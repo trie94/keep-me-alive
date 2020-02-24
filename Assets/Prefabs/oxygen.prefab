@@ -95,13 +95,12 @@ MonoBehaviour:
   oxygenBehavior: {fileID: 11400000, guid: 1d650b68f5cb148d7bd2d53126ab4e21, type: 2}
   oxygenBehaviorFollowCell: {fileID: 11400000, guid: c1f68807a33b24dc491ba30d347efa71,
     type: 2}
-  oxygenBehaviorAttachedToCell: {fileID: 11400000, guid: f4b3b998ba2e443b9a78c0872980de70,
+  oxygenBehaviorOnCell: {fileID: 11400000, guid: f4b3b998ba2e443b9a78c0872980de70,
     type: 2}
   oxygenBehaviorHeart: {fileID: 11400000, guid: 1290dc9fd88934d0a841f72893b03ab0,
     type: 2}
   neighborRadius: 2
   avoidanceRadius: 1.5
-  maxSpeed: 3
   dampThreshold: 0.3
   detachThreshold: 0.8
   velocitySensitivity: 0.5

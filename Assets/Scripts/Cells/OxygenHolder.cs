@@ -5,11 +5,25 @@ public class OxygenHolder : MonoBehaviour
 {
     public bool isOccupied;
     public Vector3 attachPoint;
-    private float height = 0.5f;
+    private float maxHeight = 0.15f;
+    private float tick = 0f;
+    private float speed = 0.5f;
 
     private void Update()
     {
-        attachPoint = transform.position + this.transform.up * height;
+        if (isOccupied)
+        {
+            tick += Time.deltaTime;
+            float d = Mathf.Sin(tick * speed);
+            attachPoint = transform.position + transform.up * d * Mathf.Sign(d) * maxHeight;
+        }
+    }
+
+    public void OnOccupied()
+    {
+        isOccupied = true;
+        speed = Random.Range(0.5f, 1f);
+        attachPoint = transform.position;
     }
 
     public void Reset()

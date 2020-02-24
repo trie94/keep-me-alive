@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class SmearEffect : MonoBehaviour
 {
-    Material _smearMat = null;
-    Renderer rend;
-    Vector3 _prevPosition;
+    private Material _smearMat = null;
+    private Renderer rend;
+    private Vector3 _prevPosition;
 
     public Material smearMat
     {

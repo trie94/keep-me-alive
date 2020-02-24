@@ -29,13 +29,15 @@ public class Oxygen : MonoBehaviour
     [SerializeField]
     private OxygenMovement oxygenBehaviorFollowCell;
     [SerializeField]
-    private OxygenMovement oxygenBehaviorAttachedToCell;
+    private OxygenMovement oxygenBehaviorOnCell;
     [SerializeField]
     private OxygenMovement oxygenBehaviorHeart;
 
     private Vector3 direction;
+    private Vector3 velocity;
     private float speed;
     private float hoppingSpeed = 8f;
+    private float springDamp = 0.1f;
 
     [Range(1f, 10f)]
     public float neighborRadius = 1.5f;
@@ -92,20 +94,13 @@ public class Oxygen : MonoBehaviour
             float sqrDist = Vector3.SqrMagnitude(hopOnHolder.transform.position - transform.position);
             if (sqrDist < 0.01f)
             {
-                hopOnHolder.isOccupied = true;
+                hopOnHolder.OnOccupied();
                 state = OxygenState.BeingCarried;
             }
             else
             {
                 velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, null);
             }
-        }
-        else if (state == OxygenState.BeingCarried)
-        {
-            // in general, the oxygen should be affacted by the cell movement
-            // if the oxygen is within the range, it follows the oxygen
-            // while slightly hoping
-            velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, null);
         }
         else if (state == OxygenState.OxygenArea)
         {
@@ -147,10 +142,15 @@ public class Oxygen : MonoBehaviour
         {
             transform.position += direction * Time.deltaTime * hoppingSpeed;
         }
+        else if (state == OxygenState.BeingCarried)
+        {
+            transform.position = Vector3.SmoothDamp(transform.position, hopOnHolder.attachPoint, ref velocity, springDamp);
+        }
         else
         {
             transform.position += direction * Time.deltaTime * speed;
         }
+
         if (direction != Vector3.zero) transform.forward = direction;
     }
 

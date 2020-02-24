@@ -9,12 +9,15 @@ public class OxygenAffectedByCellVelocity : OxygenMovement
     {
         if (creature.master == null)
         {
+            if (creature.playerMaster.Velocity.magnitude < creature.dampThreshold) return Vector3.zero;
             return creature.playerMaster.Velocity * -1f * creature.velocitySensitivity;
         }
         else
         {
             Debug.Assert(creature.master is Erythrocyte);
-            return ((Erythrocyte)creature.master).Velocity * -1f * creature.velocitySensitivity;
+            Erythrocyte master = (Erythrocyte)creature.master;
+            if (master.Velocity.magnitude < creature.dampThreshold) return Vector3.zero;
+            return master.Velocity * -1f * creature.velocitySensitivity;
         }
     }
 }

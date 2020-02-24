@@ -10,10 +10,10 @@ public class OxygenHolder : MonoBehaviour
     private float speed = 0.5f;
 
     public Transform cell;
-    private float offset = 0.53f;
-    private float noiseFreq = 0.511f;
-    private float noiseScale = 0.78f;
-    private float noiseHeight = 0.242f;
+    private float offset = -0.49f;
+    private float noiseFreq = 0.612f;
+    private float noiseScale = 1.18f;
+    private float noiseHeight = 0.087f;
     private Vector3 position;
     private Vector3 cellPrevPosition;
 

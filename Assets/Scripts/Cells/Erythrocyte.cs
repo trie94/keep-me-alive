@@ -224,13 +224,10 @@ public class Erythrocyte : Cell
     {
         Debug.Assert(childOxygen.Count > 0);
         Oxygen o = childOxygen.Pop();
+        o.hopOnHolder.Reset();
         o.hopOnHolder = null;
         o.transform.parent = null;
         o.master = null;
-        for (int i = 0; i < oxygenHolders.Length; i++)
-        {
-            oxygenHolders[i].Reset();
-        }
         o.state = OxygenState.HeartArea;
     }
 

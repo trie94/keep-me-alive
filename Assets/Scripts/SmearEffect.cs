@@ -13,7 +13,7 @@ public class SmearEffect : MonoBehaviour
         get
         {
             if (!_smearMat)
-                _smearMat = rend.sharedMaterial;
+                _smearMat = rend.material;
 
             if (!_smearMat.HasProperty("_PrevPosition"))
                 _smearMat.shader = Shader.Find("Unlit/Cell");
@@ -25,10 +25,6 @@ public class SmearEffect : MonoBehaviour
     private void Awake()
     {
         rend = GetComponent<Renderer>();
-    }
-
-    private void Start()
-    {
         _prevPosition = transform.position;
     }
 

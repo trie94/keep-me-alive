@@ -35,7 +35,7 @@ public class Oxygen : MonoBehaviour
     private Vector3 velocity;
     private float speed;
     private float hoppingSpeed = 8f;
-    private float springDamp = 0f;
+    private float springDamp = 0.05f;
 
     [Range(1f, 10f)]
     public float neighborRadius = 1.5f;

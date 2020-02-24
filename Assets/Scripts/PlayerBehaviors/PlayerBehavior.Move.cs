@@ -90,8 +90,8 @@ public partial class PlayerBehavior : MonoBehaviour
             float dot = Vector3.Dot(wallToPlayer, direction);
             direction = Vector3.Lerp(direction, Vector3.Project(direction, wallToPlayer) * Mathf.Sign(dot), 0.5f);
         }
-        velocity = direction * Time.deltaTime * speed;
-        transform.position += velocity;
+        velocity = direction * speed;
+        transform.position += velocity * Time.deltaTime;
         transform.rotation = rot;
     }
 

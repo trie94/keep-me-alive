@@ -92,6 +92,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOccupied: 0
+  attachPoint: {x: 0, y: 0, z: 0}
+  cell: {fileID: 0}
 --- !u!1 &2651622559361137647
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,6 +186,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOccupied: 0
+  attachPoint: {x: 0, y: 0, z: 0}
+  cell: {fileID: 0}
 --- !u!1 &2651622559954091074
 GameObject:
   m_ObjectHideFlags: 0
@@ -276,6 +280,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOccupied: 0
+  attachPoint: {x: 0, y: 0, z: 0}
+  cell: {fileID: 0}
 --- !u!1 &2939019097871037429
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,7 +345,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1565535c8dc7a41e798403439661807b, type: 2}
+  - {fileID: 2100000, guid: 8f5fab793d0a9473ea80563b08b58140, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -388,7 +394,6 @@ MonoBehaviour:
   debugSphere: {fileID: 5674710467707232475, guid: f242972502aac44a390f16efd1d6918f,
     type: 3}
   keepInTunnel: 1
-  isInsideTheBody: 0
   oxygenCapacity: 4
   oxygenHolders:
   - {fileID: 549693878477945836}
@@ -487,3 +492,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOccupied: 0
+  attachPoint: {x: 0, y: 0, z: 0}
+  cell: {fileID: 0}

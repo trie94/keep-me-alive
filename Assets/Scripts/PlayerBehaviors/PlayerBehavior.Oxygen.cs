@@ -13,6 +13,10 @@ public partial class PlayerBehavior : MonoBehaviour
     private void InitOxygenBehavior()
     {
         childOxygen = new Stack<Oxygen>();
+        for (int i = 0; i < oxygenHolders.Length; i++)
+        {
+            oxygenHolders[i].cell = this.transform;
+        }
     }
 
     public void GrabOxygen(Oxygen o)
@@ -31,13 +35,10 @@ public partial class PlayerBehavior : MonoBehaviour
         if (childOxygen.Count <= 0) return;
         Debug.Log("release oxygen!");
         Oxygen o = childOxygen.Pop();
+        o.hopOnHolder.Reset();
         o.hopOnHolder = null;
         o.transform.parent = null;
         o.master = null;
-        for (int i = 0; i < oxygenHolders.Length; i++)
-        {
-            oxygenHolders[i].Reset();
-        }
         o.state = OxygenState.HeartArea;
     }
 

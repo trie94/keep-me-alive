@@ -33,6 +33,10 @@ public class Erythrocyte : Cell
         base.Awake();
         childOxygen = new Stack<Oxygen>();
         cellType = CellType.Erythrocyte;
+        for (int i = 0; i < oxygenHolders.Length; i++)
+        {
+            oxygenHolders[i].cell = this.transform;
+        }
     }
 
     public override void Start()

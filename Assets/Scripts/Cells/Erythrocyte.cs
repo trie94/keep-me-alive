@@ -24,6 +24,8 @@ public class Erythrocyte : Cell
     private ErythrocyteState cellState;
     [SerializeField]
     private ErythrocyteState prevState;
+    private Vector3 velocity;
+    public Vector3 Velocity { get { return velocity; } }
 
     public override void Awake()
     {
@@ -43,7 +45,7 @@ public class Erythrocyte : Cell
         creatureGroups[CreatureTypes.Cell] = GetCellNeighbors();
         creatureGroups[CreatureTypes.Germ] = GetGermNeighbors();
 
-        Vector3 velocity = Vector3.zero;
+        velocity = Vector3.zero;
 
         if (cellState == ErythrocyteState.InVein)
         {
@@ -203,7 +205,7 @@ public class Erythrocyte : Cell
         }
     }
 
-    public void RegisterOxygen(Oxygen o)
+    private void RegisterOxygen(Oxygen o)
     {
         Debug.Assert(childOxygen.Count < oxygenCapacity);
         var holder = oxygenHolders[childOxygen.Count];

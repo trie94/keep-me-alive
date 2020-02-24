@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05dd007da79e842fd815c4e593107fe2, type: 3}
-  m_Name: OxygenCompositeWhenTaken
+  m_Name: OxygenCompositeOnCell
   m_EditorClassIdentifier: 
   behaviors:
   - {fileID: 11400000, guid: ce6e627c8a8b846399844583b384dd7e, type: 2}
+  - {fileID: 11400000, guid: 5e8a4cfaf67504bc6a249572c1e09df9, type: 2}
   weights:
+  - 1
   - 1

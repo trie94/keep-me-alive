@@ -10,15 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05dd007da79e842fd815c4e593107fe2, type: 3}
-  m_Name: OxygenComposite
+  m_Name: OxygenCompositeFollowCell
   m_EditorClassIdentifier: 
   behaviors:
-  - {fileID: 11400000, guid: f02b922da8d234fc9b0844dbb789c6db, type: 2}
-  - {fileID: 11400000, guid: 0a9c49b50183c462dad015690b109816, type: 2}
-  - {fileID: 11400000, guid: eb9368d03b6f647eba9ef2c74f094533, type: 2}
-  - {fileID: 11400000, guid: 75c7b16f5c2f4460eb1d914e34139104, type: 2}
+  - {fileID: 11400000, guid: ce6e627c8a8b846399844583b384dd7e, type: 2}
   weights:
-  - 0
   - 1
-  - 50
-  - 20

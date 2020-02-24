@@ -42,6 +42,12 @@ public partial class PlayerBehavior : MonoBehaviour
         o.state = OxygenState.HeartArea;
     }
 
+    public void AbandonOxygen(Oxygen o)
+    {
+        // TODO: this happens when the player moves to fast and lose oxyge
+        // that goes beyond the detach threashold
+    }
+
     public void ShootOxygen()
     {
 

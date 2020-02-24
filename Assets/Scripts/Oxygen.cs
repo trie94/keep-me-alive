@@ -29,23 +29,30 @@ public class Oxygen : MonoBehaviour
     [SerializeField]
     private OxygenMovement oxygenBehaviorFollowCell;
     [SerializeField]
+    private OxygenMovement oxygenBehaviorAttachedToCell;
+    [SerializeField]
     private OxygenMovement oxygenBehaviorHeart;
 
-    public Vector3 currVelocity;
-    public float progress = 0f;
-    public float speed;
+    private Vector3 direction;
+    private float speed;
+    private float hoppingSpeed = 8f;
 
     [Range(1f, 10f)]
     public float neighborRadius = 1.5f;
     [Range(0f, 5f)]
     public float avoidanceRadius = 0.5f;
-    [Range(0.1f, 10f)]
-    public float velocityMultiplier = 10f;
-    [Range(0.1f, 10f)]
-    public float maxSpeed = 5f;
-    private float squareMaxSpeed;
+    // if the oxygen goes beyond this radius, it damps back to the attach point
+    [Range(0.1f, 0.7f)]
+    public float dampThreshold = 0.3f;
+    // if the oxygen goes beyond this radius, it gets detached from the cell
+    [Range(0.8f, 1.2f)]
+    public float detachThreshold = 0.8f;
+    public float velocitySensitivity = 0.5f;
+
     public float squareAvoidanceRadius;
+    [SerializeField]
     private float squareNeighborRadius;
+    private float squareMaxRadius;
     #endregion
 
     #region Delivery
@@ -64,21 +71,22 @@ public class Oxygen : MonoBehaviour
     {
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
-        speed = Random.Range(0.5f, 0.7f);
+        speed = Random.Range(0.7f, 1.0f);
         emotionPickInterval = Random.Range(5f, 10f);
         state = OxygenState.OxygenArea;
         oxygenGroup = new Dictionary<CreatureTypes, List<Transform>>();
         oxygenGroup.Add(type, null);
 
-        squareMaxSpeed = maxSpeed * maxSpeed;
         squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
         squareNeighborRadius = neighborRadius * neighborRadius;
+        squareMaxRadius = dampThreshold * dampThreshold;
     }
 
     private void Update()
     {
         List<Transform> neighbors = GetOxygenNeighbors();
         Vector3 velocity = Vector3.zero;
+
         if (state == OxygenState.HopOnCell)
         {
             float sqrDist = Vector3.SqrMagnitude(hopOnHolder.transform.position - transform.position);
@@ -89,14 +97,15 @@ public class Oxygen : MonoBehaviour
             }
             else
             {
-                oxygenGroup[type] = neighbors;
-                velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, oxygenGroup);
+                velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, null);
             }
         }
         else if (state == OxygenState.BeingCarried)
         {
-            oxygenGroup[type] = neighbors;
-            velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, oxygenGroup);
+            // in general, the oxygen should be affacted by the cell movement
+            // if the oxygen is within the range, it follows the oxygen
+            // while slightly hoping
+            velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, null);
         }
         else if (state == OxygenState.OxygenArea)
         {
@@ -128,23 +137,21 @@ public class Oxygen : MonoBehaviour
             }
         }
 
-        velocity *= velocityMultiplier;
-        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-        Move(velocity);
+        Move(velocity.normalized);
     }
 
-    private void Move(Vector3 velocity)
+    private void Move(Vector3 dir)
     {
-        if (velocity != Vector3.zero) currVelocity = velocity;
+        if (dir != Vector3.zero) direction = dir;
         if (state == OxygenState.HopOnCell || state == OxygenState.HeartArea)
         {
-            transform.position += currVelocity * Time.deltaTime * speed * 8f;
+            transform.position += direction * Time.deltaTime * hoppingSpeed;
         }
         else
         {
-            transform.position += currVelocity * Time.deltaTime * speed;
+            transform.position += direction * Time.deltaTime * speed;
         }
-        if (currVelocity != Vector3.zero) transform.forward = currVelocity;
+        if (direction != Vector3.zero) transform.forward = direction;
     }
 
     private List<Transform> GetOxygenNeighbors()

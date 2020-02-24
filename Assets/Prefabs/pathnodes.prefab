@@ -1389,7 +1389,7 @@ MonoBehaviour:
   zones:
   - {fileID: 333408048}
   - {fileID: 1232306310}
-  debugMode: 1
+  debugMode: 0
 --- !u!114 &1744733606956968109
 MonoBehaviour:
   m_ObjectHideFlags: 0

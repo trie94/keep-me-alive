@@ -33,6 +33,9 @@ public class Oxygen : MonoBehaviour
 
     private Vector3 direction;
     private Vector3 velocity;
+    private Vector2 velocityVZ;
+    private float velocityY;
+
     private float speed;
     private float hoppingSpeed = 8f;
     private float springDamp = 0.05f;
@@ -117,7 +120,7 @@ public class Oxygen : MonoBehaviour
             {
                 state = OxygenState.HitHeart;
             }
-        }
+        } 
         else if (state == OxygenState.HitHeart)
         {
             if (resetTick > resetTime)
@@ -142,7 +145,11 @@ public class Oxygen : MonoBehaviour
         }
         else if (state == OxygenState.BeingCarried)
         {
-            transform.position = Vector3.SmoothDamp(transform.position, hopOnHolder.attachPoint, ref velocity, springDamp);
+            Vector2 vz = new Vector2(transform.position.x, transform.position.z);
+            Vector2 anchorVz = new Vector2(hopOnHolder.attachPoint.x, hopOnHolder.attachPoint.z);
+            Vector2 xzDamp = Vector2.SmoothDamp(vz, anchorVz, ref velocityVZ, springDamp);
+            float yDamp = Mathf.SmoothDamp(transform.position.y, hopOnHolder.attachPoint.y, ref velocityY, springDamp / 2f);
+            transform.position = new Vector3(xzDamp.x, yDamp, xzDamp.y);
         }
         else
         {

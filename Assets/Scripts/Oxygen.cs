@@ -39,6 +39,7 @@ public class Oxygen : MonoBehaviour
     private float speed;
     private float hoppingSpeed = 8f;
     private float springDamp = 0.05f;
+    private float springDampWhenGrabbed = 0.1f;
 
     [Range(1f, 10f)]
     public float neighborRadius = 1.5f;
@@ -98,10 +99,6 @@ public class Oxygen : MonoBehaviour
                 hopOnHolder.OnOccupied();
                 state = OxygenState.BeingCarried;
             }
-            else
-            {
-                velocity = oxygenBehaviorFollowCell.CalculateVelocity(this, null);
-            }
         }
         else if (state == OxygenState.OxygenArea)
         {
@@ -139,7 +136,15 @@ public class Oxygen : MonoBehaviour
     private void Move(Vector3 dir)
     {
         if (dir != Vector3.zero) direction = dir;
-        if (state == OxygenState.HopOnCell || state == OxygenState.HeartArea)
+        if (state == OxygenState.HopOnCell)
+        {
+            Vector2 vz = new Vector2(transform.position.x, transform.position.z);
+            Vector2 anchorVz = new Vector2(hopOnHolder.transform.position.x, hopOnHolder.transform.position.z);
+            Vector2 xzDamp = Vector2.SmoothDamp(vz, anchorVz, ref velocityVZ, springDampWhenGrabbed);
+            float yDamp = Mathf.SmoothDamp(transform.position.y, hopOnHolder.transform.position.y, ref velocityY, springDampWhenGrabbed);
+            transform.position = new Vector3(xzDamp.x, yDamp, xzDamp.y);
+        }
+        else if (state == OxygenState.HeartArea)
         {
             transform.position += direction * Time.deltaTime * hoppingSpeed;
         }

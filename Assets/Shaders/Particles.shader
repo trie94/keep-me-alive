@@ -6,10 +6,9 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent"}
+        Tags { "RenderType"="Transparent" "Queue"="Transparent+20"}
         LOD 100
-        // Blend SrcAlpha OneMinusSrcAlpha
-        Blend OneMinusDstColor One
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {

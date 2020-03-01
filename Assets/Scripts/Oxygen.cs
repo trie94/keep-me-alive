@@ -37,9 +37,9 @@ public class Oxygen : MonoBehaviour
     private float velocityY;
 
     private float speed;
-    private float hoppingSpeed = 8f;
     private float springDamp = 0.05f;
     private float springDampWhenGrabbed = 0.1f;
+    private float springDampWhenReleased = 0.2f;
 
     [Range(1f, 10f)]
     public float neighborRadius = 1.5f;
@@ -108,9 +108,6 @@ public class Oxygen : MonoBehaviour
         }
         else if (state == OxygenState.HeartArea)
         {
-            oxygenGroup[type] = neighbors;
-            velocity = oxygenBehaviorHeart.CalculateVelocity(this, oxygenGroup,
-                                                             CellController.Instance.heart.position);
             float dist = Vector3.SqrMagnitude(transform.position
                                               - CellController.Instance.heart.position);
             if (dist < 0.2f)
@@ -138,23 +135,18 @@ public class Oxygen : MonoBehaviour
         if (dir != Vector3.zero) direction = dir;
         if (state == OxygenState.HopOnCell)
         {
-            Vector2 vz = new Vector2(transform.position.x, transform.position.z);
-            Vector2 anchorVz = new Vector2(hopOnHolder.transform.position.x, hopOnHolder.transform.position.z);
-            Vector2 xzDamp = Vector2.SmoothDamp(vz, anchorVz, ref velocityVZ, springDampWhenGrabbed);
-            float yDamp = Mathf.SmoothDamp(transform.position.y, hopOnHolder.transform.position.y, ref velocityY, springDampWhenGrabbed);
-            transform.position = new Vector3(xzDamp.x, yDamp, xzDamp.y);
-        }
-        else if (state == OxygenState.HeartArea)
-        {
-            transform.position += direction * Time.deltaTime * hoppingSpeed;
+            transform.position = CustomSmoothDamp(hopOnHolder.transform,
+                springDampWhenGrabbed, springDampWhenGrabbed / 2f);
         }
         else if (state == OxygenState.BeingCarried)
         {
-            Vector2 vz = new Vector2(transform.position.x, transform.position.z);
-            Vector2 anchorVz = new Vector2(hopOnHolder.attachPoint.x, hopOnHolder.attachPoint.z);
-            Vector2 xzDamp = Vector2.SmoothDamp(vz, anchorVz, ref velocityVZ, springDamp);
-            float yDamp = Mathf.SmoothDamp(transform.position.y, hopOnHolder.attachPoint.y, ref velocityY, springDamp / 2f);
-            transform.position = new Vector3(xzDamp.x, yDamp, xzDamp.y);
+            transform.position = CustomSmoothDamp(hopOnHolder.attachPoint,
+                springDamp, springDamp / 2f);
+        }
+        else if (state == OxygenState.HeartArea)
+        {
+            transform.position = CustomSmoothDamp(CellController.Instance.heart,
+                springDampWhenReleased, springDampWhenReleased);
         }
         else
         {
@@ -191,4 +183,23 @@ public class Oxygen : MonoBehaviour
         OxygenController.Instance.oxygens.Push(this);
         resetTick = 0f;
     }
+
+    private Vector3 CustomSmoothDamp(Transform target, float smoothTimeVz, float smoothTimeY)
+    {
+        Vector2 vz = new Vector2(transform.position.x, transform.position.z);
+        Vector2 targetVz = new Vector2(target.transform.position.x, target.transform.position.z);
+        Vector2 xzDamp = Vector2.SmoothDamp(vz, targetVz, ref velocityVZ, smoothTimeVz);
+        float yDamp = Mathf.SmoothDamp(transform.position.y, target.transform.position.y, ref velocityY, smoothTimeY);
+        return new Vector3(xzDamp.x, yDamp, xzDamp.y);
+    }
+
+    private Vector3 CustomSmoothDamp(Vector3 target, float smoothTimeVz, float smoothTimeY)
+    {
+        Vector2 vz = new Vector2(transform.position.x, transform.position.z);
+        Vector2 targetVz = new Vector2(target.x, target.z);
+        Vector2 xzDamp = Vector2.SmoothDamp(vz, targetVz, ref velocityVZ, smoothTimeVz);
+        float yDamp = Mathf.SmoothDamp(transform.position.y, target.y, ref velocityY, smoothTimeY);
+        return new Vector3(xzDamp.x, yDamp, xzDamp.y);
+    }
 }
+      

@@ -32,7 +32,6 @@ public class Oxygen : MonoBehaviour
     private OxygenMovement oxygenBehaviorHeart;
 
     private Vector3 direction;
-    private Vector3 velocity;
     private Vector2 velocityVZ;
     private float velocityY;
 
@@ -56,7 +55,6 @@ public class Oxygen : MonoBehaviour
     public float squareAvoidanceRadius;
     [SerializeField]
     private float squareNeighborRadius;
-    private float squareMaxRadius;
     #endregion
 
     #region Delivery
@@ -83,7 +81,6 @@ public class Oxygen : MonoBehaviour
 
         squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
         squareNeighborRadius = neighborRadius * neighborRadius;
-        squareMaxRadius = dampThreshold * dampThreshold;
     }
 
     private void Update()
@@ -93,7 +90,8 @@ public class Oxygen : MonoBehaviour
 
         if (state == OxygenState.HopOnCell)
         {
-            float sqrDist = Vector3.SqrMagnitude(hopOnHolder.transform.position - transform.position);
+            float sqrDist = Vector3.SqrMagnitude(hopOnHolder.transform.position
+                - transform.position);
             if (sqrDist < 0.01f)
             {
                 hopOnHolder.OnOccupied();
@@ -110,10 +108,7 @@ public class Oxygen : MonoBehaviour
         {
             float dist = Vector3.SqrMagnitude(transform.position
                                               - CellController.Instance.heart.position);
-            if (dist < 0.2f)
-            {
-                state = OxygenState.HitHeart;
-            }
+            if (dist < 0.2f) state = OxygenState.HitHeart;
         } 
         else if (state == OxygenState.HitHeart)
         {

@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 5699890117394161743}
   - component: {fileID: 2094756837233672983}
   - component: {fileID: 8267606881325816526}
+  - component: {fileID: -1350268032016703247}
   m_Layer: 0
   m_Name: player-erythrocyte
   m_TagString: Untagged
@@ -207,6 +208,18 @@ MonoBehaviour:
     type: 3}
   keepInTunnel: 1
   oxygenCapacity: 4
+--- !u!114 &-1350268032016703247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6279924229699523731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92e8195776485416cbb60ac0cc119e55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   oxygenHolders:
   - {fileID: 8669249202003942538}
   - {fileID: 1816120641123880617}

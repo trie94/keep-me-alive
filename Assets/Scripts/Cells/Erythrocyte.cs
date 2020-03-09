@@ -11,13 +11,8 @@ public enum ErythrocyteState
 
 public class Erythrocyte : Cell
 {
-    [SerializeField]
-    private int oxygenCapacity = 3;
-    public float oxygenReleaseInterval = 2f;
-    public float oxygenReleaseTick = 0f;
-    public Stack<Oxygen> childOxygen;
-    public OxygenHolder[] oxygenHolders;
-    [SerializeField]
+    private float oxygenReleaseInterval = 2f;
+    private float oxygenReleaseTick = 0f;
     private Vector3? target = null;
 
     [SerializeField]
@@ -27,16 +22,13 @@ public class Erythrocyte : Cell
     // TODO change this with direction
     private Vector3 velocity;
     public Vector3 Velocity { get { return velocity; } }
+    private OxygenCarrierBehavior carrier;
 
     public override void Awake()
     {
         base.Awake();
-        childOxygen = new Stack<Oxygen>();
+        carrier = GetComponent<OxygenCarrierBehavior>();
         cellType = CellType.Erythrocyte;
-        for (int i = 0; i < oxygenHolders.Length; i++)
-        {
-            oxygenHolders[i].cell = this.transform;
-        }
     }
 
     public override void Start()
@@ -77,27 +69,15 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.WaitOxygen)
         {
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, Path.Instance.OxygenZone.transform.position);
-            if (childOxygen.Count < oxygenCapacity)
+            velocity = behaviors[(int)cellState].CalculateVelocity(
+                this, creatureGroups, Path.Instance.OxygenZone.transform.position);
+            if (carrier.CanGrabOxygen())
             {
-                for (int i = 0; i < oxygenCapacity; i++)
-                {
-                    Oxygen oxygen = OxygenController.Instance.oxygens.Pop();
-                    RegisterOxygen(oxygen);
-                }
+                carrier.GrabOxygens();
             }
             else
             {
-                bool isReadyToGo = true;
-                for (int i = 0; i < oxygenHolders.Length; i++)
-                {
-                    if (oxygenHolders[i].isOccupied == false)
-                    {
-                        isReadyToGo = false;
-                    }
-                }
-
-                if (isReadyToGo)
+                if (carrier.IsReadyToGo())
                 {
                     prevState = cellState;
                     cellState = ErythrocyteState.ExitOxygenArea;
@@ -122,7 +102,7 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.EnterHeartArea)
         {
-            if (childOxygen.Count <= 0)
+            if (!carrier.CanReleaseOxygen())
             {
                 prevState = cellState;
                 cellState = ErythrocyteState.ExitHeartArea;
@@ -147,7 +127,7 @@ public class Erythrocyte : Cell
         {
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
 
-            if (childOxygen.Count <= 0)
+            if (carrier.CanReleaseOxygen())
             {
                 prevState = cellState;
                 cellState = ErythrocyteState.ExitHeartArea;
@@ -155,7 +135,7 @@ public class Erythrocyte : Cell
             }
             else if (oxygenReleaseTick >= oxygenReleaseInterval)
             {
-                ReleaseOxygen();
+                carrier.ReleaseOxygen();
                 oxygenReleaseTick = 0f;
             }
             else
@@ -208,27 +188,6 @@ public class Erythrocyte : Cell
         {
             cellState = ErythrocyteState.InVein;
         }
-    }
-
-    private void RegisterOxygen(Oxygen o)
-    {
-        Debug.Assert(childOxygen.Count < oxygenCapacity);
-        var holder = oxygenHolders[childOxygen.Count];
-        o.hopOnHolder = holder;
-        childOxygen.Push(o);
-        o.master = this;
-        o.state = OxygenState.HopOnCell;
-    }
-
-    private void ReleaseOxygen()
-    {
-        Debug.Assert(childOxygen.Count > 0);
-        Oxygen o = childOxygen.Pop();
-        o.hopOnHolder.Reset();
-        o.hopOnHolder = null;
-        o.transform.parent = null;
-        o.master = null;
-        o.state = OxygenState.HeartArea;
     }
 
     private void OnDrawGizmos()

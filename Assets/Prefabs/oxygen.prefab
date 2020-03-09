@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2906186912493519926}
   - component: {fileID: 2906186912493519927}
   - component: {fileID: 3244267922048944490}
+  - component: {fileID: 2202715558361085936}
   m_Layer: 0
   m_Name: oxygen
   m_TagString: Untagged
@@ -93,16 +94,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeInterval: 0
   oxygenBehavior: {fileID: 11400000, guid: 1d650b68f5cb148d7bd2d53126ab4e21, type: 2}
-  oxygenBehaviorFollowCell: {fileID: 11400000, guid: c1f68807a33b24dc491ba30d347efa71,
-    type: 2}
-  oxygenBehaviorOnCell: {fileID: 11400000, guid: f4b3b998ba2e443b9a78c0872980de70,
-    type: 2}
-  oxygenBehaviorHeart: {fileID: 11400000, guid: 1290dc9fd88934d0a841f72893b03ab0,
-    type: 2}
   neighborRadius: 2
   avoidanceRadius: 1.5
   dampThreshold: 0.3
-  detachThreshold: 0.8
   velocitySensitivity: 0.5
   squareAvoidanceRadius: 0
   squareNeighborRadius: 0
@@ -110,4 +104,19 @@ MonoBehaviour:
   playerMaster: {fileID: 0}
   hopOnHolder: {fileID: 0}
   state: 0
+  uiRevealDist: 3
   type: 1
+--- !u!114 &2202715558361085936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2906186912493519925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3042d1d9e91143eb98f287697c30ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoveringUIPrefab: {fileID: 1593215134683537758, guid: 2e4f93ce6518344afbdb6ad417a67b5e,
+    type: 3}

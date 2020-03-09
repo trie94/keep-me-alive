@@ -24,7 +24,7 @@ public class Heart : MonoBehaviour
         Vector3 direction = (PlayerBehavior.Instance.transform.position - transform.position).normalized;
         float dot = Vector3.Dot(direction, PlayerBehavior.Instance.transform.forward);
 
-        if (PlayerBehavior.Instance.CanReleaseOxygen()
+        if (PlayerBehavior.Instance.carrier.CanReleaseOxygen()
             && distSqrt < uiRevealDistSqrt && dot < 0)
         {
             interactable.IsInteractable = true;
@@ -37,6 +37,6 @@ public class Heart : MonoBehaviour
 
     public void PointerDown(PointerEventData data)
     {
-        PlayerBehavior.Instance.ReleaseOxygen();
+        PlayerBehavior.Instance.carrier.ReleaseOxygen();
     }
 }

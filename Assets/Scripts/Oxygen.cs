@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public enum OxygenState
 {
-    OxygenArea, HopOnCell, BeingCarried, HeartArea, HitHeart
+    OxygenArea, HopOnCell, BeingCarried, HeartArea, HitHeart, FallFromCell, Abandoned
 }
 
 [System.Serializable]
@@ -26,16 +27,13 @@ public class Oxygen : MonoBehaviour
     #region Movement
     [SerializeField]
     private OxygenMovement oxygenBehavior;
-    [SerializeField]
-    private OxygenMovement oxygenBehaviorFollowCell;
-    [SerializeField]
-    private OxygenMovement oxygenBehaviorHeart;
 
     private Vector3 direction;
     private Vector2 velocityVZ;
     private float velocityY;
 
     private float speed;
+    private float fallSpeed = 0.3f;
     private float springDamp = 0.05f;
     private float springDampWhenGrabbed = 0.1f;
     private float springDampWhenReleased = 0.2f;
@@ -48,8 +46,10 @@ public class Oxygen : MonoBehaviour
     [Range(0.1f, 0.7f)]
     public float dampThreshold = 0.3f;
     // if the oxygen goes beyond this radius, it gets detached from the cell
-    [Range(0.8f, 1.2f)]
-    public float detachThreshold = 0.8f;
+    private float detachDist = 0.345f;
+    private float squareDetachDist;
+    private float abandonDist = 3.0f;
+    private float squareAbandonDist;
     public float velocitySensitivity = 0.5f;
 
     public float squareAvoidanceRadius;
@@ -58,12 +58,18 @@ public class Oxygen : MonoBehaviour
     #endregion
 
     #region Delivery
-    public Cell master;
-    public PlayerBehavior playerMaster;
+    public OxygenCarrierBehavior carrier;
     public OxygenHolder hopOnHolder;
     public OxygenState state;
     private float resetTime = 1f;
     private float resetTick = 0f;
+    #endregion
+
+    #region Interactable
+    [SerializeField]
+    private float uiRevealDist;
+    private float uiRevealDistSqrt;
+    private InteractableObject interactable;
     #endregion
 
     public CreatureTypes type = CreatureTypes.Oxygen;
@@ -73,7 +79,7 @@ public class Oxygen : MonoBehaviour
     {
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
-        speed = Random.Range(0.7f, 1.0f);
+        speed = Random.Range(0.5f, 0.7f);
         emotionPickInterval = Random.Range(5f, 10f);
         state = OxygenState.OxygenArea;
         oxygenGroup = new Dictionary<CreatureTypes, List<Transform>>();
@@ -81,12 +87,26 @@ public class Oxygen : MonoBehaviour
 
         squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
         squareNeighborRadius = neighborRadius * neighborRadius;
+        squareDetachDist = detachDist * detachDist;
+        squareAbandonDist = abandonDist * abandonDist;
+    }
+
+    private void Start()
+    {
+        interactable = GetComponent<InteractableObject>();
+        interactable.RegisterCallback(EventTriggerType.PointerDown, PointerDown);
+        uiRevealDistSqrt = uiRevealDist * uiRevealDist;
     }
 
     private void Update()
     {
+        UpdateState();
+        Move();
+    }
+
+    private void UpdateState()
+    {
         List<Transform> neighbors = GetOxygenNeighbors();
-        Vector3 velocity = Vector3.zero;
 
         if (state == OxygenState.HopOnCell)
         {
@@ -98,18 +118,46 @@ public class Oxygen : MonoBehaviour
                 state = OxygenState.BeingCarried;
             }
         }
+        else if (state == OxygenState.BeingCarried)
+        {
+            oxygenGroup[type] = neighbors;
+            float squareDistBetweenHolderAndOxygen =
+                (hopOnHolder.attachPoint - transform.position).sqrMagnitude;
+            if (squareDistBetweenHolderAndOxygen > squareDetachDist)
+            {
+                Debug.Log("falling!");
+                carrier.AbandonOxygen(this);
+            }
+        }
+        else if (state == OxygenState.FallFromCell)
+        {
+            if ((hopOnHolder.transform.position - transform.position).sqrMagnitude
+                > squareAbandonDist)
+            {
+                state = OxygenState.Abandoned;
+                // need a reference point to calculate distance
+                hopOnHolder = null;
+            }
+        }
+        else if (state == OxygenState.Abandoned)
+        {
+            // should be grabbable, and show ui
+            transform.LookAt(PlayerBehavior.Instance.transform.position);
+            WaitForPlayerToGrab();
+        }
         else if (state == OxygenState.OxygenArea)
         {
             oxygenGroup[type] = neighbors;
-            velocity = oxygenBehavior.CalculateVelocity(this, oxygenGroup,
-                                                        Path.Instance.OxygenZone.transform.position);
+            direction = oxygenBehavior.CalculateVelocity(
+                this, oxygenGroup, Path.Instance.OxygenZone.transform.position)
+                .normalized;
         }
         else if (state == OxygenState.HeartArea)
         {
-            float dist = Vector3.SqrMagnitude(transform.position
-                                              - CellController.Instance.heart.position);
+            float dist = Vector3.SqrMagnitude(
+                transform.position - CellController.Instance.heart.position);
             if (dist < 0.2f) state = OxygenState.HitHeart;
-        } 
+        }
         else if (state == OxygenState.HitHeart)
         {
             if (resetTick > resetTime)
@@ -121,14 +169,15 @@ public class Oxygen : MonoBehaviour
                 resetTick += Time.deltaTime;
             }
         }
-
-        Move(velocity.normalized);
     }
 
-    private void Move(Vector3 dir)
+    private void Move()
     {
-        if (dir != Vector3.zero) direction = dir;
-        if (state == OxygenState.HopOnCell)
+        if (state == OxygenState.OxygenArea)
+        {
+            transform.position += direction * Time.deltaTime * speed;
+        }
+        else if (state == OxygenState.HopOnCell)
         {
             transform.position = CustomSmoothDamp(hopOnHolder.transform,
                 springDampWhenGrabbed, springDampWhenGrabbed / 2f);
@@ -143,9 +192,13 @@ public class Oxygen : MonoBehaviour
             transform.position = CustomSmoothDamp(CellController.Instance.heart,
                 springDampWhenReleased, springDampWhenReleased);
         }
-        else
+        else if (state == OxygenState.FallFromCell)
         {
-            transform.position += direction * Time.deltaTime * speed;
+            transform.position -= direction * Time.deltaTime * fallSpeed;
+        }
+        else if (state == OxygenState.Abandoned)
+        {
+            // do nothing.. idle
         }
 
         if (direction != Vector3.zero) transform.forward = direction;
@@ -159,7 +212,7 @@ public class Oxygen : MonoBehaviour
         for (int i = 0; i < oxygens.Count; i++)
         {
             var curr = oxygens[i];
-            if (curr == this || curr.master != null || curr.playerMaster != null) continue;
+            if (curr == this || curr.carrier != null) continue;
             if (Vector3.SqrMagnitude(curr.transform.position - transform.position) <= squareNeighborRadius)
             {
                 neighbors.Add(curr.transform);
@@ -195,6 +248,29 @@ public class Oxygen : MonoBehaviour
         Vector2 xzDamp = Vector2.SmoothDamp(vz, targetVz, ref velocityVZ, smoothTimeVz);
         float yDamp = Mathf.SmoothDamp(transform.position.y, target.y, ref velocityY, smoothTimeY);
         return new Vector3(xzDamp.x, yDamp, xzDamp.y);
+    }
+
+    private void WaitForPlayerToGrab()
+    {
+        float distSqrt = Vector3.SqrMagnitude(PlayerBehavior.Instance.transform.position - transform.position);
+        Vector3 direction = (PlayerBehavior.Instance.transform.position - transform.position).normalized;
+        float dot = Vector3.Dot(direction, PlayerBehavior.Instance.transform.forward);
+
+        if (PlayerBehavior.Instance.carrier.CanGrabOxygen()
+            && distSqrt < uiRevealDistSqrt && dot < 0)
+        {
+            interactable.IsInteractable = true;
+        }
+        else
+        {
+            interactable.IsInteractable = false;
+        }
+    }
+
+    public void PointerDown(PointerEventData data)
+    {
+        PlayerBehavior.Instance.carrier.GrabOxygen(this);
+        interactable.IsInteractable = false;
     }
 }
       

@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7802241244602714389}
   - component: {fileID: 91191517026287236}
   - component: {fileID: 652916546933620544}
-  - component: {fileID: 543571848013015338}
+  - component: {fileID: 7881434322471155630}
   m_Layer: 0
-  m_Name: oxygen-holder3
+  m_Name: holder3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,7 +79,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &543571848013015338
+--- !u!114 &7881434322471155630
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -88,7 +88,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2033070683582181521}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d3494a3769894236899645217de3c98, type: 3}
+  m_Script: {fileID: 11500000, guid: 5bd99738affdd41e7b23fbc215c63f10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isOccupied: 0
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 5699890117394161743}
   - component: {fileID: 2094756837233672983}
   - component: {fileID: 8267606881325816526}
-  - component: {fileID: -1350268032016703247}
+  - component: {fileID: 131054371837302149}
   m_Layer: 0
   m_Name: player-erythrocyte
   m_TagString: Untagged
@@ -203,12 +203,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e3f827a4648f418ca70473315ee5760, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  carrier: {fileID: 0}
   maxDistFromCenter: 3.6
   debugSphere: {fileID: 5674710467707232475, guid: f242972502aac44a390f16efd1d6918f,
     type: 3}
   keepInTunnel: 1
-  oxygenCapacity: 4
---- !u!114 &-1350268032016703247
+--- !u!114 &131054371837302149
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -217,14 +217,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6279924229699523731}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92e8195776485416cbb60ac0cc119e55, type: 3}
+  m_Script: {fileID: 11500000, guid: c981df1ae7c4f417b9538fdf08ac4b96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  oxygenHolders:
-  - {fileID: 8669249202003942538}
-  - {fileID: 1816120641123880617}
-  - {fileID: 8440155821048931879}
-  - {fileID: 543571848013015338}
+  holders:
+  - {fileID: 6476819948018395526}
+  - {fileID: 6798862240723811484}
+  - {fileID: 6109738956834628851}
+  - {fileID: 7881434322471155630}
 --- !u!1 &6567320516800748681
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,9 +236,9 @@ GameObject:
   - component: {fileID: 6567320516800748686}
   - component: {fileID: 6567320516800748687}
   - component: {fileID: 6567320516800748680}
-  - component: {fileID: 8440155821048931879}
+  - component: {fileID: 6109738956834628851}
   m_Layer: 0
-  m_Name: oxygen-holder2
+  m_Name: holder2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -304,7 +304,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &8440155821048931879
+--- !u!114 &6109738956834628851
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -313,7 +313,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6567320516800748681}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d3494a3769894236899645217de3c98, type: 3}
+  m_Script: {fileID: 11500000, guid: 5bd99738affdd41e7b23fbc215c63f10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isOccupied: 0
@@ -330,9 +330,9 @@ GameObject:
   - component: {fileID: 6567320517471068363}
   - component: {fileID: 6567320517471068372}
   - component: {fileID: 6567320517471068373}
-  - component: {fileID: 1816120641123880617}
+  - component: {fileID: 6798862240723811484}
   m_Layer: 0
-  m_Name: oxygen-holder1
+  m_Name: holder1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -398,7 +398,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &1816120641123880617
+--- !u!114 &6798862240723811484
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -407,7 +407,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6567320517471068374}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d3494a3769894236899645217de3c98, type: 3}
+  m_Script: {fileID: 11500000, guid: 5bd99738affdd41e7b23fbc215c63f10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isOccupied: 0
@@ -424,9 +424,9 @@ GameObject:
   - component: {fileID: 6567320518499982105}
   - component: {fileID: 6567320518499982106}
   - component: {fileID: 6567320518499982107}
-  - component: {fileID: 8669249202003942538}
+  - component: {fileID: 6476819948018395526}
   m_Layer: 0
-  m_Name: oxygen-holder0
+  m_Name: holder0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -492,7 +492,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &8669249202003942538
+--- !u!114 &6476819948018395526
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -501,7 +501,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6567320518499982116}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d3494a3769894236899645217de3c98, type: 3}
+  m_Script: {fileID: 11500000, guid: 5bd99738affdd41e7b23fbc215c63f10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isOccupied: 0

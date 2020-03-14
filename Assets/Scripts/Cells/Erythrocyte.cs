@@ -22,12 +22,12 @@ public class Erythrocyte : Cell
     // TODO change this with direction
     private Vector3 velocity;
     public Vector3 Velocity { get { return velocity; } }
-    private OxygenCarrierBehavior carrier;
+    private MoleculeCarrierBehavior carrier;
 
     public override void Awake()
     {
         base.Awake();
-        carrier = GetComponent<OxygenCarrierBehavior>();
+        carrier = GetComponent<MoleculeCarrierBehavior>();
         cellType = CellType.Erythrocyte;
     }
 

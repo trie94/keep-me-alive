@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public enum OxygenState
+public enum MoleculeState
 {
     OxygenArea, HopOnCell, BeingCarried, HeartArea, HitHeart, FallFromCell, Abandoned
 }
 
 [System.Serializable]
-public class Oxygen : MonoBehaviour
+public class Oxygen : Molecule
 {
     #region Emotion
     private Renderer rend;
@@ -58,9 +58,6 @@ public class Oxygen : MonoBehaviour
     #endregion
 
     #region Delivery
-    public OxygenCarrierBehavior carrier;
-    public OxygenHolder hopOnHolder;
-    public OxygenState state;
     private float resetTime = 1f;
     private float resetTick = 0f;
     #endregion
@@ -81,7 +78,7 @@ public class Oxygen : MonoBehaviour
         faceID = Shader.PropertyToID("_Face");
         speed = Random.Range(0.5f, 0.7f);
         emotionPickInterval = Random.Range(5f, 10f);
-        state = OxygenState.OxygenArea;
+        state = MoleculeState.OxygenArea;
         oxygenGroup = new Dictionary<CreatureTypes, List<Transform>>();
         oxygenGroup.Add(type, null);
 
@@ -108,17 +105,17 @@ public class Oxygen : MonoBehaviour
     {
         List<Transform> neighbors = GetOxygenNeighbors();
 
-        if (state == OxygenState.HopOnCell)
+        if (state == MoleculeState.HopOnCell)
         {
             float sqrDist = Vector3.SqrMagnitude(hopOnHolder.transform.position
                 - transform.position);
             if (sqrDist < 0.01f)
             {
                 hopOnHolder.OnOccupied();
-                state = OxygenState.BeingCarried;
+                state = MoleculeState.BeingCarried;
             }
         }
-        else if (state == OxygenState.BeingCarried)
+        else if (state == MoleculeState.BeingCarried)
         {
             oxygenGroup[type] = neighbors;
             float squareDistBetweenHolderAndOxygen =
@@ -129,36 +126,36 @@ public class Oxygen : MonoBehaviour
                 carrier.AbandonOxygen(this);
             }
         }
-        else if (state == OxygenState.FallFromCell)
+        else if (state == MoleculeState.FallFromCell)
         {
             if ((hopOnHolder.transform.position - transform.position).sqrMagnitude
                 > squareAbandonDist)
             {
-                state = OxygenState.Abandoned;
+                state = MoleculeState.Abandoned;
                 // need a reference point to calculate distance
                 hopOnHolder = null;
             }
         }
-        else if (state == OxygenState.Abandoned)
+        else if (state == MoleculeState.Abandoned)
         {
             // should be grabbable, and show ui
             transform.LookAt(PlayerBehavior.Instance.transform.position);
             WaitForPlayerToGrab();
         }
-        else if (state == OxygenState.OxygenArea)
+        else if (state == MoleculeState.OxygenArea)
         {
             oxygenGroup[type] = neighbors;
             direction = oxygenBehavior.CalculateVelocity(
                 this, oxygenGroup, Path.Instance.OxygenZone.transform.position)
                 .normalized;
         }
-        else if (state == OxygenState.HeartArea)
+        else if (state == MoleculeState.HeartArea)
         {
             float dist = Vector3.SqrMagnitude(
                 transform.position - CellController.Instance.heart.position);
-            if (dist < 0.2f) state = OxygenState.HitHeart;
+            if (dist < 0.2f) state = MoleculeState.HitHeart;
         }
-        else if (state == OxygenState.HitHeart)
+        else if (state == MoleculeState.HitHeart)
         {
             if (resetTick > resetTime)
             {
@@ -173,30 +170,30 @@ public class Oxygen : MonoBehaviour
 
     private void Move()
     {
-        if (state == OxygenState.OxygenArea)
+        if (state == MoleculeState.OxygenArea)
         {
             transform.position += direction * Time.deltaTime * speed;
         }
-        else if (state == OxygenState.HopOnCell)
+        else if (state == MoleculeState.HopOnCell)
         {
             transform.position = CustomSmoothDamp(hopOnHolder.transform,
                 springDampWhenGrabbed, springDampWhenGrabbed / 2f);
         }
-        else if (state == OxygenState.BeingCarried)
+        else if (state == MoleculeState.BeingCarried)
         {
             transform.position = CustomSmoothDamp(hopOnHolder.attachPoint,
                 springDamp, springDamp / 2f);
         }
-        else if (state == OxygenState.HeartArea)
+        else if (state == MoleculeState.HeartArea)
         {
             transform.position = CustomSmoothDamp(CellController.Instance.heart,
                 springDampWhenReleased, springDampWhenReleased);
         }
-        else if (state == OxygenState.FallFromCell)
+        else if (state == MoleculeState.FallFromCell)
         {
             transform.position -= direction * Time.deltaTime * fallSpeed;
         }
-        else if (state == OxygenState.Abandoned)
+        else if (state == MoleculeState.Abandoned)
         {
             // do nothing.. idle
         }
@@ -225,7 +222,7 @@ public class Oxygen : MonoBehaviour
     {
         speed = Random.Range(0.5f, 0.7f);
         emotionPickInterval = Random.Range(5f, 10f);
-        state = OxygenState.OxygenArea;
+        state = MoleculeState.OxygenArea;
         transform.position = OxygenController.Instance.GetRandomPositionInOxygenArea();
         transform.rotation = Random.rotation;
         OxygenController.Instance.oxygens.Push(this);

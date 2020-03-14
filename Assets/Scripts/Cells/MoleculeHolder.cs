@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class OxygenHolder : MonoBehaviour
+public class MoleculeHolder : MonoBehaviour
 {
     public bool isOccupied;
     public Vector3 attachPoint;
@@ -10,6 +10,7 @@ public class OxygenHolder : MonoBehaviour
     private float speed = 0.5f;
 
     public Transform cell;
+
     private float offset = -0.49f;
     private float noiseFreq = 0.612f;
     private float noiseScale = 1.18f;
@@ -17,7 +18,7 @@ public class OxygenHolder : MonoBehaviour
     private Vector3 position;
     private Vector3 cellPrevPosition;
 
-    private void Awake()
+    private void Start()
     {
         position = transform.localPosition;
         cellPrevPosition = cell.position;

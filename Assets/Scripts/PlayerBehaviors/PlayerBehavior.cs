@@ -19,12 +19,12 @@ public partial class PlayerBehavior : MonoBehaviour
     }
 
     private PlayerZoneState currZoneState;
-    public OxygenCarrierBehavior carrier;
+    public MoleculeCarrierBehavior carrier;
 
     private void Awake()
     {
         instance = this;
-        carrier = GetComponent<OxygenCarrierBehavior>();
+        carrier = GetComponent<MoleculeCarrierBehavior>();
         InitMovement();
     }
 

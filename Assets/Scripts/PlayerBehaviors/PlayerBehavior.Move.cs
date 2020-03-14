@@ -90,7 +90,16 @@ public partial class PlayerBehavior : MonoBehaviour
             float dot = Vector3.Dot(wallToPlayer, direction);
             direction = Vector3.Lerp(direction, Vector3.Project(direction, wallToPlayer) * Mathf.Sign(dot), 0.5f);
         }
-        velocity = direction * speed;
+
+        // the current factor range is from 0.5f to 1f
+        float currentFactor = 1f;
+        if (currZoneState == PlayerZoneState.Vein)
+        {
+            Vector3 current = currSeg.n1.transform.position - currSeg.n0.transform.position;
+            currentFactor = Mathf.Cos(Mathf.Acos(Vector3.Dot(direction, current.normalized)) * 0.5f);
+            currentFactor = currentFactor * 0.5f + 0.5f;
+        }
+        velocity = direction * speed * currentFactor;
         transform.position += velocity * Time.deltaTime;
         transform.rotation = rot;
     }

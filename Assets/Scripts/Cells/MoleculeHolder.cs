@@ -9,6 +9,7 @@ public class MoleculeHolder : MonoBehaviour
     private float tick = 0f;
     private float speed = 0.5f;
 
+    [HideInInspector]
     public Transform cell;
 
     private float offset = -0.49f;

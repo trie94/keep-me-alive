@@ -122,7 +122,6 @@ public class Oxygen : Molecule
                 (hopOnHolder.attachPoint - transform.position).sqrMagnitude;
             if (squareDistBetweenHolderAndOxygen > squareDetachDist)
             {
-                Debug.Log("falling!");
                 carrier.AbandonOxygen(this);
             }
         }

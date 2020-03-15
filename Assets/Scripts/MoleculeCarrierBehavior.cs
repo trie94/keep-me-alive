@@ -38,7 +38,6 @@ public class MoleculeCarrierBehavior : MonoBehaviour
 
     public void ReleaseOxygen()
     {
-        Debug.Assert(CanReleaseOxygen());
         Molecule o = null;
         for (int i = 0; i < oxygenCapacity; i++)
         {

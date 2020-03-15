@@ -11,7 +11,7 @@ public enum ErythrocyteState
 
 public class Erythrocyte : Cell
 {
-    private float oxygenReleaseInterval = 2f;
+    private float oxygenReleaseInterval = 1f;
     private float oxygenReleaseTick = 0f;
     private Vector3? target = null;
 
@@ -125,9 +125,9 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.ReleaseOxygen)
         {
-            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
+            velocity = Vector3.zero;
 
-            if (carrier.CanReleaseOxygen())
+            if (!carrier.CanReleaseOxygen())
             {
                 prevState = cellState;
                 cellState = ErythrocyteState.ExitHeartArea;

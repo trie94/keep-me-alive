@@ -62,6 +62,12 @@ public class Oxygen : Molecule
     private float resetTick = 0f;
     #endregion
 
+    #region State
+    private float joinOxygenGroupThreshold = 4f;
+    private float sqrJoinOxygenGroupThreshold;
+    private float sqrRad;
+    #endregion
+
     #region Interactable
     [SerializeField]
     private float uiRevealDist;
@@ -86,6 +92,8 @@ public class Oxygen : Molecule
         squareNeighborRadius = neighborRadius * neighborRadius;
         squareDetachDist = detachDist * detachDist;
         squareAbandonDist = abandonDist * abandonDist;
+        sqrRad = Path.Instance.OxygenZone.Radius * Path.Instance.OxygenZone.Radius;
+        sqrJoinOxygenGroupThreshold = joinOxygenGroupThreshold * joinOxygenGroupThreshold;
     }
 
     private void Start()
@@ -137,9 +145,25 @@ public class Oxygen : Molecule
         }
         else if (state == MoleculeState.Abandoned)
         {
-            // should be grabbable, and show ui
-            transform.LookAt(PlayerBehavior.Instance.transform.position);
-            WaitForPlayerToGrab();
+            float sqrDistToOxygenArea = (Path.Instance.OxygenZone.transform.position
+                - transform.position).sqrMagnitude;
+            if (sqrDistToOxygenArea <= sqrRad)
+            {
+                if (sqrDistToOxygenArea < sqrJoinOxygenGroupThreshold)
+                {
+                    state = MoleculeState.OxygenArea;
+                }
+                else
+                {
+                    direction = (Path.Instance.OxygenZone.transform.position
+                    - transform.position).normalized;
+                }
+            }
+            else
+            {
+                direction = Vector3.zero;
+                WaitForPlayerToGrab();
+            }
         }
         else if (state == MoleculeState.OxygenArea)
         {
@@ -169,7 +193,7 @@ public class Oxygen : Molecule
 
     private void Move()
     {
-        if (state == MoleculeState.OxygenArea)
+        if (state == MoleculeState.OxygenArea || state == MoleculeState.Abandoned)
         {
             transform.position += direction * Time.deltaTime * speed;
         }
@@ -191,10 +215,6 @@ public class Oxygen : Molecule
         else if (state == MoleculeState.FallFromCell)
         {
             transform.position -= direction * Time.deltaTime * fallSpeed;
-        }
-        else if (state == MoleculeState.Abandoned)
-        {
-            // do nothing.. idle
         }
 
         if (direction != Vector3.zero) transform.forward = direction;

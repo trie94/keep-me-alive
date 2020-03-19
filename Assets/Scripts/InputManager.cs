@@ -56,7 +56,7 @@ public class InputManager : MonoBehaviour
     public Vector2 Turn { get { return turn; } }
     private float speed;
     public float Speed { get { return speed; } }
-    private float speedFactor = 2f;
+    private float speedFactor = 1.3f;
     #endregion
 
     private float pressTime;

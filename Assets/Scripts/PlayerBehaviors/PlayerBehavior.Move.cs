@@ -96,8 +96,7 @@ public partial class PlayerBehavior : MonoBehaviour
         if (currZoneState == PlayerZoneState.Vein)
         {
             Vector3 current = currSeg.n1.transform.position - currSeg.n0.transform.position;
-            currentFactor = Mathf.Cos(Mathf.Acos(Vector3.Dot(direction, current.normalized)) * 0.5f);
-            currentFactor = currentFactor * 0.5f + 0.5f;
+            currentFactor = Vector3.Dot(direction, current.normalized) * 0.5f + 0.5f;
         }
         velocity = direction * speed * currentFactor;
         transform.position += velocity * Time.deltaTime;
@@ -204,9 +203,10 @@ public partial class PlayerBehavior : MonoBehaviour
 
     private Vector3 GetClosestPointOnLine(Segment seg)
     {
-        Vector3 StartPointToPlayer = transform.position - seg.n0.transform.position;
+        Vector3 startPointToPlayer = transform.position - seg.n0.transform.position;
+        if (startPointToPlayer == Vector3.zero) return startPointToPlayer;
         Vector3 segDir = (seg.n1.transform.position - seg.n0.transform.position);
-        float t = Mathf.Clamp01(Vector3.Dot(StartPointToPlayer, segDir) / segDir.sqrMagnitude);
+        float t = Mathf.Clamp01(Vector3.Dot(startPointToPlayer, segDir) / segDir.sqrMagnitude);
         return seg.n0.transform.position + t * segDir;
     }
 

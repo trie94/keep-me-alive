@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
     private float yOffset = 3f;
     private Vector3 offset;
     private Camera mainCam;
-    private bool isEditor;
 
     private void Awake()
     {
@@ -21,12 +20,6 @@ public class PlayerController : MonoBehaviour
         mainCam = Camera.main;
         offset = player.transform.forward * zOffset + player.transform.up * yOffset;
         mainCam.transform.position = player.transform.position + offset;
-
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
-        isEditor = true;
-#else
-        isEditor = false;
-#endif
     }
 
     private void Update()
@@ -45,7 +38,11 @@ public class PlayerController : MonoBehaviour
         mainCam.transform.position = player.transform.position + offset;
 
         Vector3 target = player.transform.position + player.transform.up * yOffset / 2f;
-        Quaternion look = Quaternion.LookRotation(target - mainCam.transform.position, player.transform.up);
-        mainCam.transform.rotation = look;
+        Vector3 forward = target - mainCam.transform.position;
+        if (forward != Vector3.zero)
+        {
+            Quaternion look = Quaternion.LookRotation(forward, player.transform.up);
+            mainCam.transform.rotation = look;
+        }
     }
 }

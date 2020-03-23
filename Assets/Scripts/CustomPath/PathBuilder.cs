@@ -35,8 +35,22 @@ public class PathBuilder : MonoBehaviour
     private TunnelParts entireZones;
     private List<float> entireZoneRads;
 
+    private static PathBuilder instance;
+    public static PathBuilder Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<PathBuilder>();
+            }
+            return instance;
+        }
+    }
+
     private void Awake()
     {
+        instance = this;
         scale = radius * 2;
         tunnelsOnNode = new Dictionary<Node, TunnelParts>();
         jointOnNode = new Dictionary<Node, PathJoint>();

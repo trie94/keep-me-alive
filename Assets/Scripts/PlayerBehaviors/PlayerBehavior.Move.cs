@@ -7,6 +7,7 @@ public partial class PlayerBehavior : MonoBehaviour
     private Vector3 direction;
     public Vector3 Direction { get { return direction; } }
     private float speed;
+    private Segment prevSeg;
     private Segment currSeg;
     private Zone currZone;
     private Vector3 velocity;
@@ -91,12 +92,11 @@ public partial class PlayerBehavior : MonoBehaviour
             direction = Vector3.Lerp(direction, Vector3.Project(direction, wallToPlayer) * Mathf.Sign(dot), 0.5f);
         }
 
-        // the current factor range is from 0.5f to 1f
         float currentFactor = 1f;
         if (currZoneState == PlayerZoneState.Vein)
         {
             Vector3 current = currSeg.n1.transform.position - currSeg.n0.transform.position;
-            currentFactor = Vector3.Dot(direction, current.normalized) * 0.5f + 0.5f;
+            currentFactor = Mathf.Clamp01(Vector3.Dot(direction, current.normalized) * 0.5f + 1f);
         }
         velocity = direction * speed * currentFactor;
         transform.position += velocity * Time.deltaTime;
@@ -178,7 +178,7 @@ public partial class PlayerBehavior : MonoBehaviour
                 computedSegments.Add(seg);
             }
         }
-
+        prevSeg = currSeg;
         currSeg = potential;
     }
 

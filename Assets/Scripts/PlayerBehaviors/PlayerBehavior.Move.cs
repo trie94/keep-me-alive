@@ -7,8 +7,8 @@ public partial class PlayerBehavior : MonoBehaviour
     private Vector3 direction;
     public Vector3 Direction { get { return direction; } }
     private float speed;
-    private Segment prevSeg;
     private Segment currSeg;
+    private Vector3 current;
     private Zone currZone;
     private Vector3 velocity;
     public Vector3 Velocity { get { return velocity; } }
@@ -22,6 +22,7 @@ public partial class PlayerBehavior : MonoBehaviour
     private float rollRotationSpeed = 0.2f;
     private float pitch;
     private float yaw;
+    private float currentFactor = 0.01f;
 
     #region Debug
     [SerializeField]
@@ -36,6 +37,7 @@ public partial class PlayerBehavior : MonoBehaviour
     {
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
+        current = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
         transform.forward = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
         direction = transform.forward;
@@ -92,21 +94,19 @@ public partial class PlayerBehavior : MonoBehaviour
             direction = Vector3.Lerp(direction, Vector3.Project(direction, wallToPlayer) * Mathf.Sign(dot), 0.5f);
         }
 
-        float currentFactor = 1f;
+        velocity = direction * speed;
+        transform.position += velocity * Time.deltaTime;
         if (currZoneState == PlayerZoneState.Vein)
         {
-            Vector3 current = currSeg.n1.transform.position - currSeg.n0.transform.position;
-            currentFactor = Mathf.Clamp01(Vector3.Dot(direction, current.normalized) * 0.5f + 1f);
+            transform.position += current * currentFactor;
         }
-        velocity = direction * speed * currentFactor;
-        transform.position += velocity * Time.deltaTime;
         transform.rotation = rot;
     }
 
     // we need to check all the possible segments nearby because this does not
     // reflect the direction of the cell. If we don't count each node's prev and
     // next segments, it will cause an issue especially in the zone, where start
-    // and end node is mixed up. In order to avoid the same computation,
+    // and end node are mixed up. In order to avoid the same computation,
     // HashSet is used.
     private void UpdateCurrSeg()
     {
@@ -114,7 +114,9 @@ public partial class PlayerBehavior : MonoBehaviour
         float min = (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude;
 
         HashSet<Segment> computedSegments = new HashSet<Segment>();
+        List<NeighborSegments> neighborSegments = new List<NeighborSegments>();
         computedSegments.Add(potential);
+        neighborSegments.Add(new NeighborSegments(potential, min));
 
         var currStartNode = currSeg.n0;
         var currEndNode = currSeg.n1;
@@ -124,13 +126,14 @@ public partial class PlayerBehavior : MonoBehaviour
             var seg = currStartNode.prevSegments[i];
             if (!computedSegments.Contains(seg))
             {
-                float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-                if (distSqr < min)
+                float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+                if (sqrDist < min)
                 {
                     potential = seg;
-                    min = distSqr;
+                    min = sqrDist;
                 }
                 computedSegments.Add(seg);
+                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
             }
         }
 
@@ -139,13 +142,14 @@ public partial class PlayerBehavior : MonoBehaviour
             var seg = currStartNode.nextSegments[i];
             if (!computedSegments.Contains(seg))
             {
-                float distSqr = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-                if (distSqr < min)
+                float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
+                if (sqrDist < min)
                 {
                     potential = seg;
-                    min = distSqr;
+                    min = sqrDist;
                 }
                 computedSegments.Add(seg);
+                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
             }
         }
 
@@ -161,6 +165,7 @@ public partial class PlayerBehavior : MonoBehaviour
                     min = sqrDist;
                 }
                 computedSegments.Add(seg);
+                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
             }
         }
 
@@ -176,10 +181,30 @@ public partial class PlayerBehavior : MonoBehaviour
                     min = sqrDist;
                 }
                 computedSegments.Add(seg);
+                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
             }
         }
-        prevSeg = currSeg;
         currSeg = potential;
+        UpdateCurrent(neighborSegments);
+    }
+
+    private void UpdateCurrent(List<NeighborSegments> neighborSegments)
+    {
+        Debug.Assert(neighborSegments.Count > 0);
+        if (currZoneState == PlayerZoneState.Vein)
+        {
+            current = Vector3.zero;
+            for (int i=0; i<neighborSegments.Count; i++)
+            {
+                var segment = neighborSegments[i];
+                current += segment.drection * segment.weight;
+            }
+            current.Normalize();
+        }
+        else
+        {
+            current = Vector3.zero;
+        }
     }
 
     private void UpdateZoneState()
@@ -269,6 +294,18 @@ public partial class PlayerBehavior : MonoBehaviour
     }
     #endregion
 
+    public struct NeighborSegments
+    {
+        public Vector3 drection;
+        public float weight;
+
+        public NeighborSegments(Segment seg, float sqrDist)
+        {
+            drection = (seg.n1.transform.position - seg.n0.transform.position).normalized;
+            weight = 1f/sqrDist;
+        }
+    }
+
     #region debug
     private void MoveDebugIndicator()
     {
@@ -278,11 +315,9 @@ public partial class PlayerBehavior : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying) return;
-        Gizmos.color = Color.white;
-        Gizmos.DrawLine(transform.position, transform.position + direction);
-        // highlight currseg
+        // highlight current
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(currSeg.n0.transform.position, currSeg.n1.transform.position);
+        Gizmos.DrawLine(transform.position, transform.position + current);
 
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(transform.position, GetClosestPointOnLine(currSeg));

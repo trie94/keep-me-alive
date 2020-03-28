@@ -52,7 +52,7 @@ public partial class PlayerBehavior : MonoBehaviour
 
     private void UpdateMovement()
     {
-        UpdateCurrSeg();
+        UpdateSegmentAndCurrent();
         UpdateZoneState();
         isInsideTheBody = IsInsideTheBody();
 
@@ -85,7 +85,7 @@ public partial class PlayerBehavior : MonoBehaviour
         {
             // cancel out the direction by adding the opposite vector
             Vector3 wallToPlayer = (currZoneState == PlayerZoneState.Vein) ?
-                    GetClosestPointOnLine(currSeg) - transform.position
+                    CurrentManager.Instance.GetClosestPointOnLine(currSeg, transform) - transform.position
                     : currZone.transform.position - transform.position;
             wallToPlayer.Normalize();
 
@@ -103,108 +103,11 @@ public partial class PlayerBehavior : MonoBehaviour
         transform.rotation = rot;
     }
 
-    // we need to check all the possible segments nearby because this does not
-    // reflect the direction of the cell. If we don't count each node's prev and
-    // next segments, it will cause an issue especially in the zone, where start
-    // and end node are mixed up. In order to avoid the same computation,
-    // HashSet is used.
-    private void UpdateCurrSeg()
+    private void UpdateSegmentAndCurrent()
     {
-        Segment potential = currSeg;
-        float min = (GetClosestPointOnLine(potential) - transform.position).sqrMagnitude;
-
-        HashSet<Segment> computedSegments = new HashSet<Segment>();
-        List<NeighborSegments> neighborSegments = new List<NeighborSegments>();
-        computedSegments.Add(potential);
-        neighborSegments.Add(new NeighborSegments(potential, min));
-
-        var currStartNode = currSeg.n0;
-        var currEndNode = currSeg.n1;
-
-        for (int i = 0; i < currStartNode.prevSegments.Count; i++)
-        {
-            var seg = currStartNode.prevSegments[i];
-            if (!computedSegments.Contains(seg))
-            {
-                float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-                if (sqrDist < min)
-                {
-                    potential = seg;
-                    min = sqrDist;
-                }
-                computedSegments.Add(seg);
-                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
-            }
-        }
-
-        for (int i = 0; i < currStartNode.nextSegments.Count; i++)
-        {
-            var seg = currStartNode.nextSegments[i];
-            if (!computedSegments.Contains(seg))
-            {
-                float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-                if (sqrDist < min)
-                {
-                    potential = seg;
-                    min = sqrDist;
-                }
-                computedSegments.Add(seg);
-                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
-            }
-        }
-
-        for (int i = 0; i < currEndNode.prevSegments.Count; i++)
-        {
-            var seg = currEndNode.prevSegments[i];
-            if (!computedSegments.Contains(seg))
-            {
-                float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-                if (sqrDist < min)
-                {
-                    potential = seg;
-                    min = sqrDist;
-                }
-                computedSegments.Add(seg);
-                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
-            }
-        }
-
-        for (int i = 0; i < currEndNode.nextSegments.Count; i++)
-        {
-            var seg = currEndNode.nextSegments[i];
-            if (!computedSegments.Contains(seg))
-            {
-                float sqrDist = (GetClosestPointOnLine(seg) - transform.position).sqrMagnitude;
-                if (sqrDist < min)
-                {
-                    potential = seg;
-                    min = sqrDist;
-                }
-                computedSegments.Add(seg);
-                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
-            }
-        }
-        currSeg = potential;
-        UpdateCurrent(neighborSegments);
-    }
-
-    private void UpdateCurrent(List<NeighborSegments> neighborSegments)
-    {
-        Debug.Assert(neighborSegments.Count > 0);
-        if (currZoneState == PlayerZoneState.Vein)
-        {
-            current = Vector3.zero;
-            for (int i=0; i<neighborSegments.Count; i++)
-            {
-                var segment = neighborSegments[i];
-                current += segment.drection * segment.weight;
-            }
-            current.Normalize();
-        }
-        else
-        {
-            current = Vector3.zero;
-        }
+        CurrAndNeighborSegments pair = CurrentManager.Instance.GetCurrAndNeighborSegments(currSeg, transform);
+        currSeg = pair.currSeg;
+        current = CurrentManager.Instance.GetCurrent(pair.neighbors);
     }
 
     private void UpdateZoneState()
@@ -224,15 +127,6 @@ public partial class PlayerBehavior : MonoBehaviour
             currZoneState = PlayerZoneState.Vein;
             currZone = null;
         }
-    }
-
-    private Vector3 GetClosestPointOnLine(Segment seg)
-    {
-        Vector3 startPointToPlayer = transform.position - seg.n0.transform.position;
-        if (startPointToPlayer == Vector3.zero) return startPointToPlayer;
-        Vector3 segDir = (seg.n1.transform.position - seg.n0.transform.position);
-        float t = Mathf.Clamp01(Vector3.Dot(startPointToPlayer, segDir) / segDir.sqrMagnitude);
-        return seg.n0.transform.position + t * segDir;
     }
 
     #region collision detection
@@ -274,7 +168,7 @@ public partial class PlayerBehavior : MonoBehaviour
 
     private bool IsInSegment(Segment seg)
     {
-        Vector3 pointOnLine = GetClosestPointOnLine(seg);
+        Vector3 pointOnLine = CurrentManager.Instance.GetClosestPointOnLine(seg, transform);
         Vector3 playerToPoint = pointOnLine - transform.position;
         if (playerToPoint.sqrMagnitude <= maxDistFromCenterSqr)
         {
@@ -294,22 +188,11 @@ public partial class PlayerBehavior : MonoBehaviour
     }
     #endregion
 
-    public struct NeighborSegments
-    {
-        public Vector3 drection;
-        public float weight;
-
-        public NeighborSegments(Segment seg, float sqrDist)
-        {
-            drection = (seg.n1.transform.position - seg.n0.transform.position).normalized;
-            weight = 1f/sqrDist;
-        }
-    }
 
     #region debug
     private void MoveDebugIndicator()
     {
-        debugIndicatorOnLine.transform.position = GetClosestPointOnLine(currSeg);
+        debugIndicatorOnLine.transform.position = CurrentManager.Instance.GetClosestPointOnLine(currSeg, transform);
     }
 
     private void OnDrawGizmos()
@@ -320,7 +203,7 @@ public partial class PlayerBehavior : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + current);
 
         Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(transform.position, GetClosestPointOnLine(currSeg));
+        Gizmos.DrawLine(transform.position, CurrentManager.Instance.GetClosestPointOnLine(currSeg, transform));
     }
     #endregion
 }

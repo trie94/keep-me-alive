@@ -28,7 +28,7 @@ public class SmearEffect : MonoBehaviour
         _prevPosition = transform.position;
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         Vector3 velocity = (transform.position - _prevPosition) / Time.deltaTime;
         smearMat.SetVector("_Velocity", velocity);

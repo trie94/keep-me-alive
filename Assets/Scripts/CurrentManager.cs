@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class CurrentManager : MonoBehaviour
 {
+    // if you enable this, the game will be super super slow.
+    [SerializeField]
+    private bool drawForceField = false;
+
     private static CurrentManager instance;
     public static CurrentManager Instance
     {
@@ -31,7 +35,10 @@ public class CurrentManager : MonoBehaviour
             var segment = neighborSegments[i];
             current += segment.direction * segment.weight;
         }
-        current.Normalize();
+        if (current != Vector3.zero)
+        {
+            current.Normalize();
+        }
         return current;
     }
 
@@ -141,13 +148,146 @@ public class CurrentManager : MonoBehaviour
         return new CurrAndNeighborSegments(potential, neighborSegments);
     }
 
+    public CurrAndNeighborSegments GetCurrAndNeighborSegments(Segment currSeg, Vector3 position)
+    {
+        Segment potential = currSeg;
+        float min = (GetClosestPointOnLine(potential, position) - position).sqrMagnitude;
+
+        HashSet<Segment> computedSegments = new HashSet<Segment>();
+        List<NeighborSegments> neighborSegments = new List<NeighborSegments>();
+        computedSegments.Add(potential);
+        neighborSegments.Add(new NeighborSegments(potential, min));
+
+        var currStartNode = currSeg.n0;
+        var currEndNode = currSeg.n1;
+
+        for (int i = 0; i < currStartNode.prevSegments.Count; i++)
+        {
+            var seg = currStartNode.prevSegments[i];
+            if (!computedSegments.Contains(seg))
+            {
+                float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
+                if (sqrDist < min)
+                {
+                    potential = seg;
+                    min = sqrDist;
+                }
+                computedSegments.Add(seg);
+                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
+            }
+        }
+
+        for (int i = 0; i < currStartNode.nextSegments.Count; i++)
+        {
+            var seg = currStartNode.nextSegments[i];
+            if (!computedSegments.Contains(seg))
+            {
+                float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
+                if (sqrDist < min)
+                {
+                    potential = seg;
+                    min = sqrDist;
+                }
+                computedSegments.Add(seg);
+                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
+            }
+        }
+
+        for (int i = 0; i < currEndNode.prevSegments.Count; i++)
+        {
+            var seg = currEndNode.prevSegments[i];
+            if (!computedSegments.Contains(seg))
+            {
+                float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
+                if (sqrDist < min)
+                {
+                    potential = seg;
+                    min = sqrDist;
+                }
+                computedSegments.Add(seg);
+                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
+            }
+        }
+
+        for (int i = 0; i < currEndNode.nextSegments.Count; i++)
+        {
+            var seg = currEndNode.nextSegments[i];
+            if (!computedSegments.Contains(seg))
+            {
+                float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
+                if (sqrDist < min)
+                {
+                    potential = seg;
+                    min = sqrDist;
+                }
+                computedSegments.Add(seg);
+                neighborSegments.Add(new NeighborSegments(seg, sqrDist));
+            }
+        }
+
+        return new CurrAndNeighborSegments(potential, neighborSegments);
+    }
+
     public Vector3 GetClosestPointOnLine(Segment seg, Transform transform)
     {
-        Vector3 startPointToPlayer = transform.position - seg.n0.transform.position;
-        if (startPointToPlayer == Vector3.zero) return startPointToPlayer;
+        Vector3 startPointToTransform = transform.position - seg.n0.transform.position;
+        if (startPointToTransform == Vector3.zero) return startPointToTransform;
         Vector3 segDir = (seg.n1.transform.position - seg.n0.transform.position);
-        float t = Mathf.Clamp01(Vector3.Dot(startPointToPlayer, segDir) / segDir.sqrMagnitude);
+        float t = Mathf.Clamp01(Vector3.Dot(startPointToTransform, segDir) / segDir.sqrMagnitude);
         return seg.n0.transform.position + t * segDir;
+    }
+
+    public Vector3 GetClosestPointOnLine(Segment seg, Vector3 position)
+    {
+        Vector3 startPointToTransform = position - seg.n0.transform.position;
+        if (startPointToTransform == Vector3.zero) return startPointToTransform;
+        Vector3 segDir = (seg.n1.transform.position - seg.n0.transform.position);
+        float t = Mathf.Clamp01(Vector3.Dot(startPointToTransform, segDir) / segDir.sqrMagnitude);
+        return seg.n0.transform.position + t * segDir;
+    }
+
+    private void DrawForceField()
+    {
+        Gizmos.color = Color.magenta;
+        float numStepI = 1f;
+        float progress = 0f;
+
+        var segments = Path.Instance.segments;
+        for (int i=0; i<segments.Count; i++)
+        {
+            var currSeg = segments[i];
+            var currSegDir = (currSeg.n1.transform.position - currSeg.n0.transform.position);
+            float currSegMagnitude = currSegDir.magnitude;
+            float step = numStepI / currSegMagnitude;
+            while (progress <= 1f)
+            {
+                float offset = -3f;
+                while (offset <= 3f)
+                {
+                    var point1 = Path.Instance.GetPoint(currSeg, progress);
+                    var point2 = Path.Instance.GetPoint(currSeg, progress) + new Vector3(offset, 0, 0);
+                    var point3 = Path.Instance.GetPoint(currSeg, progress) + new Vector3(0, offset, 0);
+                    var point4 = Path.Instance.GetPoint(currSeg, progress) + new Vector3(0, 0, offset);
+                    var current1 = GetCurrent(GetCurrAndNeighborSegments(currSeg, point1).neighbors);
+                    var current2 = GetCurrent(GetCurrAndNeighborSegments(currSeg, point2).neighbors);
+                    var current3 = GetCurrent(GetCurrAndNeighborSegments(currSeg, point3).neighbors);
+                    var current4 = GetCurrent(GetCurrAndNeighborSegments(currSeg, point4).neighbors);
+                    Gizmos.DrawLine(point1, point1 + current1);
+                    Gizmos.DrawLine(point2, point2 + current2);
+                    Gizmos.DrawLine(point3, point3 + current3);
+                    Gizmos.DrawLine(point4, point4 + current4);
+                    offset += 0.5f;
+                }
+                progress += step;
+            }
+            progress = 0f;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying || !drawForceField) return;
+        DrawForceField();
     }
 }
 
@@ -171,7 +311,8 @@ public struct NeighborSegments
     public NeighborSegments(Segment seg, float sqrDist)
     {
         direction = (seg.n1.transform.position - seg.n0.transform.position).normalized;
-        weight = 1f / sqrDist;
+        // 0.1f is added to avoid dividing by zero.
+        weight = 1f / (sqrDist + 0.1f);
     }
 
     public NeighborSegments(Vector3 direction, float weight)

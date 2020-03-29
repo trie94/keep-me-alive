@@ -29,7 +29,6 @@ public class CellController : MonoBehaviour
     public List<Cell> platelets;
     // this is internal helper
     private Dictionary<CellType, List<Cell>> cellDictionary;
-    public Transform heart;
     private float radius = 3f;
 
     private void Awake()
@@ -71,9 +70,23 @@ public class CellController : MonoBehaviour
                          + Random.insideUnitSphere * radius;
     }
 
-    public Vector3 GetRandomPositionInHeartArea()
+    public BodyTissue GetTargetBodyTissue()
     {
-        return heart.position
-                    + Random.insideUnitSphere * radius;
+        List<BodyTissueGroup> groups = BodyTissueGenerator.Instance.bodyTissueGroups;
+        // first fit
+        for (int i=0; i<groups.Count; i++)
+        {
+            var currGroup = groups[i];
+            for (int j=0; j< currGroup.BodyTissues.Count; j++)
+            {
+                var currTissue = currGroup.BodyTissues[j];
+                if (currTissue.NeedOxygen())
+                {
+                    return currTissue;
+                }
+            }
+        }
+
+        return null;
     }
 }

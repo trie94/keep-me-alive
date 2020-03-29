@@ -228,6 +228,7 @@ public class CurrentManager : MonoBehaviour
         return new CurrAndNeighborSegments(potential, neighborSegments);
     }
 
+    // https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Vector_formulation
     public Vector3 GetClosestPointOnLine(Segment seg, Transform transform)
     {
         Vector3 startPointToTransform = transform.position - seg.n0.transform.position;

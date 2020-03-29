@@ -37,6 +37,6 @@ public class Heart : MonoBehaviour
 
     public void PointerDown(PointerEventData data)
     {
-        PlayerBehavior.Instance.carrier.ReleaseOxygen();
+        //PlayerBehavior.Instance.carrier.ReleaseOxygen();
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public enum MoleculeState
 {
-    OxygenArea, HopOnCell, BeingCarried, HeartArea, HitHeart, FallFromCell, Abandoned
+    OxygenArea, HopOnCell, BeingCarried, BodyTissueArea, HitBodyTissue, FallFromCell, Abandoned
 }
 
 [System.Serializable]
@@ -27,6 +27,7 @@ public class Oxygen : Molecule
     #region Movement
     [SerializeField]
     private OxygenMovement oxygenBehavior;
+    public BodyTissue targetBodyTissue;
 
     private Vector3 direction;
     private Vector2 velocityVZ;
@@ -172,13 +173,13 @@ public class Oxygen : Molecule
                 this, oxygenGroup, Path.Instance.OxygenZone.transform.position)
                 .normalized;
         }
-        else if (state == MoleculeState.HeartArea)
+        else if (state == MoleculeState.BodyTissueArea)
         {
             float dist = Vector3.SqrMagnitude(
-                transform.position - CellController.Instance.heart.position);
-            if (dist < 0.2f) state = MoleculeState.HitHeart;
+                transform.position - targetBodyTissue.transform.position);
+            if (dist < 0.2f) state = MoleculeState.HitBodyTissue;
         }
-        else if (state == MoleculeState.HitHeart)
+        else if (state == MoleculeState.HitBodyTissue)
         {
             if (resetTick > resetTime)
             {
@@ -207,9 +208,9 @@ public class Oxygen : Molecule
             transform.position = CustomSmoothDamp(hopOnHolder.attachPoint,
                 springDamp, springDamp / 2f);
         }
-        else if (state == MoleculeState.HeartArea)
+        else if (state == MoleculeState.BodyTissueArea)
         {
-            transform.position = CustomSmoothDamp(CellController.Instance.heart,
+            transform.position = CustomSmoothDamp(targetBodyTissue.transform.position,
                 springDampWhenReleased, springDampWhenReleased);
         }
         else if (state == MoleculeState.FallFromCell)

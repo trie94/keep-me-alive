@@ -6,13 +6,13 @@ public class MoleculeCarrierBehavior : MonoBehaviour
 {
     private int oxygenNumber = 0;
     private int oxygenCapacity = 4;
-    private Molecule[] childMoledules;
+    private Molecule[] childMolecules;
     [SerializeField]
     private MoleculeHolder[] holders;
 
     private void Awake()
     {
-        childMoledules = new Molecule[oxygenCapacity];
+        childMolecules = new Molecule[oxygenCapacity];
         for (int i = 0; i < holders.Length; i++)
         {
             holders[i].cell = this.transform;
@@ -24,9 +24,9 @@ public class MoleculeCarrierBehavior : MonoBehaviour
         Debug.Assert(CanGrabOxygen());
         for (int i=0; i<oxygenCapacity; i++)
         {
-            if (childMoledules[i] == null)
+            if (childMolecules[i] == null)
             {
-                childMoledules[i] = o;
+                childMolecules[i] = o;
                 o.hopOnHolder = holders[i];
                 break;
             }
@@ -36,16 +36,16 @@ public class MoleculeCarrierBehavior : MonoBehaviour
         o.state = MoleculeState.HopOnCell;
     }
 
-    public void ReleaseOxygen()
+    public void ReleaseOxygen(BodyTissue bodyTissue)
     {
         Molecule o = null;
         for (int i = 0; i < oxygenCapacity; i++)
         {
-            var oxygen = childMoledules[i];
-            if (oxygen != null)
+            var molecule = childMolecules[i];
+            if (molecule != null)
             {
-                o = oxygen;
-                childMoledules[i] = null;
+                o = molecule;
+                childMolecules[i] = null;
                 break;
             }
         }
@@ -54,7 +54,13 @@ public class MoleculeCarrierBehavior : MonoBehaviour
         o.hopOnHolder.Reset();
         o.hopOnHolder = null;
         o.carrier = null;
-        o.state = MoleculeState.HeartArea;
+        // TODO - clean up
+        if (o is Oxygen)
+        {
+            ((Oxygen)o).targetBodyTissue = bodyTissue;
+            bodyTissue.ReceiveOxygen();
+        }
+        o.state = MoleculeState.BodyTissueArea;
     }
 
     public void AbandonOxygen(Oxygen o)
@@ -62,9 +68,9 @@ public class MoleculeCarrierBehavior : MonoBehaviour
         Debug.Assert(CanReleaseOxygen());
         for (int i = 0; i < oxygenCapacity; i++)
         {
-            if (childMoledules[i] == o)
+            if (childMolecules[i] == o)
             {
-                childMoledules[i] = null;
+                childMolecules[i] = null;
                 break;
             }
         }

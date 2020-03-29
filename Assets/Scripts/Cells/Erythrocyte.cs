@@ -6,7 +6,7 @@ using UnityEngine;
 public enum ErythrocyteState
 {
     InVein, EnterOxygenArea, WaitOxygen, ExitOxygenArea,
-    EnterHeartArea, ReleaseOxygen, ExitHeartArea
+    EnterBodyTissueArea, ReleaseOxygen, ExitBodyTissueArea
 }
 
 public class Erythrocyte : Cell
@@ -100,50 +100,56 @@ public class Erythrocyte : Cell
                 cellState = ErythrocyteState.InVein;
             }
         }
-        else if (cellState == ErythrocyteState.EnterHeartArea)
+        else if (cellState == ErythrocyteState.EnterBodyTissueArea)
         {
             if (!carrier.CanReleaseOxygen())
             {
                 prevState = cellState;
-                cellState = ErythrocyteState.ExitHeartArea;
+                cellState = ErythrocyteState.ExitBodyTissueArea;
             }
             else
             {
-                if (target == null || prevState != cellState)
-                {
-                    prevState = cellState;
-                    target = CellController.Instance.GetRandomPositionInHeartArea();
-                }
-                velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
-
-                if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.7f)
-                {
-                    prevState = cellState;
-                    cellState = ErythrocyteState.ReleaseOxygen;
-                }
+                target = null;
+                cellState = ErythrocyteState.ReleaseOxygen;
             }
         }
         else if (cellState == ErythrocyteState.ReleaseOxygen)
         {
-            velocity = Vector3.zero;
-
             if (!carrier.CanReleaseOxygen())
             {
-                prevState = cellState;
-                cellState = ErythrocyteState.ExitHeartArea;
-                oxygenReleaseTick = 0f;
-            }
-            else if (oxygenReleaseTick >= oxygenReleaseInterval)
-            {
-                carrier.ReleaseOxygen();
+                cellState = ErythrocyteState.ExitBodyTissueArea;
                 oxygenReleaseTick = 0f;
             }
             else
             {
-                oxygenReleaseTick += Time.deltaTime;
+                if (prevState != cellState)
+                {
+                    target =  CellController.Instance.GetTargetBodyTissue().transform.position;
+                    velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
+                    prevState = cellState;
+                }
+                if (oxygenReleaseTick >= oxygenReleaseInterval)
+                {
+                    BodyTissue targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
+                    if ((targetBodyTissue.transform.position - transform.position).sqrMagnitude < 0.7f)
+                    {
+                        carrier.ReleaseOxygen(targetBodyTissue);
+                        oxygenReleaseTick = 0f;
+                    }
+                    else
+                    {
+                        target = targetBodyTissue.transform.position;
+                    }
+                }
+                else
+                {
+                    oxygenReleaseTick += Time.deltaTime;
+                }
             }
+            velocity = behaviors[(int)cellState].CalculateVelocity(
+                this, creatureGroups, target);
         }
-        else if (cellState == ErythrocyteState.ExitHeartArea)
+        else if (cellState == ErythrocyteState.ExitBodyTissueArea)
         {
             if (target == null || prevState != cellState)
             {
@@ -178,7 +184,7 @@ public class Erythrocyte : Cell
         var startNode = currSeg.n0.type;
         if (startNode == NodeType.HeartEntrance)
         {
-            cellState = ErythrocyteState.EnterHeartArea;
+            cellState = ErythrocyteState.EnterBodyTissueArea;
         }
         else if (startNode == NodeType.OxygenEntrance)
         {

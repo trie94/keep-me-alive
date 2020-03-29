@@ -5,6 +5,7 @@ using UnityEngine;
 public class BodyTissueGroup : MonoBehaviour
 {
     private List<BodyTissue> bodyTissues;
+    public List<BodyTissue> BodyTissues { get { return bodyTissues; } }
     private float radius;
     private int bodyTissueNum;
 

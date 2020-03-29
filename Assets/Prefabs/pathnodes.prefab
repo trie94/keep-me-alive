@@ -130,8 +130,9 @@ GameObject:
   - component: {fileID: 1232306309}
   - component: {fileID: 1232306310}
   - component: {fileID: 1232306307}
+  - component: {fileID: 5087168109227571634}
   m_Layer: 0
-  m_Name: heart area center
+  m_Name: body tissue area center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -209,6 +210,29 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &5087168109227571634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232306306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab0fa688109584fd6a057af92ab83f78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 12
+  tissueGroupNum: 5
+  bodyTissueGroupPrefab: {fileID: 7428149487976772159, guid: 36367c96488cd485c8a9d947beb98703,
+    type: 3}
+  bodyTissuePrefab: {fileID: 8771759978753654075, guid: ccf2c09486045454fb30628e8cb0ed8d,
+    type: 3}
+  center: {fileID: 0}
+  tunnelNodesToAvoid:
+  - {fileID: 1744733607271642540}
+  - {fileID: 1744733607612198334}
+  - {fileID: 1298469332}
 --- !u!1 &1298469328
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,7 +246,7 @@ GameObject:
   - component: {fileID: 1298469330}
   - component: {fileID: 1298469332}
   m_Layer: 0
-  m_Name: heart_exit2
+  m_Name: tissue_exit2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -971,7 +995,7 @@ GameObject:
   - component: {fileID: 1744733607271642542}
   - component: {fileID: 1744733607271642540}
   m_Layer: 0
-  m_Name: heart_entrance
+  m_Name: tissue_entrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1173,7 +1197,7 @@ GameObject:
   - component: {fileID: 1744733607612198332}
   - component: {fileID: 1744733607612198334}
   m_Layer: 0
-  m_Name: heart_exit
+  m_Name: tissue_exit1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

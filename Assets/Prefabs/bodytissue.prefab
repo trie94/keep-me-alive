@@ -88,6 +88,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4053794078986423775}
   - component: {fileID: 8771759978753654075}
+  - component: {fileID: -600265564628710393}
   m_Layer: 0
   m_Name: bodytissue
   m_TagString: Untagged
@@ -123,3 +124,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carbonDioxideSpawnInterval: 10
+  uiRevealDist: 7
+--- !u!114 &-600265564628710393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1984060171535916591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3042d1d9e91143eb98f287697c30ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoveringUIPrefab: {fileID: 1593215134683537758, guid: 2e4f93ce6518344afbdb6ad417a67b5e,
+    type: 3}

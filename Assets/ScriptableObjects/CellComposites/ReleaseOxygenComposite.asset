@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ReleaseOxygenComposite
   m_EditorClassIdentifier: 
   behaviors:
-  - {fileID: 11400000, guid: 531cb041a58414923bf6f6c0eaed9472, type: 2}
+  - {fileID: 11400000, guid: 0de1f3b4628df4531a9842190bd51ec7, type: 2}
   weights:
   - 1
-  debug: {x: -0.055210944, y: -0.9718264, z: 0.06511017}
+  debugVelocity: {x: 0.6879766, y: 0.7162393, z: 0.11700232}

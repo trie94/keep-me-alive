@@ -23,7 +23,6 @@ public class Platelet : Cell
     private void InitLimbs()
     {
         int limbNum = Random.Range(5, maxLimbNum);
-        float zAngle = 360f / limbNum;
         Quaternion rotation = Quaternion.identity;
         int length = Shader.PropertyToID("_Length");
         int thickness = Shader.PropertyToID("_Thickness");
@@ -32,7 +31,7 @@ public class Platelet : Cell
         for (int i = 0; i < limbNum; i++)
         {
             rotation = Random.rotationUniform;
-            GameObject limb = Instantiate(limbPrefab, this.transform.position, rotation, this.transform);
+            GameObject limb = Instantiate(limbPrefab, transform.position, rotation, transform);
             Material limbMat = limb.GetComponent<Renderer>().material;
             limbMat.SetFloat(length, Random.Range(2f, 2.3f));
             limbMat.SetFloat(thickness, Random.Range(1.0f, 1.2f));

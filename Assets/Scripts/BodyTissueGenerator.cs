@@ -7,7 +7,8 @@ public class BodyTissueGenerator : MonoBehaviour
     public float radius = 12;
     [SerializeField]
     private int tissueGroupNum = 5;
-    private List<BodyTissueGroup> bodyTissueGroups;
+    [HideInInspector]
+    public List<BodyTissueGroup> bodyTissueGroups;
     [SerializeField]
     private BodyTissueGroup bodyTissueGroupPrefab;
     public BodyTissue bodyTissuePrefab;

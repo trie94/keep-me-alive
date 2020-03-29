@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 // TODO - tissue type will be needed if planning to add different behaviors
 // based on the different tissues.
+// TODO - tissue needs state especially for animation..
 public class BodyTissue : MonoBehaviour
 {
     #region oxygen
@@ -27,6 +28,9 @@ public class BodyTissue : MonoBehaviour
     private float length;
     private float speed;
     #endregion
+
+    private bool isOccupied;
+    public bool IsOccupied { get { return isOccupied; } set { isOccupied = value; } }
 
     [SerializeField]
     private float uiRevealDist;
@@ -72,6 +76,7 @@ public class BodyTissue : MonoBehaviour
     public void ReceiveOxygen()
     {
         oxygenNumber++;
+        Debug.Assert(oxygenNumber <= oxygenCapacity);
         StartCoroutine(ConsumeOxygen());
     }
 
@@ -84,5 +89,6 @@ public class BodyTissue : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         oxygenNumber--;
+        oxygenTick = 0f;
     }
 }

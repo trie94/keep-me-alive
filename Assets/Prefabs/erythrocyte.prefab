@@ -398,7 +398,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: abc8fdc7f6eb6423390579d16df7ad52, type: 2}
   - {fileID: 11400000, guid: 2a2f89c04c541494887e7a6d62d32956, type: 2}
   - {fileID: 11400000, guid: 08ed00fdc87064d189698208e184ae54, type: 2}
-  - {fileID: 11400000, guid: 844e56444655642f5884367ae3473309, type: 2}
   - {fileID: 11400000, guid: 9f2bb948cf1204210b8b1e5df0282eaf, type: 2}
   - {fileID: 11400000, guid: a0fa33a8adbf34459bd4a8d33edadb14, type: 2}
   progress: 0

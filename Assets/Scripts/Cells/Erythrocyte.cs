@@ -5,8 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public enum ErythrocyteState
 {
-    InVein, EnterOxygenArea, WaitOxygen, ExitOxygenArea,
-    EnterBodyTissueArea, ReleaseOxygen, ExitBodyTissueArea
+    InVein, EnterOxygenArea, WaitOxygen, ExitOxygenArea, BodyTissueArea, ExitBodyTissueArea
 }
 
 public class Erythrocyte : Cell
@@ -23,6 +22,7 @@ public class Erythrocyte : Cell
     private Vector3 velocity;
     public Vector3 Velocity { get { return velocity; } }
     private MoleculeCarrierBehavior carrier;
+    private BodyTissue targetBodyTissue;
 
     public override void Awake()
     {
@@ -100,54 +100,48 @@ public class Erythrocyte : Cell
                 cellState = ErythrocyteState.InVein;
             }
         }
-        else if (cellState == ErythrocyteState.EnterBodyTissueArea)
+        else if (cellState == ErythrocyteState.BodyTissueArea)
         {
             if (!carrier.CanReleaseOxygen())
             {
                 prevState = cellState;
                 cellState = ErythrocyteState.ExitBodyTissueArea;
-            }
-            else
-            {
-                target = null;
-                cellState = ErythrocyteState.ReleaseOxygen;
-            }
-        }
-        else if (cellState == ErythrocyteState.ReleaseOxygen)
-        {
-            if (!carrier.CanReleaseOxygen())
-            {
-                cellState = ErythrocyteState.ExitBodyTissueArea;
                 oxygenReleaseTick = 0f;
+                targetBodyTissue = null;
+                target = null;
             }
             else
             {
                 if (prevState != cellState)
                 {
-                    target =  CellController.Instance.GetTargetBodyTissue().transform.position;
-                    velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
+                    targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
+                    targetBodyTissue.IsOccupied = true;
+                    target = targetBodyTissue.transform.position;
                     prevState = cellState;
                 }
                 if (oxygenReleaseTick >= oxygenReleaseInterval)
                 {
-                    BodyTissue targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
-                    if ((targetBodyTissue.transform.position - transform.position).sqrMagnitude < 0.7f)
+                    Debug.Assert(targetBodyTissue != null);
+                    if ((targetBodyTissue.transform.position - transform.position).sqrMagnitude < 1f)
                     {
                         carrier.ReleaseOxygen(targetBodyTissue);
                         oxygenReleaseTick = 0f;
-                    }
-                    else
-                    {
-                        target = targetBodyTissue.transform.position;
+                        if (!targetBodyTissue.NeedOxygen())
+                        {
+                            // unoccupy the current target and find a new one
+                            targetBodyTissue.IsOccupied = false;
+                            targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
+                            targetBodyTissue.IsOccupied = true;
+                            target = targetBodyTissue.transform.position; ;
+                        }
                     }
                 }
                 else
                 {
                     oxygenReleaseTick += Time.deltaTime;
                 }
+                velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
             }
-            velocity = behaviors[(int)cellState].CalculateVelocity(
-                this, creatureGroups, target);
         }
         else if (cellState == ErythrocyteState.ExitBodyTissueArea)
         {
@@ -184,7 +178,7 @@ public class Erythrocyte : Cell
         var startNode = currSeg.n0.type;
         if (startNode == NodeType.HeartEntrance)
         {
-            cellState = ErythrocyteState.EnterBodyTissueArea;
+            cellState = ErythrocyteState.BodyTissueArea;
         }
         else if (startNode == NodeType.OxygenEntrance)
         {

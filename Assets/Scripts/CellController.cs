@@ -80,7 +80,7 @@ public class CellController : MonoBehaviour
             for (int j=0; j< currGroup.BodyTissues.Count; j++)
             {
                 var currTissue = currGroup.BodyTissues[j];
-                if (currTissue.NeedOxygen())
+                if (!currTissue.IsOccupied && currTissue.NeedOxygen())
                 {
                     return currTissue;
                 }

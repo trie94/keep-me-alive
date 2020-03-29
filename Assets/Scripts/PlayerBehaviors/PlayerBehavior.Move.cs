@@ -96,6 +96,7 @@ public partial class PlayerBehavior : MonoBehaviour
 
         velocity = direction * speed;
         transform.position += velocity * Time.deltaTime;
+
         if (currZoneState == PlayerZoneState.Vein)
         {
             transform.position += current * currentFactor;

@@ -54,17 +54,38 @@ public class CurrentManager : MonoBehaviour
     startNode : endNode;
             Vector3 nodeToPosition = (position - closerNode.transform.position).normalized;
             Vector3 current = Vector3.zero;
+            //List<float> distFactors = new List<float>();
+            //for (int i = 0; i < closerNode.nextSegments.Count; i++)
+            //{
+            //    Segment seg = closerNode.nextSegments[i];
+            //    float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
+            //    distFactors.Add(1f / (sqrDist + 0.1f));
+            //}
+
+            //for (int i = 0; i < closerNode.prevSegments.Count; i++)
+            //{
+            //    Segment seg = closerNode.prevSegments[i];
+            //    float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
+            //    distFactors.Add(1f / (sqrDist + 0.1f));
+            //}
+
+            //for (int i = 0; i < closerNode.nextSegments.Count; i++)
+            //{
+            //    Segment seg = closerNode.nextSegments[i];
+            //    float weight = Mathf.Cos(Vector3.Angle(seg.Direction, nodeToPosition) * Mathf.Deg2Rad) * 0.5f + 0.5f;
+            //    current += seg.Direction * weight * distFactors[i];
+            //}
+
+            //for (int i = 0; i < closerNode.prevSegments.Count; i++)
+            //{
+            //    Segment seg = closerNode.prevSegments[i];
+            //    float weight = Mathf.Cos(Vector3.Angle(-seg.Direction, nodeToPosition) * Mathf.Deg2Rad) * 0.5f + 0.5f;
+            //    current += seg.Direction * weight * distFactors[i + closerNode.nextSegments.Count];
+            //}
+
             List<float> weights = new List<float>();
-
-            for (int i=0; i<closerNode.nextSegments.Count; i++)
+            for (int i = 0; i < closerNode.nextSegments.Count + closerNode.prevSegments.Count; i++)
             {
-                Vector3 seg = closerNode.nextSegments[i].Direction;
-                weights.Add(1f);
-            }
-
-            for (int i=0; i<closerNode.prevSegments.Count; i++)
-            {
-                Vector3 seg = closerNode.prevSegments[i].Direction;
                 weights.Add(1f);
             }
 
@@ -73,7 +94,7 @@ public class CurrentManager : MonoBehaviour
                 Vector3 seg = closerNode.nextSegments[i].Direction;
                 float weight = Mathf.Cos(Vector3.Angle(seg, nodeToPosition) * Mathf.Deg2Rad) * 0.5f + 0.5f;
                 weight = 1 - weight;
-                for (int j=0; j<weights.Count; j++)
+                for (int j = 0; j < weights.Count; j++)
                 {
                     if (j == i) continue;
                     weights[j] *= weight;
@@ -93,7 +114,7 @@ public class CurrentManager : MonoBehaviour
             }
 
             float sum = 0f;
-            for (int i=0; i<weights.Count; i++)
+            for (int i = 0; i < weights.Count; i++)
             {
                 sum += weights[i];
             }
@@ -105,7 +126,7 @@ public class CurrentManager : MonoBehaviour
 
             for (int i = 0; i < closerNode.prevSegments.Count; i++)
             {
-                current += closerNode.prevSegments[i].Direction * weights[i+closerNode.nextSegments.Count] / sum;
+                current += closerNode.prevSegments[i].Direction * weights[i + closerNode.nextSegments.Count] / sum;
             }
 
             if (current != Vector3.zero) current.Normalize();
@@ -207,7 +228,7 @@ public class CurrentManager : MonoBehaviour
     {
         Gizmos.color = Color.magenta;
         float numStep = 1f;
-        float progress = 0f;
+        float progress = -0.5f;
         var stepSize = 1f;
         var radiusSize = 3.5f;
 
@@ -218,7 +239,7 @@ public class CurrentManager : MonoBehaviour
             float currSegMagnitude = (currSeg.end.transform.position - currSeg.start.transform.position).magnitude;
             float segmentStepSize = numStep / currSegMagnitude;
 
-            while (progress <= 1f)
+            while (progress <= 1.5f)
             {
                 float stepX = -radiusSize;
                 while (stepX < radiusSize)
@@ -237,7 +258,7 @@ public class CurrentManager : MonoBehaviour
                 }
                 progress += segmentStepSize;
             }
-            progress = 0f;
+            progress = -0.5f;
         }
     }
 

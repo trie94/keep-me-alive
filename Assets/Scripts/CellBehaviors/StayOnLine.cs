@@ -9,7 +9,7 @@ public class StayOnLine : CellMovement
     {
         if (creature.currSeg == null) return Vector3.zero;
         Vector3 cellToClosestPointOnLine =
-            CurrentManager.Instance.GetClosestPointOnLine(creature.currSeg, creature.transform);
+            CurrentManager.Instance.GetClosestPointOnLine(creature.currSeg, creature.transform.position);
         float distFactor = cellToClosestPointOnLine.sqrMagnitude;
         distFactor = Mathf.Pow(Mathf.Clamp01(distFactor), 3f) * distFactor;
         Vector3 velocity = Vector3.Lerp(cellToClosestPointOnLine - creature.transform.position, creature.transform.forward, 0.5f);

@@ -39,7 +39,7 @@ public class PathTester : MonoBehaviour
 
     private Segment GetNextSegment()
     {
-        var nextSeg = currSeg.n1.nextSegments;
+        var nextSeg = currSeg.end.nextSegments;
         if (nextSeg.Count > 1)
         {
             float weightSum = 0f;

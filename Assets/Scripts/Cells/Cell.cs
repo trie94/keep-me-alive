@@ -164,7 +164,7 @@ public abstract class Cell : MonoBehaviour
         for (int i = 0; i < worms.Count; i++)
         {
             var currWorm = worms[i];
-            if (Vector3.SqrMagnitude(currWorm.transform.position-transform.position) <= squareGermDetectionRadius)
+            if (Vector3.SqrMagnitude(currWorm.transform.position - transform.position) <= squareGermDetectionRadius)
             {
                 neighbors.Add(currWorm.transform);
             }
@@ -172,11 +172,11 @@ public abstract class Cell : MonoBehaviour
         return neighbors;
     }
 
-    public virtual void UpdateCellState(){}
+    public virtual void UpdateCellState() { }
 
     public Segment GetNextSegment()
     {
-        var nextSeg = currSeg.n1.nextSegments;
+        var nextSeg = currSeg.end.nextSegments;
         if (nextSeg.Count > 1)
         {
             float weightSum = 0f;

@@ -41,12 +41,12 @@ public class Node : MonoBehaviour
         for (int i = 0; i < segments.Count; i++)
         {
             Segment segment = segments[i];
-            if (segment.n0 == this)
+            if (segment.start == this)
             {
                 nextSegments.Add(segment);
             }
 
-            if (segment.n1 == this)
+            if (segment.end == this)
             {
                 prevSegments.Add(segment);
             }

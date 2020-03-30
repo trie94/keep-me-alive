@@ -224,6 +224,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 12
   tissueGroupNum: 5
+  bodyTissueGroups: []
   bodyTissueGroupPrefab: {fileID: 7428149487976772159, guid: 36367c96488cd485c8a9d947beb98703,
     type: 3}
   bodyTissuePrefab: {fileID: 8771759978753654075, guid: ccf2c09486045454fb30628e8cb0ed8d,
@@ -428,11 +429,11 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 1958153948}
-    n1: {fileID: 1744733607387678229}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
-  - n0: {fileID: 1958153948}
-    n1: {fileID: 1744733607271642540}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.1
   prevSegments: []
 --- !u!1 &2059411983
@@ -532,11 +533,11 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 2059411984}
-    n1: {fileID: 1744733607387678229}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
-  - n0: {fileID: 2059411984}
-    n1: {fileID: 1744733607271642540}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.1
   prevSegments: []
 --- !u!1 &13004270762772884
@@ -636,8 +637,8 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 1970005630889468328}
-    n1: {fileID: 1744733608133129532}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
   prevSegments: []
 --- !u!1 &132772382051046917
@@ -770,11 +771,11 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 226601619222964672}
-    n1: {fileID: 1744733607387678229}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
-  - n0: {fileID: 226601619222964672}
-    n1: {fileID: 1744733607271642540}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.1
   prevSegments: []
 --- !u!1 &1744733606995955197
@@ -874,8 +875,8 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 1744733606995955184}
-    n1: {fileID: 1744733608133129532}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
   prevSegments: []
 --- !u!1 &1744733607041646859
@@ -975,11 +976,11 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 1744733607041646862}
-    n1: {fileID: 1744733607387678229}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
-  - n0: {fileID: 1744733607041646862}
-    n1: {fileID: 1744733607271642540}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.1
   prevSegments: []
 --- !u!1 &1744733607271642537
@@ -1079,8 +1080,8 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 1744733607271642540}
-    n1: {fileID: 1744733607387678229}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.1
   prevSegments: []
 --- !u!1 &1744733607387678226
@@ -1180,8 +1181,8 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 1744733607387678229}
-    n1: {fileID: 1744733606995955184}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
   prevSegments: []
 --- !u!1 &1744733607612198328
@@ -1330,69 +1331,69 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segments:
-  - n0: {fileID: 9143663679814473166}
-    n1: {fileID: 1744733606995955184}
+  - start: {fileID: 1744733607387678229}
+    end: {fileID: 333408048}
     weight: 20
-  - n0: {fileID: 1744733606995955184}
-    n1: {fileID: 1744733608133129532}
+  - start: {fileID: 9143663679814473166}
+    end: {fileID: 1744733606995955184}
     weight: 20
-  - n0: {fileID: 1744733608133129532}
-    n1: {fileID: 1744733607041646862}
+  - start: {fileID: 1744733606995955184}
+    end: {fileID: 1744733608133129532}
     weight: 20
-  - n0: {fileID: 1744733607041646862}
-    n1: {fileID: 1744733607271642540}
+  - start: {fileID: 1744733608133129532}
+    end: {fileID: 1744733607041646862}
     weight: 20
-  - n0: {fileID: 1744733607612198334}
-    n1: {fileID: 5051724644277841183}
+  - start: {fileID: 1744733607041646862}
+    end: {fileID: 1744733607271642540}
     weight: 20
-  - n0: {fileID: 5051724644277841183}
-    n1: {fileID: 226601619222964672}
+  - start: {fileID: 1744733607271642540}
+    end: {fileID: 1232306310}
     weight: 20
-  - n0: {fileID: 226601619222964672}
-    n1: {fileID: 7611166827882450612}
+  - start: {fileID: 1232306310}
+    end: {fileID: 1744733607612198334}
     weight: 20
-  - n0: {fileID: 7611166827882450612}
-    n1: {fileID: 1744733607387678229}
+  - start: {fileID: 1232306310}
+    end: {fileID: 1298469332}
     weight: 20
-  - n0: {fileID: 1744733608133129532}
-    n1: {fileID: 1970005630889468328}
+  - start: {fileID: 1744733607612198334}
+    end: {fileID: 5051724644277841183}
+    weight: 20
+  - start: {fileID: 5051724644277841183}
+    end: {fileID: 226601619222964672}
+    weight: 20
+  - start: {fileID: 6232059262851009609}
+    end: {fileID: 1744733607041646862}
     weight: 11
-  - n0: {fileID: 1970005630889468328}
-    n1: {fileID: 2989354937284863538}
-    weight: 2
-  - n0: {fileID: 2989354937284863538}
-    n1: {fileID: 6232059262851009609}
-    weight: 2
-  - n0: {fileID: 6232059262851009609}
-    n1: {fileID: 1744733607041646862}
-    weight: 11
-  - n0: {fileID: 1298469332}
-    n1: {fileID: 2059411984}
+  - start: {fileID: 1298469332}
+    end: {fileID: 2059411984}
     weight: 15
-  - n0: {fileID: 1958153948}
-    n1: {fileID: 5051724644277841183}
-    weight: 15
-  - n0: {fileID: 1744733607387678229}
-    n1: {fileID: 333408048}
-    weight: 20
-  - n0: {fileID: 333408048}
-    n1: {fileID: 9143663679814473166}
-    weight: 20
-  - n0: {fileID: 1744733607271642540}
-    n1: {fileID: 1232306310}
-    weight: 20
-  - n0: {fileID: 1232306310}
-    n1: {fileID: 1744733607612198334}
-    weight: 20
-  - n0: {fileID: 1232306310}
-    n1: {fileID: 1298469332}
-    weight: 20
-  - n0: {fileID: 2059411984}
-    n1: {fileID: 1958153948}
+  - start: {fileID: 2059411984}
+    end: {fileID: 1958153948}
     weight: 10
-  - n0: {fileID: 1958153948}
-    n1: {fileID: 7611166827882450612}
+  - start: {fileID: 1958153948}
+    end: {fileID: 7611166827882450612}
     weight: 15
+  - start: {fileID: 226601619222964672}
+    end: {fileID: 7611166827882450612}
+    weight: 20
+  - start: {fileID: 1744733607387678229}
+    end: {fileID: 333408048}
+    weight: 20
+  - start: {fileID: 333408048}
+    end: {fileID: 9143663679814473166}
+    weight: 20
+  - start: {fileID: 7611166827882450612}
+    end: {fileID: 1744733607387678229}
+    weight: 20
+  - start: {fileID: 1744733608133129532}
+    end: {fileID: 1970005630889468328}
+    weight: 11
+  - start: {fileID: 1970005630889468328}
+    end: {fileID: 2989354937284863538}
+    weight: 2
+  - start: {fileID: 2989354937284863538}
+    end: {fileID: 6232059262851009609}
+    weight: 2
   nodes:
   - {fileID: 1744733607387678229}
   - {fileID: 9143663679814473166}
@@ -1530,8 +1531,8 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 1744733608133129532}
-    n1: {fileID: 1744733607041646862}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
   prevSegments: []
 --- !u!1 &2714604239477560338
@@ -1631,8 +1632,8 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 6232059262851009609}
-    n1: {fileID: 1744733608133129532}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
   prevSegments: []
 --- !u!1 &3614598663555632488
@@ -1807,11 +1808,11 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 7611166827882450612}
-    n1: {fileID: 1744733607387678229}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
-  - n0: {fileID: 7611166827882450612}
-    n1: {fileID: 1744733607271642540}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.1
   prevSegments: []
 --- !u!1 &7573385763328296409
@@ -1911,8 +1912,8 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 2989354937284863538}
-    n1: {fileID: 1744733608133129532}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
   prevSegments: []
 --- !u!1 &7594733687361008929
@@ -2012,11 +2013,11 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 5051724644277841183}
-    n1: {fileID: 1744733607387678229}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
-  - n0: {fileID: 5051724644277841183}
-    n1: {fileID: 1744733607271642540}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.1
   prevSegments: []
 --- !u!1 &8308772554128042200
@@ -2116,7 +2117,7 @@ MonoBehaviour:
   forward: 0.5
   backward: 0.5
   nextSegments:
-  - n0: {fileID: 9143663679814473166}
-    n1: {fileID: 1744733606995955184}
+  - start: {fileID: 0}
+    end: {fileID: 0}
     weight: 1.4
   prevSegments: []

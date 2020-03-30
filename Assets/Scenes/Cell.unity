@@ -599,7 +599,6 @@ MonoBehaviour:
   erythrocytes: []
   leukocytes: []
   platelets: []
-  heart: {fileID: 0}
 --- !u!4 &1356003340
 Transform:
   m_ObjectHideFlags: 0
@@ -710,7 +709,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8ab4862435fe4eb39c0ec44588cd2d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawForceField: 0
+  drawForceField: 1
 --- !u!21 &1486204305
 Material:
   serializedVersion: 6

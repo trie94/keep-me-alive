@@ -5,9 +5,18 @@ using UnityEngine;
 [System.Serializable]
 public class Segment
 {
-    public Node n0;
-    public Node n1;
+    public Node start;
+    public Node end;
     public float weight;
+    private Vector3 direction;
+    public Vector3 Direction { get { return direction; } set { direction = value; } }
+
+    public Segment(Node start, Node end, float weight)
+    {
+        this.start = start;
+        this.end = end;
+        this.weight = weight;
+    }
 }
 
 [ExecuteInEditMode]
@@ -47,6 +56,12 @@ public class Path : MonoBehaviour
 
     private void Awake()
     {
+        for (int i=0; i<segments.Count; i++)
+        {
+            var currSeg = segments[i];
+            currSeg.Direction = (currSeg.end.transform.position - currSeg.start.transform.position).normalized;
+        }
+
         // build exit node segment lists
         oxygenExitNodes = new HashSet<Node>();
         heartExitNodes = new HashSet<Node>();
@@ -80,7 +95,7 @@ public class Path : MonoBehaviour
         for (int i = 0; i < segments.Count; i++)
         {
             var currSeg = segments[i];
-            if (exitNode.Contains(currSeg.n0))
+            if (exitNode.Contains(currSeg.start))
             {
                 exitSegments.Add(currSeg);
             }
@@ -93,7 +108,7 @@ public class Path : MonoBehaviour
         {
             var currSeg = segments[i];
             currSeg.weight
-                   = GetWeight(currSeg.n0.weight) + GetWeight(currSeg.n1.weight);
+                   = GetWeight(currSeg.start.weight) + GetWeight(currSeg.end.weight);
         }
     }
 
@@ -114,6 +129,6 @@ public class Path : MonoBehaviour
 
     public Vector3 GetPoint(Segment s, float t)
     {
-        return Vector3.Lerp(s.n0.transform.position, s.n1.transform.position, t);
+        return Vector3.Lerp(s.start.transform.position, s.end.transform.position, t);
     }
 }

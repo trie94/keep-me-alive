@@ -37,9 +37,9 @@ public partial class PlayerBehavior : MonoBehaviour
     {
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
-        current = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
+        current = (currSeg.end.transform.position - currSeg.start.transform.position).normalized;
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
-        transform.forward = (currSeg.n1.transform.position - currSeg.n0.transform.position).normalized;
+        transform.forward = (currSeg.end.transform.position - currSeg.start.transform.position).normalized;
         direction = transform.forward;
         yaw = transform.rotation.eulerAngles.y;
         pitch = transform.rotation.eulerAngles.x;
@@ -85,7 +85,7 @@ public partial class PlayerBehavior : MonoBehaviour
         {
             // cancel out the direction by adding the opposite vector
             Vector3 wallToPlayer = (currZoneState == PlayerZoneState.Vein) ?
-                    CurrentManager.Instance.GetClosestPointOnLine(currSeg, transform) - transform.position
+                    CurrentManager.Instance.GetClosestPointOnLine(currSeg, transform.position) - transform.position
                     : currZone.transform.position - transform.position;
             wallToPlayer.Normalize();
 
@@ -96,29 +96,24 @@ public partial class PlayerBehavior : MonoBehaviour
 
         velocity = direction * speed;
         transform.position += velocity * Time.deltaTime;
-
-        if (currZoneState == PlayerZoneState.Vein)
-        {
-            transform.position += current * currentFactor;
-        }
+        transform.position += current * currentFactor;
         transform.rotation = rot;
     }
 
     private void UpdateSegmentAndCurrent()
     {
-        CurrAndNeighborSegments pair = CurrentManager.Instance.GetCurrAndNeighborSegments(currSeg, transform);
-        currSeg = pair.currSeg;
-        current = CurrentManager.Instance.GetCurrent(pair.neighbors);
+        currSeg = CurrentManager.Instance.UpdateCurrentSegment(currSeg, transform.position);
+        current = CurrentManager.Instance.GetCurrent(currZoneState, currSeg, transform.position);
     }
 
     private void UpdateZoneState()
     {
-        if (currSeg.n0.type == NodeType.OxygenEntrance || currSeg.n0.type == NodeType.Oxygen)
+        if (currSeg.start.type == NodeType.OxygenEntrance || currSeg.start.type == NodeType.Oxygen)
         {
             currZoneState = PlayerZoneState.OxygenArea;
             currZone = Path.Instance.OxygenZone;
         }
-        else if (currSeg.n0.type == NodeType.HeartEntrance || currSeg.n0.type == NodeType.Heart)
+        else if (currSeg.start.type == NodeType.HeartEntrance || currSeg.start.type == NodeType.Heart)
         {
             currZoneState = PlayerZoneState.HeartArea;
             currZone = Path.Instance.HeartZone;
@@ -133,9 +128,9 @@ public partial class PlayerBehavior : MonoBehaviour
     #region collision detection
     private bool IsInsideTheBody()
     {
-        float sqrDistBetweenPlayerAndStartNode = (transform.position - currSeg.n0.transform.position).sqrMagnitude;
-        float sqrDistBetweenPlayerAndEndNode = (transform.position - currSeg.n1.transform.position).sqrMagnitude;
-        return sqrDistBetweenPlayerAndStartNode <= sqrDistBetweenPlayerAndEndNode ? IsInside(currSeg.n0) : IsInside(currSeg.n1);
+        float sqrDistBetweenPlayerAndStartNode = (transform.position - currSeg.start.transform.position).sqrMagnitude;
+        float sqrDistBetweenPlayerAndEndNode = (transform.position - currSeg.end.transform.position).sqrMagnitude;
+        return sqrDistBetweenPlayerAndStartNode <= sqrDistBetweenPlayerAndEndNode ? IsInside(currSeg.start) : IsInside(currSeg.end);
     }
 
     private bool IsInside(Node node)
@@ -169,7 +164,7 @@ public partial class PlayerBehavior : MonoBehaviour
 
     private bool IsInSegment(Segment seg)
     {
-        Vector3 pointOnLine = CurrentManager.Instance.GetClosestPointOnLine(seg, transform);
+        Vector3 pointOnLine = CurrentManager.Instance.GetClosestPointOnLine(seg, transform.position);
         Vector3 playerToPoint = pointOnLine - transform.position;
         if (playerToPoint.sqrMagnitude <= maxDistFromCenterSqr)
         {
@@ -193,7 +188,7 @@ public partial class PlayerBehavior : MonoBehaviour
     #region debug
     private void MoveDebugIndicator()
     {
-        debugIndicatorOnLine.transform.position = CurrentManager.Instance.GetClosestPointOnLine(currSeg, transform);
+        debugIndicatorOnLine.transform.position = CurrentManager.Instance.GetClosestPointOnLine(currSeg, transform.position);
     }
 
     private void OnDrawGizmos()
@@ -204,7 +199,7 @@ public partial class PlayerBehavior : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + current);
 
         Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(transform.position, CurrentManager.Instance.GetClosestPointOnLine(currSeg, transform));
+        Gizmos.DrawLine(transform.position, CurrentManager.Instance.GetClosestPointOnLine(currSeg, transform.position));
     }
     #endregion
 }

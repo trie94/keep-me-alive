@@ -8,8 +8,8 @@ public class FollowPath : CellMovement
     public override Vector3 CalculateVelocity(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
         creature.progress += Time.deltaTime * creature.speed;
-        if (creature.currSeg.n0 == null || creature.currSeg.n1 == null) return Vector3.zero;
-        float distSqrt = (creature.currSeg.n1.transform.position - creature.transform.position).sqrMagnitude;
+        if (creature.currSeg.start == null || creature.currSeg.end == null) return Vector3.zero;
+        float distSqrt = (creature.currSeg.end.transform.position - creature.transform.position).sqrMagnitude;
 
         if (distSqrt <= 1.5f)
         {
@@ -19,8 +19,8 @@ public class FollowPath : CellMovement
         }
 
         if (creature.currSeg == null) return Vector3.zero;
-        Vector3 velocity = creature.currSeg.n1.transform.position
-                                   - creature.currSeg.n0.transform.position;
+        Vector3 velocity = creature.currSeg.end.transform.position
+                                   - creature.currSeg.start.transform.position;
         return velocity;
     }
 }

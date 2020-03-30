@@ -91,8 +91,8 @@ public class PathBuilder : MonoBehaviour
         {
             // put sphere on the node
             Segment currSeg = Path.Instance.segments[i];
-            Node startNode = currSeg.n0;
-            Node endNode = currSeg.n1;
+            Node startNode = currSeg.start;
+            Node endNode = currSeg.end;
 
             Vector3 direction = endNode.transform.position - startNode.transform.position;
             Quaternion rotation = Quaternion.LookRotation(direction.normalized);

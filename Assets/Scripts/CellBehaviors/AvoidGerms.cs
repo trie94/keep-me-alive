@@ -20,8 +20,8 @@ public class AvoidGerms : CellMovement
             var currWorm = neighbors[i];
             Vector3 cellToWorm = currWorm.position - creature.transform.position;
             distFactor = cellToWorm.sqrMagnitude;
-            Vector3 segmentToProject = creature.currSeg.n1.transform.position
-                                               - creature.currSeg.n0.transform.position;
+            Vector3 segmentToProject = creature.currSeg.end.transform.position
+                                               - creature.currSeg.start.transform.position;
             Vector3 projectedVector = Vector3.Project(cellToWorm, segmentToProject);
             Vector3 projectedVectorToWorm = cellToWorm - projectedVector;
             Vector3 singleVelocity = -projectedVectorToWorm;

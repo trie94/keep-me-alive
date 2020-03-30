@@ -14,8 +14,8 @@ public class PathEditor : Editor
         for (int i = 0; i < path.segments.Count; i++)
         {
             Segment currSeg = path.segments[i];
-            Node segmentStart = currSeg.n0;
-            Node segmentEnd = currSeg.n1;
+            Node segmentStart = currSeg.start;
+            Node segmentEnd = currSeg.end;
             Handles.color = new Color(1, 1, 1, currSeg.weight * 0.3f);
 
             Vector3 p0 = segmentStart.transform.position;

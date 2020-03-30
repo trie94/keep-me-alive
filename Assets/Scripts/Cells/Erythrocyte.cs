@@ -90,7 +90,7 @@ public class Erythrocyte : Cell
             {
                 prevState = cellState;
                 int targetIndex = Random.Range(0, Path.Instance.OxygenExitSegments.Count);
-                target = Path.Instance.OxygenExitSegments[targetIndex].n0.transform.position;
+                target = Path.Instance.OxygenExitSegments[targetIndex].start.transform.position;
             }
 
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
@@ -149,7 +149,7 @@ public class Erythrocyte : Cell
             {
                 prevState = cellState;
                 int targetIndex = Random.Range(0, Path.Instance.HeartExitSegments.Count);
-                target = Path.Instance.HeartExitSegments[targetIndex].n0.transform.position;
+                target = Path.Instance.HeartExitSegments[targetIndex].start.transform.position;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
             if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
@@ -175,7 +175,7 @@ public class Erythrocyte : Cell
     public override void UpdateCellState()
     {
         prevState = cellState;
-        var startNode = currSeg.n0.type;
+        var startNode = currSeg.start.type;
         if (startNode == NodeType.HeartEntrance)
         {
             cellState = ErythrocyteState.BodyTissueArea;

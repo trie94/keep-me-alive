@@ -25,6 +25,10 @@ public partial class PlayerBehavior : MonoBehaviour
     {
         instance = this;
         carrier = GetComponent<MoleculeCarrierBehavior>();
+    }
+
+    private void Start()
+    {
         InitMovement();
     }
 

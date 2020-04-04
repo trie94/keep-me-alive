@@ -54,79 +54,33 @@ public class CurrentManager : MonoBehaviour
     startNode : endNode;
             Vector3 nodeToPosition = (position - closerNode.transform.position).normalized;
             Vector3 current = Vector3.zero;
-            //List<float> distFactors = new List<float>();
-            //for (int i = 0; i < closerNode.nextSegments.Count; i++)
-            //{
-            //    Segment seg = closerNode.nextSegments[i];
-            //    float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
-            //    distFactors.Add(1f / (sqrDist + 0.1f));
-            //}
-
-            //for (int i = 0; i < closerNode.prevSegments.Count; i++)
-            //{
-            //    Segment seg = closerNode.prevSegments[i];
-            //    float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
-            //    distFactors.Add(1f / (sqrDist + 0.1f));
-            //}
-
-            //for (int i = 0; i < closerNode.nextSegments.Count; i++)
-            //{
-            //    Segment seg = closerNode.nextSegments[i];
-            //    float weight = Mathf.Cos(Vector3.Angle(seg.Direction, nodeToPosition) * Mathf.Deg2Rad) * 0.5f + 0.5f;
-            //    current += seg.Direction * weight * distFactors[i];
-            //}
-
-            //for (int i = 0; i < closerNode.prevSegments.Count; i++)
-            //{
-            //    Segment seg = closerNode.prevSegments[i];
-            //    float weight = Mathf.Cos(Vector3.Angle(-seg.Direction, nodeToPosition) * Mathf.Deg2Rad) * 0.5f + 0.5f;
-            //    current += seg.Direction * weight * distFactors[i + closerNode.nextSegments.Count];
-            //}
-
-            List<float> weights = new List<float>();
-            for (int i = 0; i < closerNode.nextSegments.Count + closerNode.prevSegments.Count; i++)
-            {
-                weights.Add(1f);
-            }
-
+            List<float> distFactors = new List<float>();
             for (int i = 0; i < closerNode.nextSegments.Count; i++)
             {
-                Vector3 seg = closerNode.nextSegments[i].Direction;
-                float weight = Mathf.Cos(Vector3.Angle(seg, nodeToPosition) * Mathf.Deg2Rad) * 0.5f + 0.5f;
-                weight = 1 - weight;
-                for (int j = 0; j < weights.Count; j++)
-                {
-                    if (j == i) continue;
-                    weights[j] *= weight;
-                }
+                Segment seg = closerNode.nextSegments[i];
+                float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
+                distFactors.Add(1f / (sqrDist + 0.1f));
             }
 
             for (int i = 0; i < closerNode.prevSegments.Count; i++)
             {
-                Vector3 seg = closerNode.prevSegments[i].Direction;
-                float weight = Mathf.Cos(Vector3.Angle(-seg, nodeToPosition) * Mathf.Deg2Rad) * 0.5f + 0.5f;
-                weight = 1 - weight;
-                for (int j = 0; j < weights.Count; j++)
-                {
-                    if (j == i + closerNode.nextSegments.Count) continue;
-                    weights[j] *= weight;
-                }
-            }
-
-            float sum = 0f;
-            for (int i = 0; i < weights.Count; i++)
-            {
-                sum += weights[i];
+                Segment seg = closerNode.prevSegments[i];
+                float sqrDist = (GetClosestPointOnLine(seg, position) - position).sqrMagnitude;
+                distFactors.Add(1f / (sqrDist + 0.1f));
             }
 
             for (int i = 0; i < closerNode.nextSegments.Count; i++)
             {
-                current += closerNode.nextSegments[i].Direction * weights[i] / sum;
+                Segment seg = closerNode.nextSegments[i];
+                float weight = Mathf.Cos(Vector3.Angle(seg.Direction, nodeToPosition) * Mathf.Deg2Rad) * 0.5f + 0.5f;
+                current += seg.Direction * weight * distFactors[i];
             }
 
             for (int i = 0; i < closerNode.prevSegments.Count; i++)
             {
-                current += closerNode.prevSegments[i].Direction * weights[i + closerNode.nextSegments.Count] / sum;
+                Segment seg = closerNode.prevSegments[i];
+                float weight = Mathf.Cos(Vector3.Angle(-seg.Direction, nodeToPosition) * Mathf.Deg2Rad) * 0.5f + 0.5f;
+                current += seg.Direction * weight * distFactors[i + closerNode.nextSegments.Count];
             }
 
             if (current != Vector3.zero) current.Normalize();

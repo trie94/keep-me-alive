@@ -37,10 +37,8 @@ public partial class PlayerBehavior : MonoBehaviour
     {
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
-        current = (currSeg.end.transform.position - currSeg.start.transform.position).normalized;
         transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
-        transform.forward = (currSeg.end.transform.position - currSeg.start.transform.position).normalized;
-        direction = transform.forward;
+        transform.forward = direction = current = currSeg.Direction;
         yaw = transform.rotation.eulerAngles.y;
         pitch = transform.rotation.eulerAngles.x;
         if (pitch > 180f) pitch -= 360f;

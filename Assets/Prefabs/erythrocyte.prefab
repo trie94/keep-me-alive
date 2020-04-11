@@ -403,8 +403,8 @@ MonoBehaviour:
   progress: 0
   speed: 0
   currSeg:
-    n0: {fileID: 0}
-    n1: {fileID: 0}
+    start: {fileID: 0}
+    end: {fileID: 0}
     weight: 0
   neighborRadius: 2.1
   avoidanceRadius: 0.8

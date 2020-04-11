@@ -709,7 +709,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8ab4862435fe4eb39c0ec44588cd2d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawForceField: 1
+  drawForceField: 0
 --- !u!21 &1486204305
 Material:
   serializedVersion: 6

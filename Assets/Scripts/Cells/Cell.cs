@@ -80,7 +80,10 @@ public abstract class Cell : MonoBehaviour
         currSeg = Path.Instance.segments[segIndex];
         progress = Random.Range(0f, 1f);
         transform.position = Path.Instance.GetPoint(currSeg, progress);
-        transform.rotation = Random.rotation;
+        if (currSeg.Direction != Vector3.zero)
+        {
+            transform.forward = currSeg.Direction;
+        }
         PickNextEmotionAndReset();
     }
 

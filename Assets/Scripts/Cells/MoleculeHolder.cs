@@ -12,10 +12,10 @@ public class MoleculeHolder : MonoBehaviour
     [HideInInspector]
     public Transform cell;
 
-    private float offset = -0.49f;
-    private float noiseFreq = 0.612f;
-    private float noiseScale = 1.18f;
-    private float noiseHeight = 0.087f;
+    private float offset;
+    private float noiseFreq;
+    private float noiseScale;
+    private float noiseHeight;
     private Vector3 position;
     private Vector3 cellPrevPosition;
 
@@ -23,13 +23,22 @@ public class MoleculeHolder : MonoBehaviour
     {
         position = transform.localPosition;
         cellPrevPosition = cell.position;
-        if (GetComponentInParent<PlayerBehavior>() != null)
+        // Get renderer and material from the parent
+        Renderer[] rends = GetComponentsInParent<Renderer>();
+        Renderer rend = null;
+        for (int i=0; i<rends.Length; i++)
         {
-            offset = 1f;
-            noiseFreq = 0.72f;
-            noiseScale = 0.96f;
-            noiseHeight = 0.041f;
+            if (rends[i] != GetComponent<Renderer>())
+            {
+                rend = rends[i];
+                break;
+            }
         }
+
+        offset = rend.material.GetFloat("_Offset");
+        noiseFreq = rend.material.GetFloat("_NoiseFreq");
+        noiseScale = rend.material.GetFloat("_NoiseScale");
+        noiseHeight = rend.material.GetFloat("_NoiseHeight");
     }
 
     private void LateUpdate()

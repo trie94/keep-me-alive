@@ -4,35 +4,26 @@ using UnityEngine;
 
 public class SmearEffect : MonoBehaviour
 {
-    private Material _smearMat = null;
+    private Material smearMat = null;
     private Renderer rend;
-    private Vector3 _prevPosition;
-
-    public Material smearMat
-    {
-        get
-        {
-            if (!_smearMat)
-                _smearMat = rend.material;
-
-            if (!_smearMat.HasProperty("_PrevPosition"))
-                _smearMat.shader = Shader.Find("Unlit/Cell");
-
-            return _smearMat;
-        }
-    }
+    private Vector3 prevPosition;
+    private int velocityId;
+    private int positionId;
 
     private void Awake()
     {
         rend = GetComponent<Renderer>();
-        _prevPosition = transform.position;
+        smearMat = rend.material;
+        prevPosition = transform.position;
+        velocityId = Shader.PropertyToID("_Velocity");
+        positionId = Shader.PropertyToID("_Position");
     }
 
-    private void Update()
+    private void LateUpdate()
     {
-        Vector3 velocity = (transform.position - _prevPosition) / Time.deltaTime;
-        smearMat.SetVector("_Velocity", velocity);
-        smearMat.SetVector("_Position", transform.position);
-        _prevPosition = transform.position;
+        Vector3 velocity = (transform.position - prevPosition) / Time.deltaTime;
+        smearMat.SetVector(velocityId, velocity);
+        smearMat.SetVector(positionId, transform.position);
+        prevPosition = transform.position;
     }
 }

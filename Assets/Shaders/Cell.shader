@@ -6,7 +6,6 @@
         _Face ("Face", 2D) = "black" {}
         _Ramp ("Toon Ramp (RGB)", 2D) = "white" {}
 
-        _PrevPosition("Prev Position", Vector) = (0, 0, 0, 0)
         _Position("Position", Vector) = (0, 0, 0, 0)
 
         _NoiseFreq("Noise Frequency", Range(0, 1)) = 1.0
@@ -57,7 +56,6 @@
             sampler2D _BackgroundTexture;
             fixed4 _Color;
 
-            float4 _PrevPosition;
             float4 _Position;
             float3 _Velocity;
 

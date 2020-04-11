@@ -73,9 +73,9 @@ Material:
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseFreq: 0.692
+    - _NoiseFreq: 0.48
     - _NoiseHeight: 0.205
-    - _NoiseScale: 1.15
+    - _NoiseScale: 0.83
     - _OcclusionStrength: 1
     - _Offset: 0.662
     - _Parallax: 0.02

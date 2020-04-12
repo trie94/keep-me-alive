@@ -83,8 +83,6 @@
 
                 float dirDot = abs(dot(normalizedVelocity, normalize(localOffset)) + _Offset);
                 fixed3 smearOffset = _Velocity.xyz * (dirDot + snoise(worldPos.xyz * _NoiseFreq) * _NoiseScale) * _NoiseHeight;
-                //fixed3 smearOffset = (snoise(worldPos.xyz * _NoiseFreq) * _NoiseScale) * _NoiseHeight;
-
                 worldPos.xyz -= smearOffset;
                 o.smearVal = smearOffset;
                 o.vertex = UnityWorldToClipPos(worldPos);

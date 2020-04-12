@@ -31,6 +31,8 @@ public class BodyTissue : MonoBehaviour
 
     private bool isOccupied;
     public bool IsOccupied { get { return isOccupied; } set { isOccupied = value; } }
+    private Vector3 head;
+    public Vector3 Head { get { return head; } }
 
     [SerializeField]
     private float uiRevealDist;
@@ -38,17 +40,39 @@ public class BodyTissue : MonoBehaviour
 
     private InteractableObject interactable;
 
+    private Renderer rend;
+    private Material mat;
+
+    private int lengthId;
+    private int speedId;
+    private int wobbleId;
+    private int flipId;
+
+    private void Awake()
+    {
+        rend = GetComponentInChildren<Renderer>();
+        mat = rend.material;
+        lengthId = Shader.PropertyToID("_BodyLength");
+        speedId = Shader.PropertyToID("_Speed");
+        wobbleId = Shader.PropertyToID("_Wobble");
+        flipId = Shader.PropertyToID("_Flip");
+    }
+
     private void Start()
     {
         interactable = GetComponent<InteractableObject>();
         interactable.RegisterCallback(EventTriggerType.PointerDown, PointerDown);
         uiRevealDistSqrt = uiRevealDist * uiRevealDist;
+        head = transform.position;
     }
 
     private void Update()
     {
-        float distSqrt = Vector3.SqrMagnitude(PlayerBehavior.Instance.transform.position - transform.position);
-        Vector3 direction = (PlayerBehavior.Instance.transform.position - transform.position).normalized;
+        UpdateHeadPosition();
+        interactable.SetDifferentUiRevealPosition(head);
+
+        float distSqrt = Vector3.SqrMagnitude(PlayerBehavior.Instance.transform.position - head);
+        Vector3 direction = (PlayerBehavior.Instance.transform.position - head).normalized;
         float dot = Vector3.Dot(direction, PlayerBehavior.Instance.transform.forward);
 
         if (PlayerBehavior.Instance.carrier.CanReleaseOxygen()
@@ -61,6 +85,24 @@ public class BodyTissue : MonoBehaviour
         {
             interactable.IsInteractable = false;
         }
+    }
+
+    private void UpdateHeadPosition()
+    {
+        // this can be moved to start if no dynamic change is needed.
+        float bodyLength = mat.GetFloat(lengthId);
+        float wobble = mat.GetFloat(wobbleId);
+        float speed = mat.GetFloat(speedId);
+        float flip = mat.GetFloat(flipId);
+        Vector3 localPos = transform.InverseTransformPoint(transform.localPosition);
+
+        float z = localPos.z * bodyLength;
+        z += bodyLength - 2.5f;
+        localPos.z = z;
+        float y = Mathf.Sin(z + Time.time * speed) * wobble;
+        localPos.y += y * flip;
+
+        head = transform.TransformPoint(localPos);
     }
 
     public void PointerDown(PointerEventData data)

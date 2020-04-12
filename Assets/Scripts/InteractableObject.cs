@@ -26,6 +26,9 @@ public class InteractableObject : MonoBehaviour
     private bool isInteractable = false;
     public bool IsInteractable { get { return isInteractable; } set { isInteractable = value; } }
 
+    private Vector3 uiRevealPosition;
+    private bool hasDifferentRevealPosition = false;
+
     private void Awake()
     {
         mainCam = Camera.main;
@@ -41,7 +44,8 @@ public class InteractableObject : MonoBehaviour
         if (isInteractable)
         {
             hoveringUI.SetActive(true);
-            Vector3 screenPos = mainCam.WorldToScreenPoint(transform.position);
+            Vector3 screenPos = (hasDifferentRevealPosition)? mainCam.WorldToScreenPoint(uiRevealPosition) : mainCam.WorldToScreenPoint(transform.position);
+
             hoveringUI.transform.position = screenPos;
             isInteractable = true;
         }
@@ -58,5 +62,11 @@ public class InteractableObject : MonoBehaviour
         entry.eventID = eventTriggerType;
         entry.callback.AddListener((data) => { callback((PointerEventData)data); });
         eventTrigger.triggers.Add(entry);
+    }
+
+    public void SetDifferentUiRevealPosition(Vector3 pos)
+    {
+        uiRevealPosition = pos;
+        hasDifferentRevealPosition = true;
     }
 }

@@ -78,7 +78,6 @@
                 v2f o;
                 o.localPos = v.vertex;
                 v.vertex.xy = v.vertex.xy * pow(saturate(v.vertex.z + _Deform), _DeformPower);
-
                 if (abs(v.vertex.z) <= _Cap) {
                     v.vertex.z *= _BodyLength;
                 } else {

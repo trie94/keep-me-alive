@@ -11,7 +11,7 @@
         _BodyLength ("Length", Range(1, 6)) = 1.0
         _Cap ("Cap", Range(-0.5, 1.0)) = 0.0
 
-        _Speed ("Speed", Range(1.0, 70.0)) = 0.1
+        _Speed ("Speed", Range(1.0, 20.0)) = 0.1
         _Wobble ("Wobble", Range(0.0, 1.0)) = 0.1
 
         _Deform ("Deform", Range(-1.5, 3.0)) = 0.1
@@ -84,11 +84,13 @@
                 } else {
                     v.vertex.z += (_BodyLength-1) * sign(v.vertex.z);
                 }
-                
+                // this makes the gameobject body located at the bottom
+                v.vertex.z += (_BodyLength-1);
+
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
                 o.worldPos = worldPos;
 
-                float y = sin(v.vertex.z + (_Time.x * _Speed)) * _Wobble;
+                float y = sin(v.vertex.z + (_Time.y * _Speed)) * _Wobble;
                 v.vertex.y += y * _Flip;
 
                 o.worldNormal = mul((float3x3)unity_ObjectToWorld, v.normal);

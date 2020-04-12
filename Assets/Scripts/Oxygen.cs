@@ -176,7 +176,7 @@ public class Oxygen : Molecule
         else if (state == MoleculeState.BodyTissueArea)
         {
             float dist = Vector3.SqrMagnitude(
-                transform.position - targetBodyTissue.transform.position);
+                transform.position - targetBodyTissue.Head);
             if (dist < 0.2f) state = MoleculeState.HitBodyTissue;
         }
         else if (state == MoleculeState.HitBodyTissue)
@@ -210,7 +210,7 @@ public class Oxygen : Molecule
         }
         else if (state == MoleculeState.BodyTissueArea)
         {
-            transform.position = CustomSmoothDamp(targetBodyTissue.transform.position,
+            transform.position = CustomSmoothDamp(targetBodyTissue.Head,
                 springDampWhenReleased, springDampWhenReleased);
         }
         else if (state == MoleculeState.FallFromCell)

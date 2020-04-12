@@ -68,7 +68,7 @@ Material:
     - _BumpScale: 1
     - _Cap: 1
     - _Cutoff: 0.5
-    - _Deform: 1.49
+    - _Deform: 3
     - _DeformPower: 0.395
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -85,7 +85,7 @@ Material:
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Speed: 35.4
+    - _Speed: 4.4
     - _SrcBlend: 1
     - _SwayMax: 0.83
     - _UVSec: 0
@@ -95,4 +95,5 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HeadColor: {r: 1, g: 0.41037738, b: 0.41037738, a: 1}
+    - _HeadPosition: {r: 0, g: 0, b: 0, a: 0}
     - _TailColor: {r: 1, g: 0.6556604, b: 0.6556604, a: 1}

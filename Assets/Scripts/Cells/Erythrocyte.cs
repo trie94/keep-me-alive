@@ -71,7 +71,7 @@ public class Erythrocyte : Cell
         {
             velocity = behaviors[(int)cellState].CalculateVelocity(
                 this, creatureGroups, Path.Instance.OxygenZone.transform.position);
-            if (carrier.CanGrabOxygen())
+            if (carrier.CanGrab())
             {
                 carrier.GrabOxygens();
             }
@@ -116,13 +116,13 @@ public class Erythrocyte : Cell
                 {
                     targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
                     targetBodyTissue.IsOccupied = true;
-                    target = targetBodyTissue.transform.position;
+                    target = targetBodyTissue.Head;
                     prevState = cellState;
                 }
                 if (oxygenReleaseTick >= oxygenReleaseInterval)
                 {
                     Debug.Assert(targetBodyTissue != null);
-                    if ((targetBodyTissue.transform.position - transform.position).sqrMagnitude < 1f)
+                    if ((targetBodyTissue.Head - transform.position).sqrMagnitude < 1f)
                     {
                         carrier.ReleaseOxygen(targetBodyTissue);
                         oxygenReleaseTick = 0f;
@@ -132,7 +132,7 @@ public class Erythrocyte : Cell
                             targetBodyTissue.IsOccupied = false;
                             targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
                             targetBodyTissue.IsOccupied = true;
-                            target = targetBodyTissue.transform.position; ;
+                            target = targetBodyTissue.Head;
                         }
                     }
                 }

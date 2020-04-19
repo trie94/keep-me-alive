@@ -175,8 +175,7 @@ public class Oxygen : Molecule
         }
         else if (state == MoleculeState.BodyTissueArea)
         {
-            float dist = Vector3.SqrMagnitude(
-                transform.position - targetBodyTissue.Head);
+            float dist = Vector3.SqrMagnitude(transform.position - targetBodyTissue.Head);
             if (dist < 0.2f) state = MoleculeState.HitBodyTissue;
         }
         else if (state == MoleculeState.HitBodyTissue)
@@ -273,7 +272,7 @@ public class Oxygen : Molecule
         Vector3 direction = (PlayerBehavior.Instance.transform.position - transform.position).normalized;
         float dot = Vector3.Dot(direction, PlayerBehavior.Instance.transform.forward);
 
-        if (PlayerBehavior.Instance.carrier.CanGrabOxygen()
+        if (PlayerBehavior.Instance.carrier.CanGrab()
             && distSqrt < uiRevealDistSqrt && dot < 0)
         {
             interactable.IsInteractable = true;

@@ -4,25 +4,25 @@ using UnityEngine;
 
 public class MoleculeCarrierBehavior : MonoBehaviour
 {
-    private int oxygenNumber = 0;
-    private int oxygenCapacity = 4;
+    private int moleculeNumber = 0;
+    private int moleculeCapacity = 4;
     private Molecule[] childMolecules;
     [SerializeField]
     private MoleculeHolder[] holders;
 
     private void Awake()
     {
-        childMolecules = new Molecule[oxygenCapacity];
+        childMolecules = new Molecule[moleculeCapacity];
         for (int i = 0; i < holders.Length; i++)
         {
             holders[i].cell = this.transform;
         }
     }
 
-    public void GrabOxygen(Molecule o)
+    public void GrabOxygen(Oxygen o)
     {
-        Debug.Assert(CanGrabOxygen());
-        for (int i=0; i<oxygenCapacity; i++)
+        Debug.Assert(CanGrab());
+        for (int i=0; i<moleculeCapacity; i++)
         {
             if (childMolecules[i] == null)
             {
@@ -31,42 +31,38 @@ public class MoleculeCarrierBehavior : MonoBehaviour
                 break;
             }
         }
-        oxygenNumber++;
+        moleculeNumber++;
         o.carrier = this;
         o.state = MoleculeState.HopOnCell;
     }
 
     public void ReleaseOxygen(BodyTissue bodyTissue)
     {
-        Molecule o = null;
-        for (int i = 0; i < oxygenCapacity; i++)
+        Oxygen o = null;
+        for (int i = 0; i < moleculeCapacity; i++)
         {
             var molecule = childMolecules[i];
-            if (molecule != null)
+            if (molecule != null && molecule is Oxygen)
             {
-                o = molecule;
+                o = (Oxygen)molecule;
                 childMolecules[i] = null;
                 break;
             }
         }
-        oxygenNumber--;
+        moleculeNumber--;
         Debug.Assert(o != null);
         o.hopOnHolder.Reset();
         o.hopOnHolder = null;
         o.carrier = null;
-        // TODO - clean up
-        if (o is Oxygen)
-        {
-            ((Oxygen)o).targetBodyTissue = bodyTissue;
-            bodyTissue.ReceiveOxygen();
-        }
+        o.targetBodyTissue = bodyTissue;
+        bodyTissue.ReceiveOxygen();
         o.state = MoleculeState.BodyTissueArea;
     }
 
     public void AbandonOxygen(Oxygen o)
     {
         Debug.Assert(CanReleaseOxygen());
-        for (int i = 0; i < oxygenCapacity; i++)
+        for (int i = 0; i < moleculeCapacity; i++)
         {
             if (childMolecules[i] == o)
             {
@@ -74,7 +70,7 @@ public class MoleculeCarrierBehavior : MonoBehaviour
                 break;
             }
         }
-        oxygenNumber--;
+        moleculeNumber--;
         Debug.Assert(o != null);
         o.hopOnHolder.Reset();
         o.carrier = null;
@@ -83,21 +79,21 @@ public class MoleculeCarrierBehavior : MonoBehaviour
 
     public void GrabOxygens()
     {
-        for (int i = 0; i < oxygenCapacity; i++)
+        for (int i = 0; i < moleculeCapacity; i++)
         {
             Oxygen oxygen = OxygenController.Instance.oxygens.Pop();
             GrabOxygen(oxygen);
         }
     }
 
-    public bool CanGrabOxygen()
+    public bool CanGrab()
     {
-        return oxygenNumber < oxygenCapacity;
+        return moleculeNumber < moleculeCapacity;
     }
 
     public bool CanReleaseOxygen()
     {
-        return oxygenNumber > 0;
+        return moleculeNumber > 0;
     }
 
     public bool IsReadyToGo()

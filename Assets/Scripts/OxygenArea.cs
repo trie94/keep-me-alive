@@ -23,7 +23,7 @@ public class OxygenArea : MonoBehaviour
         Vector3 direction = (PlayerBehavior.Instance.transform.position - transform.position).normalized;
         float dot = Vector3.Dot(direction, PlayerBehavior.Instance.transform.forward);
 
-        if (PlayerBehavior.Instance.carrier.CanGrabOxygen()
+        if (PlayerBehavior.Instance.carrier.CanGrab()
             && distSqrt < uiRevealDistSqrt && dot < 0)
         {
             interactable.IsInteractable = true;

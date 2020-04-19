@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ public class MoleculeCarrierBehavior : MonoBehaviour
     private Molecule[] childMolecules;
     [SerializeField]
     private MoleculeHolder[] holders;
+    private bool canAbandonOxygen = false;
+    public bool CanAbandonOxygen { get { return canAbandonOxygen; } set { canAbandonOxygen = value; } }
 
     private void Awake()
     {
@@ -56,7 +59,7 @@ public class MoleculeCarrierBehavior : MonoBehaviour
         o.carrier = null;
         o.targetBodyTissue = bodyTissue;
         bodyTissue.ReceiveOxygen();
-        o.state = MoleculeState.BodyTissueArea;
+        o.state = MoleculeState.Released;
     }
 
     public void AbandonOxygen(Oxygen o)

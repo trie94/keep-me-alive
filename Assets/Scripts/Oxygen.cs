@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public enum MoleculeState
 {
-    OxygenArea, HopOnCell, BeingCarried, BodyTissueArea, HitBodyTissue, FallFromCell, Abandoned
+    OxygenArea, HopOnCell, BeingCarried, Released, HitBodyTissue, FallFromCell, Abandoned
 }
 
 [System.Serializable]
@@ -127,11 +127,13 @@ public class Oxygen : Molecule
         else if (state == MoleculeState.BeingCarried)
         {
             oxygenGroup[type] = neighbors;
-            float squareDistBetweenHolderAndOxygen =
-                (hopOnHolder.attachPoint - transform.position).sqrMagnitude;
-            if (squareDistBetweenHolderAndOxygen > squareDetachDist)
+            if (carrier.CanAbandonOxygen)
             {
-                carrier.AbandonOxygen(this);
+                float squareDistBetweenHolderAndOxygen = (hopOnHolder.attachPoint - transform.position).sqrMagnitude;
+                if (squareDistBetweenHolderAndOxygen > squareDetachDist)
+                {
+                    carrier.AbandonOxygen(this);
+                }
             }
         }
         else if (state == MoleculeState.FallFromCell)
@@ -173,7 +175,7 @@ public class Oxygen : Molecule
                 this, oxygenGroup, Path.Instance.OxygenZone.transform.position)
                 .normalized;
         }
-        else if (state == MoleculeState.BodyTissueArea)
+        else if (state == MoleculeState.Released)
         {
             float dist = Vector3.SqrMagnitude(transform.position - targetBodyTissue.Head);
             if (dist < 0.2f) state = MoleculeState.HitBodyTissue;
@@ -207,7 +209,7 @@ public class Oxygen : Molecule
             transform.position = CustomSmoothDamp(hopOnHolder.attachPoint,
                 springDamp, springDamp / 2f);
         }
-        else if (state == MoleculeState.BodyTissueArea)
+        else if (state == MoleculeState.Released)
         {
             transform.position = CustomSmoothDamp(targetBodyTissue.Head,
                 springDampWhenReleased, springDampWhenReleased);

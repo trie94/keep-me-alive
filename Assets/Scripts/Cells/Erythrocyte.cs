@@ -49,6 +49,7 @@ public class Erythrocyte : Cell
             if (prevState != cellState)
             {
                 currSeg = GetNextSegment();
+                carrier.CanAbandonOxygen = true;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups);
         }
@@ -58,6 +59,7 @@ public class Erythrocyte : Cell
             {
                 prevState = cellState;
                 target = CellController.Instance.GetRandomPositionInOxygenArea();
+                carrier.CanAbandonOxygen = false;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
 
@@ -110,35 +112,62 @@ public class Erythrocyte : Cell
                 targetBodyTissue = null;
                 target = null;
             }
-            else
+            else if (prevState != cellState)
             {
-                if (prevState != cellState)
+                carrier.CanAbandonOxygen = false;
+                targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
+                if (targetBodyTissue == null)
                 {
-                    targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
+                    prevState = cellState;
+                    cellState = ErythrocyteState.ExitBodyTissueArea;
+                    oxygenReleaseTick = 0f;
+                    target = null;
+                }
+                else
+                {
                     targetBodyTissue.IsOccupied = true;
                     target = targetBodyTissue.Head;
                     prevState = cellState;
                 }
-                if (oxygenReleaseTick >= oxygenReleaseInterval)
+            }
+            else
+            {
+                Debug.Assert(targetBodyTissue != null);
+                if ((targetBodyTissue.Head - transform.position).sqrMagnitude < 1f)
                 {
-                    Debug.Assert(targetBodyTissue != null);
-                    if ((targetBodyTissue.Head - transform.position).sqrMagnitude < 1f)
+                    carrier.ReleaseOxygen(targetBodyTissue);
+                    oxygenReleaseTick = 0f;
+                    if (!targetBodyTissue.NeedOxygen())
                     {
-                        carrier.ReleaseOxygen(targetBodyTissue);
-                        oxygenReleaseTick = 0f;
-                        if (!targetBodyTissue.NeedOxygen())
+                        // unoccupy the current target and find a new one
+                        // if there's no bodytissue available, exit the room
+                        targetBodyTissue.IsOccupied = false;
+                        targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
+                        if (targetBodyTissue == null)
                         {
-                            // unoccupy the current target and find a new one
-                            targetBodyTissue.IsOccupied = false;
-                            targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
+                            prevState = cellState;
+                            cellState = ErythrocyteState.ExitBodyTissueArea;
+                            oxygenReleaseTick = 0f;
+                            target = null;
+                        }
+                        else
+                        {
                             targetBodyTissue.IsOccupied = true;
                             target = targetBodyTissue.Head;
                         }
                     }
-                }
-                else
-                {
-                    oxygenReleaseTick += Time.deltaTime;
+                    else  // if the target body tissue is the same, give some interval
+                    {
+                        if (oxygenReleaseTick > oxygenReleaseInterval)
+                        {
+                            carrier.ReleaseOxygen(targetBodyTissue);
+                            oxygenReleaseTick = 0f;
+                        }
+                        else
+                        {
+                            oxygenReleaseTick += Time.deltaTime;
+                        }
+                    }
                 }
                 velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
             }

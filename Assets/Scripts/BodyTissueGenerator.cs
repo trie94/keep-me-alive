@@ -9,6 +9,10 @@ public class BodyTissueGenerator : MonoBehaviour
     private int tissueGroupNum = 5;
     [HideInInspector]
     public List<BodyTissueGroup> bodyTissueGroups;
+    [HideInInspector]
+    public List<BodyTissue> availableBodyTissues;
+    [HideInInspector]
+    public List<BodyTissue> unavailableBodyTissues;
     [SerializeField]
     private BodyTissueGroup bodyTissueGroupPrefab;
     public BodyTissue bodyTissuePrefab;
@@ -37,6 +41,8 @@ public class BodyTissueGenerator : MonoBehaviour
         instance = this;
         center = transform;
         bodyTissueGroups = new List<BodyTissueGroup>();
+        availableBodyTissues = new List<BodyTissue>();
+        unavailableBodyTissues = new List<BodyTissue>();
         SpawnTissueGroup();
     }
 
@@ -47,6 +53,11 @@ public class BodyTissueGenerator : MonoBehaviour
             Vector3 groupCenter = GetRandomPointOnSphereWithWeight();
             BodyTissueGroup group = Instantiate(bodyTissueGroupPrefab, groupCenter, Quaternion.identity);
             bodyTissueGroups.Add(group);
+            // add all body tissues to available
+            for (int j=0; j<group.BodyTissues.Count; j++)
+            {
+                availableBodyTissues.Add(group.BodyTissues[j]);
+            }
             Vector3 forward = center.position - groupCenter;
             if (forward != Vector3.zero)
             {
@@ -87,5 +98,28 @@ public class BodyTissueGenerator : MonoBehaviour
             GetRandomPointOnSphereWithWeight();
         }
         return point;
+    }
+
+    public BodyTissue GetTargetBodyTissue()
+    {
+        BodyTissue target = null;
+        int randomInt = Random.Range(0, availableBodyTissues.Count);
+        target = availableBodyTissues[randomInt];
+        availableBodyTissues.Remove(target);
+        unavailableBodyTissues.Add(target);
+
+        return target;
+    }
+
+    public void AddBodyTissueToAvailableList(BodyTissue bodyTissue)
+    {
+        unavailableBodyTissues.Remove(bodyTissue);
+        availableBodyTissues.Add(bodyTissue);
+    }
+
+    public void RemoveBodyTissueToAvailableList(BodyTissue bodyTissue)
+    {
+        availableBodyTissues.Remove(bodyTissue);
+        unavailableBodyTissues.Add(bodyTissue);
     }
 }

@@ -112,7 +112,7 @@ public class Erythrocyte : Cell
             }
             else if (prevState != cellState)
             {
-                targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
+                targetBodyTissue = BodyTissueGenerator.Instance.GetTargetBodyTissue();
                 if (targetBodyTissue == null)
                 {
                     prevState = cellState;
@@ -139,7 +139,7 @@ public class Erythrocyte : Cell
                         // unoccupy the current target and find a new one
                         // if there's no bodytissue available, exit the room
                         targetBodyTissue.IsOccupied = false;
-                        targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
+                        targetBodyTissue = BodyTissueGenerator.Instance.GetTargetBodyTissue();
                         if (targetBodyTissue == null)
                         {
                             prevState = cellState;

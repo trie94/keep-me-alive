@@ -24,7 +24,6 @@ public class MoleculeCarrierBehavior : MonoBehaviour
         if (GetComponent<PlayerBehavior>() != null)
         {
             canAbandonOxygen = true;
-            Debug.Log(canAbandonOxygen);
         }
     }
 

@@ -76,7 +76,7 @@ public class BodyTissue : MonoBehaviour
         float dot = Vector3.Dot(direction, PlayerBehavior.Instance.transform.forward);
 
         if (PlayerBehavior.Instance.carrier.CanReleaseOxygen()
-            && NeedOxygen()
+            && !IsOccupied && NeedOxygen()
             && distSqrt < uiRevealDistSqrt && dot < -0.5f)
         {
             interactable.IsInteractable = true;
@@ -108,6 +108,7 @@ public class BodyTissue : MonoBehaviour
     public void PointerDown(PointerEventData data)
     {
         PlayerBehavior.Instance.carrier.ReleaseOxygen(this);
+        BodyTissueGenerator.Instance.RemoveBodyTissueToAvailableList(this);
     }
 
     public bool NeedOxygen()
@@ -132,5 +133,6 @@ public class BodyTissue : MonoBehaviour
         }
         oxygenNumber--;
         oxygenTick = 0f;
+        BodyTissueGenerator.Instance.AddBodyTissueToAvailableList(this);
     }
 }

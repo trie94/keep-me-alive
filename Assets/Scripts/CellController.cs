@@ -69,24 +69,4 @@ public class CellController : MonoBehaviour
         return Path.Instance.OxygenZone.transform.position
                          + Random.insideUnitSphere * radius;
     }
-
-    public BodyTissue GetTargetBodyTissue()
-    {
-        List<BodyTissueGroup> groups = BodyTissueGenerator.Instance.bodyTissueGroups;
-        // first fit
-        for (int i=0; i<groups.Count; i++)
-        {
-            var currGroup = groups[i];
-            for (int j=0; j< currGroup.BodyTissues.Count; j++)
-            {
-                var currTissue = currGroup.BodyTissues[j];
-                if (!currTissue.IsOccupied && currTissue.NeedOxygen())
-                {
-                    return currTissue;
-                }
-            }
-        }
-
-        return null;
-    }
 }

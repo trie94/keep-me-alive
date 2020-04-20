@@ -16,7 +16,7 @@ public partial class PlayerBehavior : MonoBehaviour
     [SerializeField]
     private float maxDistFromCenter = 3.9f;
     private float maxDistFromCenterSqr;
-    private float zoneCollisionRadiusFactor = 0.1f;
+    private float zoneCollisionRadiusFactor = 0f;
 
     private float pitchRotationSpeed = 0.3f;
     private float rollRotationSpeed = 0.2f;

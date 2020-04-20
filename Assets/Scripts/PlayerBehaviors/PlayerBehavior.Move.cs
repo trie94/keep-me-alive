@@ -22,7 +22,7 @@ public partial class PlayerBehavior : MonoBehaviour
     private float rollRotationSpeed = 0.2f;
     private float pitch;
     private float yaw;
-    private float currentFactor = 1f;
+    private float currentFactor = 0.5f;
 
     private void InitMovement()
     {

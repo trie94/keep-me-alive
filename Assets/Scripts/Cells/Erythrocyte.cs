@@ -49,7 +49,6 @@ public class Erythrocyte : Cell
             if (prevState != cellState)
             {
                 currSeg = GetNextSegment();
-                carrier.CanAbandonOxygen = true;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups);
         }
@@ -59,7 +58,6 @@ public class Erythrocyte : Cell
             {
                 prevState = cellState;
                 target = CellController.Instance.GetRandomPositionInOxygenArea();
-                carrier.CanAbandonOxygen = false;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
 
@@ -114,7 +112,6 @@ public class Erythrocyte : Cell
             }
             else if (prevState != cellState)
             {
-                carrier.CanAbandonOxygen = false;
                 targetBodyTissue = CellController.Instance.GetTargetBodyTissue();
                 if (targetBodyTissue == null)
                 {

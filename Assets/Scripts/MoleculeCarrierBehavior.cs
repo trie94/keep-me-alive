@@ -11,7 +11,7 @@ public class MoleculeCarrierBehavior : MonoBehaviour
     [SerializeField]
     private MoleculeHolder[] holders;
     private bool canAbandonOxygen = false;
-    public bool CanAbandonOxygen { get { return canAbandonOxygen; } set { canAbandonOxygen = value; } }
+    public bool CanAbandonOxygen { get { return canAbandonOxygen; } }
 
     private void Awake()
     {
@@ -19,6 +19,12 @@ public class MoleculeCarrierBehavior : MonoBehaviour
         for (int i = 0; i < holders.Length; i++)
         {
             holders[i].cell = this.transform;
+        }
+        // only player can abandon oxygen
+        if (GetComponent<PlayerBehavior>() != null)
+        {
+            canAbandonOxygen = true;
+            Debug.Log(canAbandonOxygen);
         }
     }
 

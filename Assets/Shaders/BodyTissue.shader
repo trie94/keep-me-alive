@@ -98,7 +98,7 @@
                 v.vertex.z += (_BodyLength+originalBodyHeight);
                 if (v.vertex.z > convertedEatingProgress && v.vertex.z < convertedEatingProgress+_FoodRange) {
                     fixed mid = (convertedEatingProgress * 2 + _FoodRange)/2;
-                    fixed p = lerp(1, 2, _FoodSize-abs(mid - v.vertex.z));
+                    fixed p = smoothstep(0, 1, _FoodSize-abs(mid - v.vertex.z)) + 1;
                     v.vertex.xy *= p;
                 }
 

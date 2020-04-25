@@ -62,7 +62,9 @@ public class BodyTissue : MonoBehaviour
         flipId = Shader.PropertyToID("_Flip");
         eatingProgressId = Shader.PropertyToID("_EatingProgress");
         mat.SetFloat(eatingProgressId, 0f);
-        // debugObj = Instantiate(debugPrefab);
+
+        Mesh mesh = GetComponentInChildren<MeshFilter>().mesh;
+        mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 100f);
     }
 
     private void Start()

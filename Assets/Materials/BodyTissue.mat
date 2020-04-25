@@ -72,7 +72,10 @@ Material:
     - _DeformPower: 0.395
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EatingProgress: 0
     - _Flip: 1
+    - _FoodRange: 1.1
+    - _FoodSize: 0.962
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

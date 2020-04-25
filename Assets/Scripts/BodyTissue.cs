@@ -11,7 +11,7 @@ public class BodyTissue : MonoBehaviour
     #region oxygen
     private int oxygenCapacity = 1;
     private int oxygenNumber;
-    private float oxygenConsumeInterval = 5f;
+    private float oxygenConsumeInterval = 3f;
     private float oxygenTick;
     // TODO - might need oxygen reference
     #endregion
@@ -47,6 +47,10 @@ public class BodyTissue : MonoBehaviour
     private int speedId;
     private int wobbleId;
     private int flipId;
+    private int eatingProgressId;
+    [SerializeField]
+    private GameObject debugPrefab;
+    private GameObject debugObj;
 
     private void Awake()
     {
@@ -56,6 +60,9 @@ public class BodyTissue : MonoBehaviour
         speedId = Shader.PropertyToID("_Speed");
         wobbleId = Shader.PropertyToID("_Wobble");
         flipId = Shader.PropertyToID("_Flip");
+        eatingProgressId = Shader.PropertyToID("_EatingProgress");
+        mat.SetFloat(eatingProgressId, 0f);
+        // debugObj = Instantiate(debugPrefab);
     }
 
     private void Start()
@@ -97,12 +104,13 @@ public class BodyTissue : MonoBehaviour
         Vector3 localPos = transform.InverseTransformPoint(transform.localPosition);
 
         float z = localPos.z * bodyLength;
-        z += bodyLength - 2.5f;
+        z += bodyLength - 2f;
         localPos.z = z;
         float y = Mathf.Sin(z + Time.time * speed) * wobble;
         localPos.y += y * flip;
 
         head = transform.TransformPoint(localPos);
+        // debugObj.transform.position = head;
     }
 
     public void PointerDown(PointerEventData data)
@@ -120,19 +128,25 @@ public class BodyTissue : MonoBehaviour
     {
         oxygenNumber++;
         Debug.Assert(oxygenNumber <= oxygenCapacity);
-        StartCoroutine(ConsumeOxygen());
     }
 
-    private IEnumerator ConsumeOxygen()
+    public void ConsumeOxygen()
+    {
+        StartCoroutine(ConsumeOxygenCoroutine());
+    }
+
+    private IEnumerator ConsumeOxygenCoroutine()
     {
         Debug.Assert(oxygenNumber > 0);
         while (oxygenTick < oxygenConsumeInterval)
         {
             oxygenTick += Time.deltaTime;
+            mat.SetFloat(eatingProgressId, oxygenTick / oxygenConsumeInterval);
             yield return new WaitForEndOfFrame();
         }
         oxygenNumber--;
         oxygenTick = 0f;
+        mat.SetFloat(eatingProgressId, 0f);
         BodyTissueGenerator.Instance.AddBodyTissueToAvailableList(this);
     }
 }

@@ -58,11 +58,6 @@ public class Oxygen : Molecule
     private float squareNeighborRadius;
     #endregion
 
-    #region Delivery
-    private float resetTime = 1f;
-    private float resetTick = 0f;
-    #endregion
-
     #region State
     private float joinOxygenGroupThreshold = 4f;
     private float sqrJoinOxygenGroupThreshold;
@@ -178,18 +173,15 @@ public class Oxygen : Molecule
         else if (state == MoleculeState.Released)
         {
             float dist = Vector3.SqrMagnitude(transform.position - targetBodyTissue.Head);
-            if (dist < 0.2f) state = MoleculeState.HitBodyTissue;
+            if (dist < 0.2f)
+            {
+                state = MoleculeState.HitBodyTissue;
+            }
         }
         else if (state == MoleculeState.HitBodyTissue)
         {
-            if (resetTick > resetTime)
-            {
-                Reset();
-            }
-            else
-            {
-                resetTick += Time.deltaTime;
-            }
+            targetBodyTissue.ConsumeOxygen();
+            Reset();
         }
     }
 
@@ -247,7 +239,7 @@ public class Oxygen : Molecule
         transform.position = OxygenController.Instance.GetRandomPositionInOxygenArea();
         transform.rotation = Random.rotation;
         OxygenController.Instance.oxygens.Push(this);
-        resetTick = 0f;
+        targetBodyTissue = null;
     }
 
     private Vector3 CustomSmoothDamp(Transform target, float smoothTimeVz, float smoothTimeY)

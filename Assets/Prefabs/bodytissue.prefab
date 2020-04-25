@@ -125,7 +125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carbonDioxideSpawnInterval: 10
   uiRevealDist: 7
-  faceDebugHolder: {fileID: 5674710467707232475, guid: f242972502aac44a390f16efd1d6918f,
+  debugPrefab: {fileID: 5674710467707232475, guid: f242972502aac44a390f16efd1d6918f,
     type: 3}
 --- !u!114 &-600265564628710393
 MonoBehaviour:

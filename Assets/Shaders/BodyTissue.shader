@@ -17,6 +17,10 @@
         _Deform ("Deform", Range(-1.5, 3.0)) = 0.1
         _DeformPower ("Deform Power", Range(0.1, 1.0)) = 0.35
         _Flip("Flip", Int) = 1
+
+        _EatingProgress("Eating Progress", Range(0.0, 1.0)) = 0.5
+        _FoodSize("Food Size", Range(0.5, 2.0)) = 1.0
+        _FoodRange("Food Range", Range(0.5, 3.0)) = 1.0
     }
     SubShader
     {
@@ -73,11 +77,17 @@
             float _DeformPower;
             fixed _Flip;
 
+            fixed _EatingProgress;
+            fixed _FoodSize;
+            fixed _FoodRange;
+
             v2f vert (appdata v)
             {
                 v2f o;
                 o.localPos = v.vertex;
                 v.vertex.xy = v.vertex.xy * pow(saturate(v.vertex.z + _Deform), _DeformPower);
+                fixed originalBodyHeight = 2;
+                fixed convertedEatingProgress = (1-_EatingProgress) * (_BodyLength+originalBodyHeight) * originalBodyHeight;
 
                 if (abs(v.vertex.z) <= _Cap) {
                     v.vertex.z *= _BodyLength;
@@ -85,7 +95,12 @@
                     v.vertex.z += (_BodyLength-1) * sign(v.vertex.z);
                 }
                 // this makes the gameobject body located at the bottom
-                v.vertex.z += (_BodyLength-1);
+                v.vertex.z += (_BodyLength+originalBodyHeight);
+                if (v.vertex.z > convertedEatingProgress && v.vertex.z < convertedEatingProgress+_FoodRange) {
+                    fixed mid = (convertedEatingProgress * 2 + _FoodRange)/2;
+                    fixed p = lerp(1, 2, _FoodSize-abs(mid - v.vertex.z));
+                    v.vertex.xy *= p;
+                }
 
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
                 o.worldPos = worldPos;

@@ -9,7 +9,9 @@
         
         _GradientPower ("Gradient Power", Range(0.1, 5.0)) = 1.0
         _BodyLength ("Length", Range(1, 6)) = 1.0
-        _Cap ("Cap", Range(-0.5, 1.0)) = 0.0
+        _Cap ("Cap", Range(-1.0, 1.6)) = 0.0
+
+        _BodyThickness ("Body Thickness", Range(1.0, 3.0)) = 1.0
 
         _Speed ("Speed", Range(1.0, 20.0)) = 0.1
         _Wobble ("Wobble", Range(0.0, 1.0)) = 0.1
@@ -19,8 +21,8 @@
         _Flip("Flip", Int) = 1
 
         _EatingProgress("Eating Progress", Range(0.0, 1.0)) = 0.5
-        _FoodSize("Food Size", Range(0.5, 2.0)) = 1.0
-        _FoodRange("Food Range", Range(0.5, 3.0)) = 1.0
+        _FoodSize("Food Size", Range(0.0, 2.0)) = 1.0
+        _FoodRange("Food Range", Range(0.0, 5.0)) = 1.0
     }
     SubShader
     {
@@ -64,6 +66,7 @@
             
             float _BodyLength;
             float _Cap;
+            fixed _BodyThickness;
 
             sampler2D _BackgroundTexture;
             fixed4 _HeadColor;
@@ -86,21 +89,22 @@
                 v2f o;
                 o.localPos = v.vertex;
                 v.vertex.xy = v.vertex.xy * pow(saturate(v.vertex.z + _Deform), _DeformPower);
-                fixed originalBodyHeight = 2;
-                fixed convertedEatingProgress = (1-_EatingProgress) * (_BodyLength+originalBodyHeight) * originalBodyHeight;
-
-                if (abs(v.vertex.z) <= _Cap) {
-                    v.vertex.z *= _BodyLength;
-                } else {
-                    v.vertex.z += (_BodyLength-1) * sign(v.vertex.z);
+                fixed originalBodyHeight = 3;
+                fixed halfHeight = originalBodyHeight/2;
+                
+                fixed c = step(0, _Cap - abs(v.vertex.z));
+                if (c != 0) {
+                    v.vertex.z *= c * _BodyLength;
                 }
+                v.vertex.z += (1-c) * sign(v.vertex.z) * (_BodyLength-1);
                 // this makes the gameobject body located at the bottom
-                v.vertex.z += (_BodyLength+originalBodyHeight);
-                if (v.vertex.z > convertedEatingProgress && v.vertex.z < convertedEatingProgress+_FoodRange) {
-                    fixed mid = (convertedEatingProgress * 2 + _FoodRange)/2;
-                    fixed p = smoothstep(0, 1, _FoodSize-abs(mid - v.vertex.z)) + 1;
-                    v.vertex.xy *= p;
-                }
+                v.vertex.z += (_BodyLength-1) + originalBodyHeight;
+
+                fixed convertedEatingProgress = (1-_EatingProgress) * originalBodyHeight * ((_BodyLength-1) + originalBodyHeight) - originalBodyHeight - _Cap;
+                fixed mid = (convertedEatingProgress * 2 + _FoodRange)/2;
+                fixed p = smoothstep(-_FoodRange, _FoodRange, _FoodRange-abs(mid - v.vertex.z)) * _FoodSize + 1;
+                v.vertex.xy *= p;
+                v.vertex.xy *= _BodyThickness;
 
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
                 o.worldPos = worldPos;

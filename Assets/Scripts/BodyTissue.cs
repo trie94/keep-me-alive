@@ -65,6 +65,8 @@ public class BodyTissue : MonoBehaviour
 
         Mesh mesh = GetComponentInChildren<MeshFilter>().mesh;
         mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 100f);
+
+        // debugObj = Instantiate(debugPrefab);ß
     }
 
     private void Start()
@@ -106,7 +108,7 @@ public class BodyTissue : MonoBehaviour
         Vector3 localPos = transform.InverseTransformPoint(transform.localPosition);
 
         float z = localPos.z * bodyLength;
-        z += bodyLength - 2f;
+        z += bodyLength;
         localPos.z = z;
         float y = Mathf.Sin(z + Time.time * speed) * wobble;
         localPos.y += y * flip;

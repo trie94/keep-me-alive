@@ -17,20 +17,34 @@ public class BodyTissueGroup : MonoBehaviour
         SpawnTissues();
     }
 
-    // when spawn, there should be no collision between tissues
     private void SpawnTissues()
     {
         for (int i = 0; i < bodyTissueNum; i++)
         {
-            BodyTissue tissue = Instantiate(
-                BodyTissueGenerator.Instance.bodyTissuePrefab);
-            bodyTissues.Add(tissue);
+            BodyTissue tissue = Instantiate(BodyTissueGenerator.Instance.bodyTissuePrefab);
             tissue.transform.position = GetRandomPositionWithinRadius();
+            CheckCollision(tissue, bodyTissues);
+            bodyTissues.Add(tissue);
+
             Vector3 forward = BodyTissueGenerator.Instance.center.position
                 - tissue.transform.position;
             if (forward != Vector3.zero)
             {
                 tissue.transform.forward = forward;
+            }
+        }
+    }
+
+    private void CheckCollision(BodyTissue tissue, List<BodyTissue> tissues)
+    {
+        float avoidRad = 1.3f;
+        for (int i=0; i<tissues.Count; i++)
+        {
+            BodyTissue comp = bodyTissues[i];
+            if ((tissue.transform.position - comp.transform.position).sqrMagnitude < avoidRad * avoidRad)
+            {
+                tissue.transform.position = GetRandomPositionWithinRadius();
+                CheckCollision(tissue, tissues);
             }
         }
     }

@@ -130,7 +130,7 @@ public class Erythrocyte : Cell
             else
             {
                 Debug.Assert(targetBodyTissue != null);
-                if ((targetBodyTissue.Head - transform.position).sqrMagnitude < 1f)
+                if ((targetBodyTissue.Head - transform.position).sqrMagnitude < 3f)
                 {
                     carrier.ReleaseOxygen(targetBodyTissue);
                     oxygenReleaseTick = 0f;

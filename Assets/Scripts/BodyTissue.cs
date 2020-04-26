@@ -25,8 +25,11 @@ public class BodyTissue : MonoBehaviour
     #endregion
 
     #region visual
-    private float length;
+    private float bodyLength;
+    private float bodyThickness;
     private float speed;
+    private float wobble;
+    private float flip;
     #endregion
 
     private bool isOccupied;
@@ -44,11 +47,13 @@ public class BodyTissue : MonoBehaviour
     private Material mat;
 
     private int lengthId;
+    private int thicknessId;
     private int speedId;
     private int wobbleId;
     private int flipId;
     private int capId;
     private int eatingProgressId;
+
     [SerializeField]
     private GameObject debugPrefab;
     private GameObject debugObj;
@@ -65,6 +70,18 @@ public class BodyTissue : MonoBehaviour
         flipId = Shader.PropertyToID("_Flip");
         capId = Shader.PropertyToID("_Cap");
         eatingProgressId = Shader.PropertyToID("_EatingProgress");
+        thicknessId = Shader.PropertyToID("_BodyThickness");
+        flip = mat.GetFloat(flipId);
+
+        bodyLength = Random.Range(1.8f, 4f);
+        bodyThickness = Random.Range(1.2f, 2.5f);
+        speed = Random.Range(4f, 7f);
+        wobble = Random.Range(0.1f, 0.5f);
+
+        mat.SetFloat(lengthId, bodyLength);
+        mat.SetFloat(thicknessId, bodyThickness);
+        mat.SetFloat(wobbleId, wobble);
+        mat.SetFloat(speedId, speed);
         mat.SetFloat(eatingProgressId, 0f);
 
         Mesh mesh = GetComponentInChildren<MeshFilter>().mesh;
@@ -104,11 +121,6 @@ public class BodyTissue : MonoBehaviour
 
     private void UpdateHeadPosition()
     {
-        // this can be moved to start if no dynamic change is needed.
-        float bodyLength = mat.GetFloat(lengthId);
-        float wobble = mat.GetFloat(wobbleId);
-        float speed = mat.GetFloat(speedId);
-        float flip = mat.GetFloat(flipId);
         float originalBodyHeight = 3f; // original height is 3
         Vector3 localPos = new Vector3(0, 0, 1f);
 

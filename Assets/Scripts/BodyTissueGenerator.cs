@@ -89,13 +89,13 @@ public class BodyTissueGenerator : MonoBehaviour
             if ((node.transform.position - point).sqrMagnitude
                 < avoidRad * avoidRad)
             {
-                GetRandomPointOnSphereWithWeight();
+                point = GetRandomPointOnSphereWithWeight();
             }
         }
 
         while (ApplyWeightOnPoint(point) < Random.Range(0, 1))
         {
-            GetRandomPointOnSphereWithWeight();
+            point = GetRandomPointOnSphereWithWeight();
         }
         return point;
     }
@@ -103,7 +103,7 @@ public class BodyTissueGenerator : MonoBehaviour
     public BodyTissue GetTargetBodyTissue()
     {
         if (availableBodyTissues.Count == 0) return null;
-        
+
         BodyTissue target = null;
         int randomInt = Random.Range(0, availableBodyTissues.Count);
         target = availableBodyTissues[randomInt];

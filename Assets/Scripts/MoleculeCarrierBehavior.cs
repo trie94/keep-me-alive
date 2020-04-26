@@ -87,10 +87,10 @@ public class MoleculeCarrierBehavior : MonoBehaviour
 
     public void GrabOxygens()
     {
-        for (int i = 0; i < moleculeCapacity; i++)
+        for (int i = 0; i < moleculeCapacity - moleculeNumber; i++)
         {
             Oxygen oxygen = OxygenController.Instance.oxygens.Pop();
-            GrabOxygen(oxygen);
+            if (oxygen != null) GrabOxygen(oxygen);
         }
     }
 

@@ -102,6 +102,8 @@ public class BodyTissueGenerator : MonoBehaviour
 
     public BodyTissue GetTargetBodyTissue()
     {
+        if (availableBodyTissues.Count == 0) return null;
+        
         BodyTissue target = null;
         int randomInt = Random.Range(0, availableBodyTissues.Count);
         target = availableBodyTissues[randomInt];

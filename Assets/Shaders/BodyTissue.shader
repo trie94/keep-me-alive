@@ -90,17 +90,15 @@
                 o.localPos = v.vertex;
                 v.vertex.xy = v.vertex.xy * pow(saturate(v.vertex.z + _Deform), _DeformPower);
                 fixed originalBodyHeight = 3;
-                fixed halfHeight = originalBodyHeight/2;
-                
                 fixed c = step(0, _Cap - abs(v.vertex.z));
-                if (c != 0) {
+                if (c == 1) {
                     v.vertex.z *= c * _BodyLength;
                 }
                 v.vertex.z += (1-c) * sign(v.vertex.z) * (_BodyLength-1);
                 // this makes the gameobject body located at the bottom
                 v.vertex.z += (_BodyLength-1) + originalBodyHeight;
 
-                fixed convertedEatingProgress = (1-_EatingProgress) * originalBodyHeight * ((_BodyLength-1) + originalBodyHeight) - originalBodyHeight - _Cap;
+                fixed convertedEatingProgress = (1-_EatingProgress) * (_BodyLength + originalBodyHeight + c *_BodyLength + _Cap * 2) - _Cap * c;
                 fixed mid = (convertedEatingProgress * 2 + _FoodRange)/2;
                 fixed p = smoothstep(-_FoodRange, _FoodRange, _FoodRange-abs(mid - v.vertex.z)) * _FoodSize + 1;
                 v.vertex.xy *= p;

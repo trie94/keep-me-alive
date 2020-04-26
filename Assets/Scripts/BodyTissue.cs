@@ -47,10 +47,13 @@ public class BodyTissue : MonoBehaviour
     private int speedId;
     private int wobbleId;
     private int flipId;
+    private int capId;
     private int eatingProgressId;
     [SerializeField]
     private GameObject debugPrefab;
     private GameObject debugObj;
+    [SerializeField]
+    private Transform childTransform;
 
     private void Awake()
     {
@@ -60,13 +63,14 @@ public class BodyTissue : MonoBehaviour
         speedId = Shader.PropertyToID("_Speed");
         wobbleId = Shader.PropertyToID("_Wobble");
         flipId = Shader.PropertyToID("_Flip");
+        capId = Shader.PropertyToID("_Cap");
         eatingProgressId = Shader.PropertyToID("_EatingProgress");
         mat.SetFloat(eatingProgressId, 0f);
 
         Mesh mesh = GetComponentInChildren<MeshFilter>().mesh;
         mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 100f);
 
-        // debugObj = Instantiate(debugPrefab);ß
+        // debugObj = Instantiate(debugPrefab);
     }
 
     private void Start()
@@ -105,15 +109,23 @@ public class BodyTissue : MonoBehaviour
         float wobble = mat.GetFloat(wobbleId);
         float speed = mat.GetFloat(speedId);
         float flip = mat.GetFloat(flipId);
-        Vector3 localPos = transform.InverseTransformPoint(transform.localPosition);
+        float originalBodyHeight = 3f; // original height is 3
+        Vector3 localPos = new Vector3(0, 0, 1f);
 
-        float z = localPos.z * bodyLength;
-        z += bodyLength;
+        float z = localPos.z;
+        float c = mat.GetFloat(capId) - Mathf.Abs(localPos.z);
+        if (c >= 0) {
+            c = 1f;
+            z *= bodyLength;
+        }
+        z += (1f-c) * Mathf.Sign(localPos.z) * (bodyLength-1f);
+        z += (bodyLength-1f) + originalBodyHeight;
+
         localPos.z = z;
         float y = Mathf.Sin(z + Time.time * speed) * wobble;
         localPos.y += y * flip;
 
-        head = transform.TransformPoint(localPos);
+        head = childTransform.TransformPoint(localPos);
         // debugObj.transform.position = head;
     }
 

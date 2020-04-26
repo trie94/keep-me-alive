@@ -64,8 +64,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BodyLength: 4.66
-    - _BodyThickness: 3
+    - _BodyLength: 2.08
+    - _BodyThickness: 1.36
     - _BumpScale: 1
     - _Cap: 1.6
     - _Cutoff: 0.5
@@ -73,7 +73,7 @@ Material:
     - _DeformPower: 0.395
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EatingProgress: 0.508
+    - _EatingProgress: 0
     - _Flip: 1
     - _FoodRange: 0.9
     - _FoodSize: 0.61

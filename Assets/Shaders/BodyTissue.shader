@@ -23,6 +23,7 @@
         _EatingProgress("Eating Progress", Range(0.0, 1.0)) = 0.5
         _FoodSize("Food Size", Range(0.0, 2.0)) = 1.0
         _FoodRange("Food Range", Range(0.0, 5.0)) = 1.0
+        _FogColor("FogColor", color) = (0.9294118,0.4901961,0.4392157,1)
     }
     SubShader
     {
@@ -30,16 +31,12 @@
         Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
 
-        GrabPass
-        {
-            "_BackgroundTexture"
-        }
-
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
@@ -68,7 +65,6 @@
             float _Cap;
             fixed _BodyThickness;
 
-            sampler2D _BackgroundTexture;
             fixed4 _HeadColor;
             fixed4 _TailColor;
             fixed _GradientPower;
@@ -83,6 +79,8 @@
             fixed _EatingProgress;
             fixed _FoodSize;
             fixed _FoodRange;
+
+            fixed4 _FogColor;
 
             v2f vert (appdata v)
             {
@@ -126,14 +124,14 @@
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
                 float ramp = saturate(dot(normalize(i.worldNormal), lightDir));
                 float4 lighting = float4(tex2D(_Ramp, float2(ramp, 0.5)).rgb, 1.0);
+                col *= lighting;
                 
                 float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance/15, 0, 1);
-                
-                fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
-                col.rgb = lerp(col.rgb, background.rgb, viewDistance);
-                col = col * lighting;
 
+                #if (defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2))
+                    UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+                    col.rgb = lerp(_FogColor, col.rgb, saturate(unityFogFactor));
+                #endif
                 return col;
             }
             ENDCG

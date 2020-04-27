@@ -5,6 +5,7 @@
         _Color ("Color", color) = (1,0,0,1)
         _Face ("Face", 2D) = "black" {}
         _Ramp ("Toon Ramp (RGB)", 2D) = "white" {}
+        _FogColor("FogColor", color) = (0.9294118,0.4901961,0.4392157,1)
     }
     SubShader
     {
@@ -12,16 +13,12 @@
         Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
 
-        GrabPass
-        {
-            "_BackgroundTexture"
-        }
-
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
@@ -46,8 +43,8 @@
             sampler2D _Face;
             float4 _Face_ST;
             sampler2D _Ramp;
-            sampler2D _BackgroundTexture;
             fixed4 _Color;
+            fixed4 _FogColor;
 
             v2f vert (appdata v)
             {
@@ -79,11 +76,12 @@
                 col += rimColor * 0.5;
                 col = col * lighting;
 
-                fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
                 float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance/10, 0, 0.75);
-                col.rgb = lerp(col.rgb, background.rgb, viewDistance);
-                col.a = 0.8;
+                #if (defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2))
+                    UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+                    col.rgb = lerp(_FogColor, col.rgb, saturate(unityFogFactor*0.6));
+                #endif
+                col.a = 0.75;
                 return col;
             }
             ENDCG

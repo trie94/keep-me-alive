@@ -223,8 +223,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 12
-  tissueGroupNum: 5
+  tissueGroupNum: 7
   bodyTissueGroups: []
+  availableBodyTissues: []
+  unavailableBodyTissues: []
   bodyTissueGroupPrefab: {fileID: 7428149487976772159, guid: 36367c96488cd485c8a9d947beb98703,
     type: 3}
   bodyTissuePrefab: {fileID: 8771759978753654075, guid: ccf2c09486045454fb30628e8cb0ed8d,

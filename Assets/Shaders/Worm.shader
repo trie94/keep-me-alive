@@ -17,6 +17,8 @@
         _Deform ("Deform", Range(-1.5, 3.0)) = 0.1
         _DeformPower ("Deform Power", Range(0.1, 1.0)) = 0.35
         _Flip("Flip", Int) = 1
+
+        _FogColor("FogColor", color) = (0.9294118,0.4901961,0.4392157,1)
     }
     SubShader
     {
@@ -34,6 +36,7 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
@@ -61,10 +64,10 @@
             float _BodyLength;
             float _Cap;
 
-            sampler2D _BackgroundTexture;
             fixed4 _HeadColor;
             fixed4 _TailColor;
             fixed _GradientPower;
+            fixed4 _FogColor;
 
             float _Wobble;
             float _Speed;
@@ -107,13 +110,13 @@
                 float ramp = saturate(dot(normalize(i.worldNormal), lightDir));
                 float4 lighting = float4(tex2D(_Ramp, float2(ramp, 0.5)).rgb, 1.0);
                 
-                float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance/15, 0, 1);
-                
-                fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
-                col.rgb = lerp(col.rgb, background.rgb, viewDistance);
                 col = col * lighting;
+                float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
 
+                #if (defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2))
+                    UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+                    col.rgb = lerp(_FogColor, col.rgb, saturate(unityFogFactor));
+                #endif
                 return col;
             }
             ENDCG

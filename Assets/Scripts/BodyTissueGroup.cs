@@ -23,7 +23,7 @@ public class BodyTissueGroup : MonoBehaviour
         {
             BodyTissue tissue = Instantiate(BodyTissueGenerator.Instance.bodyTissuePrefab);
             tissue.transform.position = GetRandomPositionWithinRadius();
-            CheckCollision(tissue, bodyTissues);
+            CheckCollision(tissue, bodyTissues, 0);
             bodyTissues.Add(tissue);
 
             Vector3 forward = BodyTissueGenerator.Instance.center.position
@@ -35,25 +35,28 @@ public class BodyTissueGroup : MonoBehaviour
         }
     }
 
-    private void CheckCollision(BodyTissue tissue, List<BodyTissue> tissues)
+    private void CheckCollision(BodyTissue tissue, List<BodyTissue> tissues, int iteration)
     {
-        float avoidRad = 1.3f;
+        // avoid too many recursive calls
+        if (iteration > 10) return;
+        float avoidRad = 1f;
         for (int i=0; i<tissues.Count; i++)
         {
             BodyTissue comp = bodyTissues[i];
-            if ((tissue.transform.position - comp.transform.position).sqrMagnitude < avoidRad * avoidRad)
+            if ((tissue.transform.position - comp.transform.position).sqrMagnitude < avoidRad)
             {
                 tissue.transform.position = GetRandomPositionWithinRadius();
-                CheckCollision(tissue, tissues);
+                CheckCollision(tissue, tissues, iteration+1);
             }
         }
     }
 
     private Vector3 GetRandomPositionWithinRadius()
     {
+        float offset = 0.5f;
         Vector3 randomPoint = transform.position + Random.insideUnitSphere * radius;
         Vector3 roomCenterToPoint = randomPoint - BodyTissueGenerator.Instance.center.position;
-        return roomCenterToPoint.normalized * BodyTissueGenerator.Instance.radius
+        return roomCenterToPoint.normalized * (BodyTissueGenerator.Instance.radius + offset)
             + BodyTissueGenerator.Instance.center.position;
     }
 }

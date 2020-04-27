@@ -12,6 +12,7 @@
         _Speed ("Limb Speed", Range(0.1, 2)) = 0.5
         _NoiseFreq ("Noise Frequency", Range(0.1, 2)) = 1
         _NoiseIntensity ("Noise Intensity", Range(0.001, 2)) = 1
+        _FogColor("FogColor", color) = (0.9294118,0.4901961,0.4392157,1)
     }
     SubShader
     {
@@ -19,16 +20,12 @@
         LOD 100
         Blend SrcAlpha OneMinusSrcAlpha
 
-        GrabPass
-        {
-            "_BackgroundTexture"
-        }
-
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
@@ -51,12 +48,12 @@
             };
 
             sampler2D _Ramp;
-            sampler2D _BackgroundTexture;
 
             uniform fixed _Length;
             uniform fixed _Thickness;
 
             fixed4 _Color;
+            fixed4 _FogColor;
 
             float _YOffset;
             uniform float _Speed;
@@ -92,14 +89,13 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 float4 lighting = float4(tex2D(_Ramp, float2(i.ramp, 0.5)).rgb, 1.0);
-
+                fixed4 col = _Color * lighting;
                 float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance/15, 0, 1);
-                fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
-                fixed4 col = _Color;
-                col.rgb = lerp(col.rgb, background.rgb, viewDistance);
-
-                return col * lighting;
+                #if (defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2))
+                    UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+                    col.rgb = lerp(_FogColor, col.rgb, saturate(unityFogFactor*0.6));
+                #endif
+                return col;
             }
             ENDCG
         }

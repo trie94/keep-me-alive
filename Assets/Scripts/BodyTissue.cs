@@ -73,7 +73,7 @@ public class BodyTissue : MonoBehaviour
         thicknessId = Shader.PropertyToID("_BodyThickness");
         flip = mat.GetFloat(flipId);
 
-        bodyLength = Random.Range(1.8f, 4f);
+        bodyLength = Random.Range(2f, 6f);
         bodyThickness = Random.Range(1.2f, 2.5f);
         speed = Random.Range(4f, 7f);
         wobble = Random.Range(0.1f, 0.5f);

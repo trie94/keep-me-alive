@@ -88,8 +88,8 @@ Material:
     - _WarpScale: 0.56
     - _WarpTiling: 2.6
     - _WidthShift: 0.962
-    - _WiggleAmount: 0.032
-    - _WiggleSpeed: 10.7
+    - _WiggleAmount: 0.02
+    - _WiggleSpeed: 10
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

@@ -20,6 +20,8 @@
 
         _WiggleSpeed ("Wiggle Speed", Range(0, 20)) = 0.5
         _WiggleAmount ("Wiggle Amount", Range(0, 2)) = 0.2
+
+        _FogColor("FogColor", color) = (0.9294118,0.4901961,0.4392157,1)
     }
     SubShader
     {
@@ -38,6 +40,7 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
             #include "Noise.cginc"
@@ -63,11 +66,11 @@
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
-            sampler2D _BackgroundTexture;
-
             fixed4 _Color1;
 			fixed4 _Color2;
             fixed4 _PulseColor;
+            fixed4 _FogColor;
+
             sampler2D _Ramp;
 
 			int _Tiling;
@@ -130,8 +133,28 @@
                 float3 normal = i.normal;
                 float2 uv = i.uv;
                 float3 localPosition = i.localPos;
-                float3 worldNormal = i.worldNormal;
                 float4 grabPosition = i.grabPos;
+
+                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+                float ramp = saturate(dot(normalize(i.worldNormal), lightDir));
+                float4 lighting = float4(tex2D(_Ramp, float2(ramp, 0.5)).rgb, 1.0);
+
+                float pos = uv.y * _Tiling;
+                pos += sin(snoise(uv.xxy * _WarpTiling)) * _WarpScale;
+	            fixed value = floor(frac(pos) + _DistanceBetweenLines);
+
+                float pulseDir = dot(_PulseDirection, normalize(i.worldPos.xyz - _WorldSpaceCameraPos));
+                float pulse = pow(saturate(sin(pulseDir - _Time.y * _PulseFreq) * _PulseBrightness), _PulseSpeed);
+
+                fixed4 lineColor = lerp(_Color1, _Color2, saturate(abs(0.5-uv.x) *_Tiling - 1));
+                lineColor = lineColor + pulse * _PulseColor;
+                fixed4 col = lerp(lineColor, _Color2, value);
+
+                float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
+                #if (defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2))
+                    UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+                    col.rgb = lerp(_FogColor, col.rgb, saturate(unityFogFactor));
+                #endif
 
                 bool bye = false;
 
@@ -154,28 +177,7 @@
                     }
                 }
                 if (bye) discard;
-
-                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
-                float ramp = saturate(dot(normalize(worldNormal), lightDir));
-                float4 lighting = float4(tex2D(_Ramp, float2(ramp, 0.5)).rgb, 1.0);
-
-                float pos = uv.y * _Tiling;
-                pos += sin(snoise(uv.xxy * _WarpTiling)) * _WarpScale;
-	            fixed value = floor(frac(pos) + _DistanceBetweenLines);
-
-                float pulseDir = dot(_PulseDirection, normalize(worldPosition.xyz - _WorldSpaceCameraPos));
-                float pulse = pow(saturate(sin(pulseDir - _Time.y * _PulseFreq) * _PulseBrightness), _PulseSpeed);
-                fixed4 lineColor = lerp(_Color1, _Color2, saturate(abs(0.5-uv.x) *_Tiling - 1));
-                lineColor = lineColor + pulse * _PulseColor;
-                fixed4 color = lerp(lineColor, _Color2, value);
-
-                float viewDistance = length(worldPosition.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance * 0.03, 0, 1);
-
-                fixed4 background = tex2Dproj(_BackgroundTexture, grabPosition);
-                color.rgb = lerp(color.rgb, background.rgb, viewDistance);
-
-				return color;
+                return col;
             }
             ENDCG
         }

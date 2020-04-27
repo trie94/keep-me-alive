@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Zone
-  m_Shader: {fileID: 4800000, guid: 543eba7b1ffa34801887e18586be086d, type: 3}
+  m_Shader: {fileID: 4800000, guid: a3fb28f8e056743f4992c641baa73dc6, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -74,6 +74,9 @@ Material:
     - _NoiseScale: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _PulseBrightness: 0.5
+    - _PulseFreq: 0.5
+    - _PulseSpeed: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -81,6 +84,8 @@ Material:
     - _UVSec: 0
     - _WarpScale: 0.357
     - _WarpTiling: 2.6
+    - _WiggleAmount: 0.05
+    - _WiggleSpeed: 0.5
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
@@ -89,4 +94,6 @@ Material:
     - _ColorBack: {r: 0.9843137, g: 0.5019608, b: 0.45490196, a: 1}
     - _ColorFront: {r: 1, g: 0.84313726, b: 0.7764706, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FogColor: {r: 0.9294118, g: 0.4901961, b: 0.4392157, a: 1}
+    - _PulseColor: {r: 1, g: 0, b: 0, a: 1}
     - _VeinColor: {r: 1, g: 0.6192716, b: 0.5707547, a: 1}

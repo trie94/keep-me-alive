@@ -3,9 +3,9 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _ColorFront ("Color Front", color) = (1,0,0,1)
-        _ColorBack ("Color Back", color) = (1,0,0,1)
+        _Color ("Color", color) = (1,0,0,1)
         _VeinColor ("Vein Color", color) = (1,0,0,1)
+        _FogColor("FogColor", color) = (0.9294118,0.4901961,0.4392157,1)
     }
     SubShader
     {
@@ -14,16 +14,12 @@
         LOD 100
         Cull Front
 
-        GrabPass
-        {
-            "_BackgroundTexture"
-        }
-
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
 
@@ -46,11 +42,9 @@
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
-            sampler2D _BackgroundTexture;
-
-            fixed4 _ColorFront;
-            fixed4 _ColorBack;
+            fixed4 _Color;
             fixed4 _VeinColor;
+            fixed4 _FogColor;
 
             uniform float4x4 _CylinderInverseTransform[20];
             uniform float4 _CylinderDimension[20];
@@ -89,19 +83,16 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance * 0.03, 0, 1);
-
-                // fixed4 color = lerp(_ColorFront, _ColorBack, viewDistance);
-                fixed4 color = _ColorBack;
-
-                fixed4 background = tex2Dproj(_BackgroundTexture, i.grabPos);
-                color.rgb = lerp(color.rgb, background.rgb, viewDistance);
-                color.a = min(_ColorFront.a, _ColorBack.a);
-
+                fixed4 col = _Color;
                 float4 worldPosition = float4(i.worldPos.xyz, 1);
                 float3 normal = i.normal;
                 float2 uv = i.uv;
+
+                float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
+                #if (defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2))
+                    UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+                    col.rgb = lerp(_FogColor, col.rgb, saturate(unityFogFactor));
+                #endif
 
                 bool bye = false;
 
@@ -124,8 +115,7 @@
                     }
                 }
                 if (bye) discard;
-
-                return color;
+                return col;
             }
             ENDCG
         }

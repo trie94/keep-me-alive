@@ -12,6 +12,8 @@
         _NoiseScale("Noise Scale", Range(0, 3)) = 1.0
         _NoiseHeight("Noise Height", Range(0, 1)) = 0.1
         _Offset("Head Offset", Range(-1, 1)) = 0.0
+
+        _FogColor("FogColor", color) = (0.9294118,0.4901961,0.4392157,1)
     }
     SubShader
     {
@@ -19,17 +21,14 @@
         Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
 
-        GrabPass
-        {
-            "_BackgroundTexture"
-        }
-        
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_fwdbase
+            #pragma multi_compile_fog
+
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
             #include "Noise.cginc"
@@ -53,8 +52,8 @@
             sampler2D _Face;
             float4 _Face_ST;
             sampler2D _Ramp;
-            sampler2D _BackgroundTexture;
             fixed4 _Color;
+            fixed4 _FogColor;
 
             float4 _Position;
             float3 _Velocity;
@@ -84,6 +83,7 @@
                 float dirDot = abs(dot(normalizedVelocity, normalize(localOffset)) + _Offset);
                 fixed3 smearOffset = _Velocity.xyz * (dirDot + snoise(worldPos.xyz * _NoiseFreq) * _NoiseScale) * _NoiseHeight;
                 worldPos.xyz -= smearOffset;
+
                 o.smearVal = smearOffset;
                 o.vertex = UnityWorldToClipPos(worldPos);
 
@@ -98,15 +98,14 @@
                 fixed4 col = _Color;
                 fixed4 face = tex2D(_Face, i.uv);
 
-                float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
-                viewDistance = clamp(viewDistance/15, 0, 1);
-
                 col.rgb = face.rgb * face.a + col * (1-face.a);
                 col = col * lighting;
 
-                fixed4 background = tex2D(_BackgroundTexture, i.worldPos.xy);
-                col.rgb = lerp(col.rgb, background.rgb, viewDistance);
-
+                float viewDistance = length(i.worldPos.xyz - _WorldSpaceCameraPos);
+                #if (defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2))
+                    UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+                    col.rgb = lerp(_FogColor, col.rgb, saturate(unityFogFactor*0.6));
+                #endif
                 return col;
             }
             ENDCG

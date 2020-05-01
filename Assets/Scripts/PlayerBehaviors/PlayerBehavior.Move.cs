@@ -94,10 +94,10 @@ public partial class PlayerBehavior : MonoBehaviour
             currZoneState = PlayerZoneState.OxygenArea;
             currZone = Path.Instance.OxygenZone;
         }
-        else if (currSeg.start.type == NodeType.HeartEntrance || currSeg.start.type == NodeType.Heart)
+        else if (currSeg.start.type == NodeType.BodyTissueEntrance || currSeg.start.type == NodeType.BodyTissue)
         {
             currZoneState = PlayerZoneState.HeartArea;
-            currZone = Path.Instance.HeartZone;
+            currZone = Path.Instance.BodyTissueZone;
         }
         else
         {

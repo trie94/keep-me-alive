@@ -193,7 +193,7 @@ public class Erythrocyte : Cell
     {
         prevState = cellState;
         var startNode = currSeg.start.type;
-        if (startNode == NodeType.HeartEntrance)
+        if (startNode == NodeType.BodyTissueEntrance)
         {
             cellState = ErythrocyteState.BodyTissueArea;
         }

@@ -26,7 +26,7 @@ public class Path : MonoBehaviour
     public List<Node> nodes = new List<Node>();
     public List<Zone> zones = new List<Zone>();
     public Zone OxygenZone { get { return zones[0]; } }
-    public Zone HeartZone { get { return zones[1]; } }
+    public Zone BodyTissueZone { get { return zones[1]; } }
 
     private HashSet<Node> oxygenExitNodes;
     private HashSet<Node> heartExitNodes;
@@ -75,7 +75,7 @@ public class Path : MonoBehaviour
             {
                 oxygenExitNodes.Add(node);
             }
-            else if (node.type == NodeType.HeartExit)
+            else if (node.type == NodeType.BodyTissueExit)
             {
                 heartExitNodes.Add(node);
             }

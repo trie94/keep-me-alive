@@ -4,80 +4,82 @@ using UnityEngine;
 
 public class PathMeshBuilder : MonoBehaviour
 {
-    private int tubularSegments = 20;
-    private int radialSegments = 8;
-    private float radius = 5;
+    private int tubularSegments = 40;
+    private int radialSegments = 10;
+    [Range(0.1f, 7f)]
+    public float radius = 1;
     [SerializeField]
     private GameObject tunnelPrefab;
-    private List<GameObject> tunnels = new List<GameObject>();
+    private GameObject tunnel;
     private List<Vector3> debugVertices = new List<Vector3>();
+    private CatmullRomCurve curve;
 
     private void Awake()
     {
-        for (int i=0; i<Path.Instance.segments.Count; i++)
-        {
-            tunnels.Add(Instantiate(tunnelPrefab));
-        }
+        tunnel = Instantiate(tunnelPrefab);
     }
 
     private void Update()
     {
-        for (int i = 0; i < Path.Instance.segments.Count; i++)
+        List<Vector3> points = new List<Vector3>();
+        for (int i = 0; i < Path.Instance.nodes.Count; i++)
         {
-            var vertices = new List<Vector3>();
-            var normals = new List<Vector3>();
-            var tangents = new List<Vector4>();
-            var uvs = new List<Vector2>();
-            var triangles = new List<int>();
-            var frames = ComputeFrenetFrames(Path.Instance.segments[i], tubularSegments+1);
-
-            for (int j = 0; j <= tubularSegments; j++)
-            {
-                GenerateSubSegments(Path.Instance.segments[i], frames, vertices, normals, tangents, j);
-            }
-
-            for (int k = 0; k <= tubularSegments; k++)
-            {
-                for (int j = 0; j <= radialSegments; j++)
-                {
-                    float u = 1f * j / radialSegments;
-                    float v = 1f * k / tubularSegments;
-                    uvs.Add(new Vector2(u, v));
-                }
-            }
-            debugVertices = vertices;
-            // side
-            for (int j = 1; j <= tubularSegments; j++)
-            {
-                for (int k = 1; k <= radialSegments; k++)
-                {
-                    int a = (radialSegments + 1) * (j - 1) + (k - 1);
-                    int b = (radialSegments + 1) * j + (k - 1);
-                    int c = (radialSegments + 1) * j + k;
-                    int d = (radialSegments + 1) * (j - 1) + k;
-                    triangles.Add(a); triangles.Add(d); triangles.Add(b);
-                    triangles.Add(b); triangles.Add(d); triangles.Add(c);
-                }
-            }
-            var mesh = new Mesh();
-
-            tunnels[i].GetComponent<MeshFilter>().mesh = mesh;
-            mesh.vertices = vertices.ToArray();
-            mesh.normals = normals.ToArray();
-            mesh.tangents = tangents.ToArray();
-            mesh.uv = uvs.ToArray();
-            // we need back rendering
-            triangles.Reverse();
-            mesh.triangles = triangles.ToArray();
+            points.Add(Path.Instance.nodes[i].transform.position);
         }
+        // points.Add(points[0]);
+        curve = new CatmullRomCurve(points, true);
+        var vertices = new List<Vector3>();
+        var normals = new List<Vector3>();
+        var tangents = new List<Vector4>();
+        var uvs = new List<Vector2>();
+        var triangles = new List<int>();
+        var frames = curve.ComputeFrenetFrames(tubularSegments, true);
+
+        for (int j = 0; j <= tubularSegments; j++)
+        {
+            GenerateSubSegments(curve, frames, vertices, normals, tangents, j);
+        }
+
+        for (int k = 0; k <= tubularSegments; k++)
+        {
+            for (int j = 0; j <= radialSegments; j++)
+            {
+                float u = 1f * j / radialSegments;
+                float v = 1f * k / tubularSegments;
+                uvs.Add(new Vector2(u, v));
+            }
+        }
+        debugVertices = vertices;
+        // side
+        for (int j = 1; j <= tubularSegments; j++)
+        {
+            for (int k = 1; k <= radialSegments; k++)
+            {
+                int a = (radialSegments + 1) * (j - 1) + (k - 1);
+                int b = (radialSegments + 1) * j + (k - 1);
+                int c = (radialSegments + 1) * j + k;
+                int d = (radialSegments + 1) * (j - 1) + k;
+                triangles.Add(a); triangles.Add(d); triangles.Add(b);
+                triangles.Add(b); triangles.Add(d); triangles.Add(c);
+            }
+        }
+        var mesh = new Mesh();
+        tunnel.GetComponent<MeshFilter>().mesh = mesh;
+        mesh.vertices = vertices.ToArray();
+        mesh.normals = normals.ToArray();
+        mesh.tangents = tangents.ToArray();
+        mesh.uv = uvs.ToArray();
+        // we need back rendering
+        triangles.Reverse();
+        mesh.triangles = triangles.ToArray();
     }
 
     private void GenerateSubSegments(
-        Segment segment, FrenetFrame[] frames, List<Vector3> vertices, List<Vector3> normals, List<Vector4> tangents, int index)
+        CurveBase curve, List<FrenetFrame> frames, List<Vector3> vertices, List<Vector3> normals, List<Vector4> tangents, int index)
     {
         // 0~1
         var u = 1f * index / tubularSegments;
-        var p = Path.Instance.GetPoint(segment, u);
+        var p = curve.GetPointAt(u);
         var fr = frames[index];
         var N = fr.normal;
         var B = fr.binormal;
@@ -97,60 +99,35 @@ public class PathMeshBuilder : MonoBehaviour
         }
     }
 
-    private FrenetFrame[] ComputeFrenetFrames(Segment segment, int num)
-    {
-        var frames = new FrenetFrame[num];
-        for (int i = 1; i < num + 1; i++)
-        {
-            float prevStep = 1f * (i - 1) / num;
-            float currentStep = 1f * i / num;
-
-            Vector3 prevCenter = Path.Instance.GetPoint(segment, prevStep);
-            Vector3 currentCenter = Path.Instance.GetPoint(segment, currentStep);
-            Vector3 tangent = (prevCenter - currentCenter).normalized;
-            FrenetFrame frame = new FrenetFrame(currentCenter, tangent, Vector3.up, Vector3.Cross(Vector3.up, tangent));
-            frames[i - 1] = frame;
-        }
-        return frames;
-    }
-
     private void OnDrawGizmos()
     {
-        for (int i = 0; i < debugVertices.Count; i++)
+        if (curve == null) return;
+        DrawGizmo(curve);
+    }
+
+    private void DrawGizmo(CatmullRomCurve curve)
+    {
+        Gizmos.color = Color.white;
+        Vector3 lineStart = curve.GetPointAt(0f);
+        int lineSteps = 20;
+        for (int i = 1; i <= lineSteps; i++)
         {
-            DrawGizmo(debugVertices[i]);
-        }
-    }
-
-    private void DrawGizmo(FrenetFrame frame)
-    {
-        Gizmos.color = Color.black;
-        Gizmos.DrawSphere(frame.center, 0.1f);
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(frame.center, frame.center + frame.binormal);
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(frame.center, frame.center + frame.tangent);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(frame.center, frame.center + frame.normal);
-    }
-
-    private void DrawGizmo(Vector3 point)
-    {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(point, 0.1f);
+            Gizmos.DrawSphere(lineStart, 0.2f);
+			Vector3 lineEnd = curve.GetPointAt(i / (float)lineSteps);
+			Gizmos.DrawLine(lineStart, lineEnd);
+			lineStart = lineEnd;
+		}
     }
 }
 
 public class FrenetFrame
 {
-    public Vector3 center;
     public Vector3 tangent;
     public Vector3 normal;
     public Vector3 binormal;
 
-    public FrenetFrame(Vector3 center, Vector3 tangent, Vector3 normal, Vector3 binormal)
+    public FrenetFrame(Vector3 tangent, Vector3 normal, Vector3 binormal)
     {
-        this.center = center;
         this.tangent = tangent;
         this.normal = normal;
         this.binormal = binormal;
@@ -158,6 +135,6 @@ public class FrenetFrame
 
     public override string ToString()
     {
-        return "FrenetFrame>   center: " + center + "   tangent: " + tangent + "   normal: " + normal + "   binormal: " + binormal;
+        return "FrenetFrame>   tangent: " + tangent + "   normal: " + normal + "   binormal: " + binormal;
     }
 }

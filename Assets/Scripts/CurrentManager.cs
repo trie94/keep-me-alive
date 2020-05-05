@@ -46,7 +46,7 @@ public class CurrentManager : MonoBehaviour
         float sqrDistBetweenPosAndStartNode = (startNode.transform.position - position).sqrMagnitude;
         float sqrDistBetweenPosAndEndNode = (endNode.transform.position - position).sqrMagnitude;
 
-        float sqrRad = PathBuilder.Instance.radius * PathBuilder.Instance.radius * 2f;
+        float sqrRad = PathMeshBuilder.Instance.radius * PathMeshBuilder.Instance.radius * 2f;
 
         if (sqrDistBetweenPosAndStartNode <= sqrRad || sqrDistBetweenPosAndEndNode <= sqrRad)
         {

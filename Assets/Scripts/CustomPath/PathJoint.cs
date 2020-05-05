@@ -25,7 +25,7 @@ public class PathJoint : MonoBehaviour
     private void Awake()
     {
         rend = GetComponentInChildren<Renderer>();
-        material = rend.material;
+        if (rend) material = rend.material;
         cylinderNum = Shader.PropertyToID("_CylinderNum");
         cylinderDimension = Shader.PropertyToID("_CylinderDimension");
         cylinderInverseTransform = Shader.PropertyToID("_CylinderInverseTransform");

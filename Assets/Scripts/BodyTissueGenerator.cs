@@ -85,7 +85,7 @@ public class BodyTissueGenerator : MonoBehaviour
         for (int i=0; i<tunnelNodesToAvoid.Length; i++)
         {
             var node = tunnelNodesToAvoid[i];
-            float avoidRad = PathBuilder.Instance.radius * 2f;
+            float avoidRad = PathMeshBuilder.Instance.radius * 2f;
             if ((node.transform.position - point).sqrMagnitude
                 < avoidRad * avoidRad)
             {

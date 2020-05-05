@@ -5,35 +5,98 @@ using UnityEngine;
 public class PathMeshBuilder : MonoBehaviour
 {
     private int tubularSegments = 40;
-    private int radialSegments = 10;
+    private int radialSegments = 20;
     [Range(0.1f, 7f)]
-    public float radius = 1;
+    public float radius = 4f;
     [SerializeField]
-    private GameObject tunnelPrefab;
-    private GameObject tunnel;
+    private PathJoint tunnelPrefab;
+    [SerializeField]
+    private PathJoint jointPrefab;
+    [SerializeField]
+    private PathJoint zonePrefab;
     private List<Vector3> debugVertices = new List<Vector3>();
-    private CatmullRomCurve curve;
+    private List<CatmullRomCurve> curves = new List<CatmullRomCurve>();
+    private List<PathJoint> tunnelPaths = new List<PathJoint>();
+    private List<JointInfo> jointInfo = new List<JointInfo>();
+    private List<JointInfo> jointInfoWithoutZone = new List<JointInfo>();
+    private List<PathJoint> zones = new List<PathJoint>();
 
-    private void Awake()
+    private static PathMeshBuilder instance;
+    public static PathMeshBuilder Instance
     {
-        tunnel = Instantiate(tunnelPrefab);
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<PathMeshBuilder>();
+            }
+            return instance;
+        }
     }
 
-    private void Update()
+    private void Start()
     {
-        List<Vector3> points = new List<Vector3>();
-        for (int i = 0; i < Path.Instance.nodes.Count; i++)
+        instance = this;
+        BuildZones();
+        BuildJoints();
+        for (int i = 0; i < Path.Instance.curves.Count; i++)
         {
-            points.Add(Path.Instance.nodes[i].transform.position);
+            var points = new List<Vector3>();
+            var currentCurve = Path.Instance.curves[i];
+            for (int j = 0; j < currentCurve.nodes.Count; j++)
+            {
+                points.Add(currentCurve.nodes[j].transform.position);
+            }
+
+            BuildCurve(points, currentCurve.isClosed);
         }
-        // points.Add(points[0]);
-        curve = new CatmullRomCurve(points, true);
+        // BuildPath();
+    }
+
+    private void BuildZones()
+    {
+        for (int i = 0; i < Path.Instance.zones.Count; i++)
+        {
+            Zone zone = Path.Instance.zones[i];
+            PathJoint joint = Instantiate(zonePrefab, zone.transform.position, Quaternion.identity);
+            float scale = zone.Radius * 2f;
+            joint.transform.localScale = new Vector3(scale, scale, scale);
+            Matrix4x4 inverseMatrix = Matrix4x4.TRS(zone.transform.position, zone.transform.rotation, Vector3.one).inverse;
+            JointInfo info = new JointInfo(joint, zone.Radius, inverseMatrix);
+            jointInfo.Add(info);
+            zones.Add(joint);
+        }
+    }
+
+    private void BuildJoints()
+    {
+        for (int i = 0; i < Path.Instance.joints.Count; i++)
+        {
+            var j = Path.Instance.joints[i];
+            PathJoint joint = Instantiate(jointPrefab, j.transform.position, Quaternion.identity);
+            float scale = radius * 2f;
+            joint.transform.localScale = new Vector3(scale, scale, scale);
+            Matrix4x4 inverseMatrix = Matrix4x4.TRS(joint.transform.position, joint.transform.rotation, Vector3.one).inverse;
+            JointInfo info = new JointInfo(joint, radius, inverseMatrix);
+            jointInfo.Add(info);
+            jointInfoWithoutZone.Add(info);
+            joint.Rend.enabled = false;
+        }
+    }
+
+    private void BuildCurve(List<Vector3> points, bool isClosed)
+    {
+        PathJoint tunnel = Instantiate(tunnelPrefab);
+        CatmullRomCurve curve = new CatmullRomCurve(points, isClosed);
+        curves.Add(curve);
+        tunnelPaths.Add(tunnel);
+
         var vertices = new List<Vector3>();
         var normals = new List<Vector3>();
         var tangents = new List<Vector4>();
         var uvs = new List<Vector2>();
         var triangles = new List<int>();
-        var frames = curve.ComputeFrenetFrames(tubularSegments, true);
+        var frames = curve.ComputeFrenetFrames(tubularSegments, isClosed);
 
         for (int j = 0; j <= tubularSegments; j++)
         {
@@ -70,8 +133,48 @@ public class PathMeshBuilder : MonoBehaviour
         mesh.tangents = tangents.ToArray();
         mesh.uv = uvs.ToArray();
         // we need back rendering
-        triangles.Reverse();
+        // triangles.Reverse();
         mesh.triangles = triangles.ToArray();
+    }
+
+    private void BuildPath()
+    {
+        List<Matrix4x4> inverseTransformMatrixs = new List<Matrix4x4>();
+        List<float> radius = new List<float>();
+
+        for (int i = 0; i < jointInfo.Count; i++)
+        {
+            inverseTransformMatrixs.Add(jointInfo[i].inverseTransformMatrix);
+            radius.Add(jointInfo[i].radius);
+        }
+
+        for (int i = 0; i < tunnelPaths.Count; i++)
+        {
+            PathJoint curr = tunnelPaths[i];
+            curr.Material.SetInt(curr.cylinderNum, 0);
+            curr.Material.SetInt(curr.zoneNum, jointInfo.Count);
+            curr.Material.SetFloatArray(curr.zoneRadius, radius);
+            curr.Material.SetMatrixArray(curr.zoneInverseTransform, inverseTransformMatrixs);
+        }
+
+        // reuse this for compute zones
+        inverseTransformMatrixs = new List<Matrix4x4>();
+        radius = new List<float>();
+
+        for (int i = 0; i < jointInfoWithoutZone.Count; i++)
+        {
+            inverseTransformMatrixs.Add(jointInfoWithoutZone[i].inverseTransformMatrix);
+            radius.Add(jointInfoWithoutZone[i].radius);
+        }
+
+        for (int i = 0; i < zones.Count; i++)
+        {
+            PathJoint curr = zones[i];
+            curr.Material.SetInt(curr.cylinderNum, 0);
+            curr.Material.SetInt(curr.zoneNum, jointInfoWithoutZone.Count);
+            curr.Material.SetFloatArray(curr.zoneRadius, radius);
+            curr.Material.SetMatrixArray(curr.zoneInverseTransform, inverseTransformMatrixs);
+        }
     }
 
     private void GenerateSubSegments(
@@ -101,8 +204,6 @@ public class PathMeshBuilder : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (curve == null) return;
-        DrawGizmo(curve);
     }
 
     private void DrawGizmo(CatmullRomCurve curve)
@@ -113,28 +214,23 @@ public class PathMeshBuilder : MonoBehaviour
         for (int i = 1; i <= lineSteps; i++)
         {
             Gizmos.DrawSphere(lineStart, 0.2f);
-			Vector3 lineEnd = curve.GetPointAt(i / (float)lineSteps);
-			Gizmos.DrawLine(lineStart, lineEnd);
-			lineStart = lineEnd;
-		}
+            Vector3 lineEnd = curve.GetPointAt(i / (float)lineSteps);
+            Gizmos.DrawLine(lineStart, lineEnd);
+            lineStart = lineEnd;
+        }
     }
 }
 
-public class FrenetFrame
+public struct JointInfo
 {
-    public Vector3 tangent;
-    public Vector3 normal;
-    public Vector3 binormal;
+    public PathJoint joint;
+    public float radius;
+    public Matrix4x4 inverseTransformMatrix;
 
-    public FrenetFrame(Vector3 tangent, Vector3 normal, Vector3 binormal)
+    public JointInfo(PathJoint joint, float radius, Matrix4x4 inverseTransformMatrix)
     {
-        this.tangent = tangent;
-        this.normal = normal;
-        this.binormal = binormal;
-    }
-
-    public override string ToString()
-    {
-        return "FrenetFrame>   tangent: " + tangent + "   normal: " + normal + "   binormal: " + binormal;
+        this.joint = joint;
+        this.radius = radius;
+        this.inverseTransformMatrix = inverseTransformMatrix;
     }
 }

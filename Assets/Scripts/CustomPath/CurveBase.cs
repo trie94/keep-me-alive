@@ -138,7 +138,6 @@ public abstract class CurveBase
         var tx = Mathf.Abs(tangent.x);
         var ty = Mathf.Abs(tangent.y);
         var tz = Mathf.Abs(tangent.z);
-
         var normal = new Vector3();
         var min = float.MaxValue;
         if (tx <= min)

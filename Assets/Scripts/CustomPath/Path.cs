@@ -25,6 +25,9 @@ public class Path : MonoBehaviour
     public List<Segment> segments = new List<Segment>();
     public List<Node> nodes = new List<Node>();
     public List<Zone> zones = new List<Zone>();
+    public List<Curve> curves = new List<Curve>();
+    public List<Node> joints = new List<Node>();
+
     public Zone OxygenZone { get { return zones[0]; } }
     public Zone BodyTissueZone { get { return zones[1]; } }
 
@@ -131,4 +134,11 @@ public class Path : MonoBehaviour
     {
         return Vector3.Lerp(s.start.transform.position, s.end.transform.position, t);
     }
+}
+
+[System.Serializable]
+public class Curve
+{
+    public List<Node> nodes;
+    public bool isClosed;
 }

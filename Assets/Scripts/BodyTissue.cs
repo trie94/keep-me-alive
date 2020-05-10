@@ -51,14 +51,25 @@ public class BodyTissue : MonoBehaviour
     private int speedId;
     private int wobbleId;
     private int flipId;
-    private int capId;
     private int eatingProgressId;
+    private int framesId;
 
     [SerializeField]
     private GameObject debugPrefab;
     private GameObject debugObj;
     [SerializeField]
     private Transform childTransform;
+
+    #region frames
+    [SerializeField]
+    private GameObject framePrefab;
+    private int numFrame = 10;
+    // tail to head
+    private GameObject[] frames;
+    private float headOffset = 1.5f;
+    private Matrix4x4[] frameMatrices;
+    private Transform target;
+    #endregion
 
     private void Awake()
     {
@@ -68,13 +79,13 @@ public class BodyTissue : MonoBehaviour
         speedId = Shader.PropertyToID("_Speed");
         wobbleId = Shader.PropertyToID("_Wobble");
         flipId = Shader.PropertyToID("_Flip");
-        capId = Shader.PropertyToID("_Cap");
         eatingProgressId = Shader.PropertyToID("_EatingProgress");
         thicknessId = Shader.PropertyToID("_BodyThickness");
+        framesId = Shader.PropertyToID("_Frames");
         flip = mat.GetFloat(flipId);
 
-        bodyLength = Random.Range(2f, 6f);
-        bodyThickness = Random.Range(1.2f, 2.5f);
+        bodyLength = Random.Range(5f, 12f);
+        bodyThickness = Random.Range(1f, 2f);
         speed = Random.Range(4f, 7f);
         wobble = Random.Range(0.1f, 0.5f);
 
@@ -87,7 +98,7 @@ public class BodyTissue : MonoBehaviour
         Mesh mesh = GetComponentInChildren<MeshFilter>().mesh;
         mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 100f);
 
-        // debugObj = Instantiate(debugPrefab);
+        debugObj = Instantiate(debugPrefab);
     }
 
     private void Start()
@@ -96,11 +107,14 @@ public class BodyTissue : MonoBehaviour
         interactable.RegisterCallback(EventTriggerType.PointerDown, PointerDown);
         uiRevealDistSqrt = uiRevealDist * uiRevealDist;
         head = transform.position;
+        // matrix
+        frames = InitBodyFrames(numFrame);
+        frameMatrices = new Matrix4x4[numFrame];
     }
 
     private void Update()
     {
-        UpdateHeadPosition();
+        UpdateBodyFrames();
         interactable.SetDifferentUiRevealPosition(head);
 
         float distSqrt = Vector3.SqrMagnitude(PlayerBehavior.Instance.transform.position - head);
@@ -119,26 +133,60 @@ public class BodyTissue : MonoBehaviour
         }
     }
 
-    private void UpdateHeadPosition()
+    private GameObject[] InitBodyFrames(int numFrame)
     {
+        GameObject[] frames = new GameObject[numFrame];
+        for (int i = 0; i < numFrame; i++)
+        {
+            GameObject frameObject = Instantiate(framePrefab);
+            frameObject.transform.position = childTransform.TransformPoint(Vector3.zero);
+            frames[i] = frameObject;
+            frameObject.transform.parent = this.transform;
+        }
+        return frames;
+    }
+
+    private void UpdateBodyFrames()
+    {
+        // set posiiton
+        for (int i = 0; i < frames.Length; i++)
+        {
+            UpdateBodyFrame(frames[i], i);
+        }
+        // set rotation
+
+        for (int i = 0; i < frames.Length - 1; i++)
+        {
+            frames[i].transform.forward = frames[i + 1].transform.position - frames[i].transform.position;
+        }
+        frames[frames.Length - 1].transform.forward = frames[frames.Length - 2].transform.forward;
+        // handle the last one, head
+        head = frames[frames.Length - 1].transform.position;
+        debugObj.transform.position = head;
+
+        // set matrices
+        for (int i = 0; i < frames.Length; i++)
+        {
+            frameMatrices[i] = frames[i].transform.localToWorldMatrix;
+        }
+        mat.SetMatrixArray(framesId, frameMatrices);
+    }
+
+    private void UpdateBodyFrame(GameObject frame, int index)
+    {
+        bodyLength = mat.GetFloat("_BodyLength");
+
         float originalBodyHeight = 3f; // original height is 3
-        Vector3 localPos = new Vector3(0, 0, 1f);
+        Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)index / numFrame) * originalBodyHeight);
 
         float z = localPos.z;
-        float c = mat.GetFloat(capId) - Mathf.Abs(localPos.z);
-        if (c >= 0) {
-            c = 1f;
-            z *= bodyLength;
-        }
-        z += (1f-c) * Mathf.Sign(localPos.z) * (bodyLength-1f);
-        z += (bodyLength-1f) + originalBodyHeight;
-
+        z = (z + 1.5f) / 3f * bodyLength;
+        z += originalBodyHeight;
         localPos.z = z;
         float y = Mathf.Sin(z + Time.time * speed) * wobble;
         localPos.y += y * flip;
 
-        head = childTransform.TransformPoint(localPos);
-        // debugObj.transform.position = head;
+        frame.transform.position = childTransform.TransformPoint(localPos);
     }
 
     public void PointerDown(PointerEventData data)

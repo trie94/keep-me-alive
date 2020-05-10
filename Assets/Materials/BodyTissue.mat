@@ -40,7 +40,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Face:
-        m_Texture: {fileID: 2800000, guid: 66a1b183f119b4e5cabae7c3f1801c2b, type: 3}
+        m_Texture: {fileID: 2800000, guid: e57cacb989ce7490f88932a07528ff7d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -64,8 +64,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BodyLength: 2.08
-    - _BodyThickness: 1.36
+    - _BodyLength: 1
+    - _BodyThickness: 1
     - _BumpScale: 1
     - _Cap: 1.6
     - _Cutoff: 0.5
@@ -75,8 +75,8 @@ Material:
     - _DstBlend: 0
     - _EatingProgress: 0
     - _Flip: 1
-    - _FoodRange: 0.9
-    - _FoodSize: 0.61
+    - _FoodRange: 0.16
+    - _FoodSize: 0.38
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

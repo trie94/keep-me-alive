@@ -128,6 +128,10 @@ MonoBehaviour:
   debugPrefab: {fileID: 5674710467707232475, guid: f242972502aac44a390f16efd1d6918f,
     type: 3}
   childTransform: {fileID: 3425131151641367811}
+  framePrefab: {fileID: 5097536128835773338, guid: ca7ce384225c84f6288d84e2efbbf631,
+    type: 3}
+  targetObject: {fileID: 9219830322219412461, guid: d6575012dd809420fb69929200f96b60,
+    type: 3}
 --- !u!114 &-600265564628710393
 MonoBehaviour:
   m_ObjectHideFlags: 0

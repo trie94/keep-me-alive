@@ -26,7 +26,6 @@ public class PathMeshBuilder : MonoBehaviour
         {
             points.Add(Path.Instance.nodes[i].transform.position);
         }
-        // points.Add(points[0]);
         curve = new CatmullRomCurve(points, true);
         var vertices = new List<Vector3>();
         var normals = new List<Vector3>();
@@ -113,10 +112,10 @@ public class PathMeshBuilder : MonoBehaviour
         for (int i = 1; i <= lineSteps; i++)
         {
             Gizmos.DrawSphere(lineStart, 0.2f);
-			Vector3 lineEnd = curve.GetPointAt(i / (float)lineSteps);
-			Gizmos.DrawLine(lineStart, lineEnd);
-			lineStart = lineEnd;
-		}
+            Vector3 lineEnd = curve.GetPointAt(i / (float)lineSteps);
+            Gizmos.DrawLine(lineStart, lineEnd);
+            lineStart = lineEnd;
+        }
     }
 }
 

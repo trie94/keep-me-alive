@@ -8,21 +8,18 @@
         _Ramp ("Toon Ramp (RGB)", 2D) = "white" {}
         
         _GradientPower ("Gradient Power", Range(0.1, 5.0)) = 1.0
-        _BodyLength ("Length", Range(1, 6)) = 1.0
+        _BodyLength ("Length", Range(1, 20)) = 1.0
+        _BodyThickness ("Thickness", Range(1.0, 3.0)) = 1.0
+
         _Cap ("Cap", Range(-1.0, 1.6)) = 0.0
-
-        _BodyThickness ("Body Thickness", Range(1.0, 3.0)) = 1.0
-
         _Speed ("Speed", Range(1.0, 20.0)) = 0.1
         _Wobble ("Wobble", Range(0.0, 1.0)) = 0.1
 
-        _Deform ("Deform", Range(-1.5, 3.0)) = 0.1
-        _DeformPower ("Deform Power", Range(0.1, 1.0)) = 0.35
         _Flip("Flip", Int) = 1
 
         _EatingProgress("Eating Progress", Range(0.0, 1.0)) = 0.5
         _FoodSize("Food Size", Range(0.0, 2.0)) = 1.0
-        _FoodRange("Food Range", Range(0.0, 5.0)) = 1.0
+        _FoodRange("Food Range", Range(0.0, 0.5)) = 0.03
         _FogColor("FogColor", color) = (0.9294118,0.4901961,0.4392157,1)
     }
     SubShader
@@ -55,6 +52,7 @@
                 float3 worldNormal : NORMAL;
                 float4 worldPos : TEXCOORD1;
                 float4 localPos : TEXCOORD2;
+                float3 color : TEXCOORD3;
             };
 
             sampler2D _Face;
@@ -82,40 +80,53 @@
 
             fixed4 _FogColor;
 
+            // bone animation
+            uniform float4x4 _Frames[10];
+
             v2f vert (appdata v)
             {
                 v2f o;
+                float3 localPos = v.vertex;
                 o.localPos = v.vertex;
-                v.vertex.xy = v.vertex.xy * pow(saturate(v.vertex.z + _Deform), _DeformPower);
+                
                 fixed originalBodyHeight = 3;
-                fixed c = step(0, _Cap - abs(v.vertex.z));
-                if (c == 1) {
-                    v.vertex.z *= c * _BodyLength;
-                }
-                v.vertex.z += (1-c) * sign(v.vertex.z) * (_BodyLength-1);
-                // this makes the gameobject body located at the bottom
-                v.vertex.z += (_BodyLength-1) + originalBodyHeight;
+                localPos.xy *= _BodyThickness;
 
-                fixed convertedEatingProgress = (1-_EatingProgress) * (_BodyLength + originalBodyHeight + c *_BodyLength + _Cap * 2) - _Cap * c;
-                fixed mid = (convertedEatingProgress * 2 + _FoodRange)/2;
-                fixed p = smoothstep(-_FoodRange, _FoodRange, _FoodRange-abs(mid - v.vertex.z)) * _FoodSize + 1;
-                v.vertex.xy *= p;
-                v.vertex.xy *= _BodyThickness;
+                fixed eatingProgress = (1-_EatingProgress);
+                fixed p = (localPos.z + 1.5) / 3.0;
+                fixed mid = (eatingProgress * 2 + _FoodRange)/2;
+                fixed food = smoothstep(-_FoodRange, _FoodRange, _FoodRange-abs(mid - p)) * _FoodSize + 1;
+                localPos.xy *= food;
 
-                float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
-                o.worldPos = worldPos;
+                // skinning
+                uint numFrame = 10;
+                float offset = -1.5;
+                float progress = clamp((localPos.z + 0.95) / 2.0 * numFrame + offset, 0, numFrame - 1);
+                uint currIndex = clamp(floor(progress), 0, numFrame - 1);
+                uint nextIndex = clamp(ceil(progress), 0, numFrame - 1);
 
-                float y = sin(v.vertex.z + (_Time.y * _Speed)) * _Wobble;
-                v.vertex.y += y * _Flip;
+                float weight0 = abs(progress - nextIndex);
+                float weight1 = abs(progress - currIndex);
+
+                float cap = abs(localPos.z) - 1.0;
+                float c = step(0, cap);
+                localPos.z = cap * _Cap * sign(localPos.z) * c + localPos.z;
+
+                float3 worldPos0 = mul(_Frames[currIndex], float4(localPos, 1.0)).xyz;
+                float3 worldPos1 = mul(_Frames[nextIndex], float4(localPos, 1.0)).xyz;
+
+                float3 worldPos = lerp(worldPos0, worldPos1, weight1);
+                o.worldPos = float4(worldPos, 1.0);
 
                 o.worldNormal = mul((float3x3)unity_ObjectToWorld, v.normal);
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.vertex = UnityWorldToClipPos(worldPos);
                 o.uv = TRANSFORM_TEX(v.uv, _Face);
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
+                // return float4(i.color, 1.0);
                 float lerpFactor = pow(saturate(i.localPos.z/3.0+0.5), _GradientPower);
                 fixed4 col = lerp( _TailColor, _HeadColor, lerpFactor);
                 fixed4 face = tex2D(_Face, i.uv);

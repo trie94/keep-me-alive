@@ -40,13 +40,13 @@ public class BodyTissueGroup : MonoBehaviour
         // avoid too many recursive calls
         if (iteration > 10) return;
         float avoidRad = 1f;
-        for (int i=0; i<tissues.Count; i++)
+        for (int i = 0; i < tissues.Count; i++)
         {
             BodyTissue comp = bodyTissues[i];
             if ((tissue.transform.position - comp.transform.position).sqrMagnitude < avoidRad)
             {
                 tissue.transform.position = GetRandomPositionWithinRadius();
-                CheckCollision(tissue, tissues, iteration+1);
+                CheckCollision(tissue, tissues, iteration + 1);
             }
         }
     }

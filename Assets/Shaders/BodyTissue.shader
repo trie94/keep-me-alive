@@ -12,10 +12,6 @@
         _BodyThickness ("Thickness", Range(1.0, 3.0)) = 1.0
 
         _Cap ("Cap", Range(-1.0, 1.6)) = 0.0
-        _Speed ("Speed", Range(1.0, 20.0)) = 0.1
-        _Wobble ("Wobble", Range(0.0, 1.0)) = 0.1
-
-        _Flip("Flip", Int) = 1
 
         _EatingProgress("Eating Progress", Range(0.0, 1.0)) = 0.5
         _FoodSize("Food Size", Range(0.0, 2.0)) = 1.0
@@ -52,7 +48,6 @@
                 float3 worldNormal : NORMAL;
                 float4 worldPos : TEXCOORD1;
                 float4 localPos : TEXCOORD2;
-                float3 color : TEXCOORD3;
             };
 
             sampler2D _Face;
@@ -66,13 +61,6 @@
             fixed4 _HeadColor;
             fixed4 _TailColor;
             fixed _GradientPower;
-
-            float _Wobble;
-            float _Speed;
-
-            float _Deform;
-            float _DeformPower;
-            fixed _Flip;
 
             fixed _EatingProgress;
             fixed _FoodSize;
@@ -126,7 +114,6 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
-                // return float4(i.color, 1.0);
                 float lerpFactor = pow(saturate(i.localPos.z/3.0+0.5), _GradientPower);
                 fixed4 col = lerp( _TailColor, _HeadColor, lerpFactor);
                 fixed4 face = tex2D(_Face, i.uv);

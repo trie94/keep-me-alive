@@ -132,6 +132,7 @@ MonoBehaviour:
     type: 3}
   targetObject: {fileID: 9219830322219412461, guid: d6575012dd809420fb69929200f96b60,
     type: 3}
+  debugFrames: 0
 --- !u!114 &-600265564628710393
 MonoBehaviour:
   m_ObjectHideFlags: 0

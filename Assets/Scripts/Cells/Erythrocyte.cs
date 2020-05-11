@@ -125,6 +125,7 @@ public class Erythrocyte : Cell
                     else
                     {
                         targetBodyTissue.IsOccupied = true;
+                        targetBodyTissue.SetTarget(this.transform);
                         target = targetBodyTissue.Head;
                         prevState = cellState;
                     }
@@ -142,6 +143,7 @@ public class Erythrocyte : Cell
                             // unoccupy the current target and find a new one
                             // if there's no bodytissue available, exit the room
                             targetBodyTissue.IsOccupied = false;
+                            targetBodyTissue.SetTarget(null);
                             targetBodyTissue = BodyTissueGenerator.Instance.GetTargetBodyTissue();
                             if (targetBodyTissue == null)
                             {
@@ -153,6 +155,7 @@ public class Erythrocyte : Cell
                             else
                             {
                                 targetBodyTissue.IsOccupied = true;
+                                targetBodyTissue.SetTarget(this.transform);
                                 target = targetBodyTissue.Head;
                             }
                         }

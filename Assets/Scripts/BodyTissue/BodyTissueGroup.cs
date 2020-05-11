@@ -19,7 +19,7 @@ public class BodyTissueGroup : MonoBehaviour
 
     private void SpawnTissues()
     {
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < bodyTissueNum; i++)
         {
             BodyTissue tissue = Instantiate(BodyTissueGenerator.Instance.bodyTissuePrefab);
             tissue.transform.position = GetRandomPositionWithinRadius();

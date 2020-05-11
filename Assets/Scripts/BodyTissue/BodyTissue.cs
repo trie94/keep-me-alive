@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 [System.Serializable]
 public enum TissueState
 {
-    IDLE, FOLLOW_OXYGEN, EAT_OXYGEN, BACK_TO_IDLE
+    IDLE, IDLE_TO_FOLLOW_TARGET, FOLLOW_TARGET, EAT_OXYGEN, BACK_TO_IDLE
 }
 
 public class BodyTissue : MonoBehaviour
@@ -69,15 +69,17 @@ public class BodyTissue : MonoBehaviour
 
     #region frames
     [SerializeField]
-    private GameObject framePrefab;
+    private BodyFrame framePrefab;
     private int numFrame = 10;
     // tail to head
-    private GameObject[] frames;
+    private BodyFrame[] frames;
     private float headOffset = 1.5f;
     private Matrix4x4[] frameMatrices;
     [SerializeField]
     private GameObject targetObject;
     private Transform target;
+    [SerializeField]
+    private bool debugTarget = false;
     #endregion
 
     private void Awake()
@@ -116,9 +118,12 @@ public class BodyTissue : MonoBehaviour
         frames = InitBodyFrames(numFrame);
         frameMatrices = new Matrix4x4[numFrame];
 
-        GameObject t = Instantiate(targetObject);
-        t.transform.position = childTransform.TransformPoint(new Vector3(0, 0, bodyLength * 3));
-        target = t.transform;
+        if (debugTarget)
+        {
+            GameObject t = Instantiate(targetObject);
+            t.transform.position = childTransform.TransformPoint(new Vector3(0, 0, bodyLength * 3));
+            target = t.transform;
+        }
     }
 
     private void Update()
@@ -142,12 +147,12 @@ public class BodyTissue : MonoBehaviour
         }
     }
 
-    private GameObject[] InitBodyFrames(int numFrame)
+    private BodyFrame[] InitBodyFrames(int numFrame)
     {
-        GameObject[] frames = new GameObject[numFrame];
+        BodyFrame[] frames = new BodyFrame[numFrame];
         for (int i = 0; i < numFrame; i++)
         {
-            GameObject frameObject = Instantiate(framePrefab);
+            BodyFrame frameObject = Instantiate(framePrefab);
 
             Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)i / numFrame) * originalBodyHeight);
             float z = localPos.z;
@@ -172,7 +177,29 @@ public class BodyTissue : MonoBehaviour
                 UpdateBodyFrameIdle(frames[i], i);
             }
         }
-        else if (tissueState == TissueState.FOLLOW_OXYGEN)
+        else if (tissueState == TissueState.IDLE_TO_FOLLOW_TARGET)
+        {
+            if (prevState != tissueState)
+            {
+                tick = 0;
+                prevState = tissueState;
+            }
+            else if (tick >= 1f)
+            {
+                prevState = tissueState;
+                tissueState = TissueState.IDLE_TO_FOLLOW_TARGET;
+                tick = 0;
+            }
+            else
+            {
+                tick += Time.deltaTime;
+                for (int i = 0; i < frames.Length; i++)
+                {
+                    UpdateBodyFrameIdleToFollowTarget(frames[i], i, target, tick);
+                }
+            }
+        }
+        else if (tissueState == TissueState.FOLLOW_TARGET)
         {
             for (int i = 0; i < frames.Length; i++)
             {
@@ -202,19 +229,34 @@ public class BodyTissue : MonoBehaviour
             }
         }
 
-        // set forward
-        for (int i = 0; i < frames.Length - 1; i++)
-        {
-            UpdateBodyFrameForward(frames[i], frames[i + 1], i, target);
-        }
+        // for (int i = 0; i < frames.Length; i++)
+        // {
+        //     UpdateBodyFrame(frames[i], i, target);
+        // }
 
-        if (tissueState == TissueState.FOLLOW_OXYGEN)
+        if (target != null)
         {
-            frames[frames.Length - 1].transform.forward = target.transform.position - frames[frames.Length - 1].transform.position;
+            Vector3 forward = target.position - frames[frames.Length - 1].transform.position;
+            if (forward != Vector3.zero)
+            {
+                frames[frames.Length - 1].transform.forward = forward;
+            }
+            // set forward
+            for (int i = 0; i < frames.Length - 1; i++)
+            {
+                UpdateBodyFrameForward(frames[i], frames[i + 1], i, target);
+            }
         }
         else
         {
             frames[frames.Length - 1].transform.forward = frames[frames.Length - 2].transform.forward;
+        }
+
+        frames[0].transform.forward = this.transform.forward;
+
+        for (int i = 1; i < frames.Length - 1; i++)
+        {
+            frames[i].ComputeAlignment(frames[i + 1], frames[i - 1]);
         }
 
         // handle the last one, head
@@ -228,15 +270,44 @@ public class BodyTissue : MonoBehaviour
         mat.SetMatrixArray(framesId, frameMatrices);
     }
 
-    private void UpdateBodyFrameIdle(GameObject frame, int index)
+    private void UpdateBodyFrameIdleToFollowTarget(BodyFrame frame, int index, Transform target, float lerpFactor)
+    {
+        if (target != null)
+        {
+            Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)index / numFrame) * originalBodyHeight);
+
+            float z = localPos.z;
+            z = (z + 1.5f) / 3f * bodyLength;
+            z += originalBodyHeight;
+            float y = Mathf.Sin(z + Time.time * speed) * wobble;
+
+            localPos.z = z;
+            localPos.y += y;
+
+            float dist = (transform.position - target.position).magnitude;
+            Vector3 localTarget = childTransform.InverseTransformPoint(target.position);
+            float weight = (float)index / numFrame / 1.5f * bodyLength / dist;
+            localPos = Vector3.Lerp(localPos, localTarget, weight);
+            Vector3 pos = childTransform.TransformPoint(localPos);
+
+            frame.transform.position = Vector3.Lerp(pos, target.position, lerpFactor);
+        }
+        else
+        {
+            prevState = tissueState;
+            tissueState = TissueState.BACK_TO_IDLE;
+        }
+    }
+
+    private void UpdateBodyFrameIdle(BodyFrame frame, int index)
     {
         bodyLength = mat.GetFloat("_BodyLength");
         Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)index / numFrame) * originalBodyHeight);
 
-        if ((transform.position - target.position).magnitude < oxygenFollowThreshold + bodyLength)
+        if (target != null)
         {
             prevState = tissueState;
-            tissueState = TissueState.FOLLOW_OXYGEN;
+            tissueState = TissueState.FOLLOW_TARGET;
         }
         else
         {
@@ -252,24 +323,24 @@ public class BodyTissue : MonoBehaviour
         }
     }
 
-    private void UpdateBodyFrameFollowTarget(GameObject frame, int index, Transform target)
+    private void UpdateBodyFrameFollowTarget(BodyFrame frame, int index, Transform target)
     {
         bodyLength = mat.GetFloat("_BodyLength");
         Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)index / numFrame) * originalBodyHeight);
 
         float z = localPos.z;
-        Vector3 localTarget = childTransform.InverseTransformPoint(target.position);
-        float dist = (transform.position - target.position).magnitude;
+        z = (z + 1.5f) / 3f * bodyLength;
+        z += originalBodyHeight;
+        localPos.z = z;
+        float y = Mathf.Sin(z + Time.time * speed) * wobble;
+        localPos.y += y;
 
-
-        if (dist < oxygenFollowThreshold + bodyLength)
+        if (target != null)
         {
-            float weight = (float)index / numFrame;
+            float dist = (transform.position - target.position).magnitude;
+            Vector3 localTarget = childTransform.InverseTransformPoint(target.position);
+            float weight = (float)index / numFrame / 1.5f * bodyLength / dist;
             localPos = Vector3.Lerp(localPos, localTarget, weight);
-
-            float y = Mathf.Sin(z + Time.time * speed) * wobble;
-            localPos.y += y;
-
             frame.transform.position = childTransform.TransformPoint(localPos);
         }
         else
@@ -279,7 +350,7 @@ public class BodyTissue : MonoBehaviour
         }
     }
 
-    private void UpdateBodyFrameBackToIdle(GameObject frame, int index, float lerpFactor)
+    private void UpdateBodyFrameBackToIdle(BodyFrame frame, int index, float lerpFactor)
     {
         Vector3 localTarget = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)index / numFrame) * originalBodyHeight);
         float z = localTarget.z;
@@ -294,7 +365,7 @@ public class BodyTissue : MonoBehaviour
         frame.transform.position = Vector3.Lerp(frame.transform.position, target, lerpFactor);
     }
 
-    private void UpdateBodyFrameForward(GameObject currFrame, GameObject frontFrame, int index, Transform target)
+    private void UpdateBodyFrameForward(BodyFrame currFrame, BodyFrame frontFrame, int index, Transform target)
     {
         Vector3 f = (frontFrame.transform.position - currFrame.transform.position).normalized;
         float weight = (float)index / numFrame;
@@ -325,6 +396,7 @@ public class BodyTissue : MonoBehaviour
 
     public void ConsumeOxygen()
     {
+        target = null;
         StartCoroutine(ConsumeOxygenCoroutine());
     }
 
@@ -341,5 +413,10 @@ public class BodyTissue : MonoBehaviour
         oxygenTick = 0f;
         mat.SetFloat(eatingProgressId, 0f);
         BodyTissueGenerator.Instance.AddBodyTissueToAvailableList(this);
+    }
+
+    public void SetTarget(Transform target)
+    {
+        this.target = target;
     }
 }

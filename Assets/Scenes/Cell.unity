@@ -1124,7 +1124,7 @@ PrefabInstance:
     - target: {fileID: 5087168109227571634, guid: e7d3f5456ef3849818d8596687776d95,
         type: 3}
       propertyPath: tissueGroupNum
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e7d3f5456ef3849818d8596687776d95, type: 3}

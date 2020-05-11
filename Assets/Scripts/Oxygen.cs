@@ -283,4 +283,3 @@ public class Oxygen : Molecule
         interactable.IsInteractable = false;
     }
 }
-      

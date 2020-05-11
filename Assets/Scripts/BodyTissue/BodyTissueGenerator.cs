@@ -48,13 +48,13 @@ public class BodyTissueGenerator : MonoBehaviour
 
     private void SpawnTissueGroup()
     {
-        for (int i=0; i<tissueGroupNum; i++)
+        for (int i = 0; i < tissueGroupNum; i++)
         {
             Vector3 groupCenter = GetRandomPointOnSphereWithWeight();
             BodyTissueGroup group = Instantiate(bodyTissueGroupPrefab, groupCenter, Quaternion.identity);
             bodyTissueGroups.Add(group);
             // add all body tissues to available
-            for (int j=0; j<group.BodyTissues.Count; j++)
+            for (int j = 0; j < group.BodyTissues.Count; j++)
             {
                 availableBodyTissues.Add(group.BodyTissues[j]);
             }
@@ -82,7 +82,7 @@ public class BodyTissueGenerator : MonoBehaviour
     private Vector3 GetRandomPointOnSphereWithWeight()
     {
         Vector3 point = GetRandomPointOnSphere();
-        for (int i=0; i<tunnelNodesToAvoid.Length; i++)
+        for (int i = 0; i < tunnelNodesToAvoid.Length; i++)
         {
             var node = tunnelNodesToAvoid[i];
             float avoidRad = PathBuilder.Instance.radius * 2f;

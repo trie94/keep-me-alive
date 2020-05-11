@@ -30,7 +30,7 @@ public class MoleculeCarrierBehavior : MonoBehaviour
     public void GrabOxygen(Oxygen o)
     {
         Debug.Assert(CanGrab());
-        for (int i=0; i<moleculeCapacity; i++)
+        for (int i = 0; i < moleculeCapacity; i++)
         {
             if (childMolecules[i] == null)
             {
@@ -64,6 +64,7 @@ public class MoleculeCarrierBehavior : MonoBehaviour
         o.carrier = null;
         o.targetBodyTissue = bodyTissue;
         bodyTissue.ReceiveOxygen();
+        bodyTissue.SetTarget(o.transform);
         o.state = MoleculeState.Released;
     }
 

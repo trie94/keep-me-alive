@@ -7,10 +7,6 @@ using UnityEngine.EventSystems;
 // based on the different tissues.
 // TODO - tissue needs state especially for animation..
 [System.Serializable]
-public enum TissueState
-{
-    IDLE, IDLE_TO_FOLLOW_TARGET, FOLLOW_TARGET, EAT_OXYGEN, BACK_TO_IDLE
-}
 
 public class BodyTissue : MonoBehaviour
 {
@@ -57,13 +53,7 @@ public class BodyTissue : MonoBehaviour
     private int framesId;
 
     [SerializeField]
-    private GameObject debugPrefab;
-    private GameObject debugObj;
-    [SerializeField]
     private Transform childTransform;
-    [SerializeField]
-    private TissueState tissueState;
-    private TissueState prevState;
     private float oxygenFollowThreshold = 2f;
     private float originalBodyHeight = 3f; // original height is 3
 
@@ -79,7 +69,8 @@ public class BodyTissue : MonoBehaviour
     private GameObject targetObject;
     private Transform target;
     [SerializeField]
-    private bool debugTarget = false;
+    private bool debugSpringPhysics = false;
+    private float followThreshold = 3f;
     #endregion
 
     private void Awake()
@@ -102,10 +93,6 @@ public class BodyTissue : MonoBehaviour
 
         Mesh mesh = GetComponentInChildren<MeshFilter>().mesh;
         mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 100f);
-
-        debugObj = Instantiate(debugPrefab);
-        prevState = TissueState.IDLE;
-        tissueState = TissueState.IDLE;
     }
 
     private void Start()
@@ -113,17 +100,15 @@ public class BodyTissue : MonoBehaviour
         interactable = GetComponent<InteractableObject>();
         interactable.RegisterCallback(EventTriggerType.PointerDown, PointerDown);
         uiRevealDistSqrt = uiRevealDist * uiRevealDist;
-        head = transform.position;
         // matrix
         frames = InitBodyFrames(numFrame);
         frameMatrices = new Matrix4x4[numFrame];
 
-        if (debugTarget)
-        {
-            GameObject t = Instantiate(targetObject);
-            t.transform.position = childTransform.TransformPoint(new Vector3(0, 0, bodyLength * 3));
-            target = t.transform;
-        }
+        GameObject t = Instantiate(targetObject);
+        t.transform.position = childTransform.TransformPoint(new Vector3(0, 0, followThreshold + bodyLength));
+        t.transform.forward = transform.forward;
+        target = t.transform;
+        t.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
     }
 
     private void Update()
@@ -152,16 +137,17 @@ public class BodyTissue : MonoBehaviour
         BodyFrame[] frames = new BodyFrame[numFrame];
         for (int i = 0; i < numFrame; i++)
         {
-            BodyFrame frameObject = Instantiate(framePrefab);
-
+            // compute position
             Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)i / numFrame) * originalBodyHeight);
             float z = localPos.z;
             z = (z + 1.5f) / 3f * bodyLength;
             z += originalBodyHeight;
             localPos.z = z;
-            frameObject.transform.position = childTransform.TransformPoint(localPos);
-            frames[i] = frameObject;
+
+            BodyFrame frameObject = Instantiate(framePrefab, childTransform.TransformPoint(localPos), Quaternion.identity);
             frameObject.transform.parent = this.transform;
+            frameObject.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
+            frames[i] = frameObject;
         }
         head = frames[frames.Length - 1].transform.position;
         return frames;
@@ -169,212 +155,52 @@ public class BodyTissue : MonoBehaviour
 
     private void UpdateBodyFrames()
     {
-        // set posiiton
-        if (tissueState == TissueState.IDLE || tissueState == TissueState.EAT_OXYGEN)
+        // reset acceleration
+        for (int i = 0; i < frames.Length; i++)
         {
-            for (int i = 0; i < frames.Length; i++)
-            {
-                UpdateBodyFrameIdle(frames[i], i);
-            }
-        }
-        else if (tissueState == TissueState.IDLE_TO_FOLLOW_TARGET)
-        {
-            if (prevState != tissueState)
-            {
-                tick = 0;
-                prevState = tissueState;
-            }
-            else if (tick >= 1f)
-            {
-                prevState = tissueState;
-                tissueState = TissueState.IDLE_TO_FOLLOW_TARGET;
-                tick = 0;
-            }
-            else
-            {
-                tick += Time.deltaTime;
-                for (int i = 0; i < frames.Length; i++)
-                {
-                    UpdateBodyFrameIdleToFollowTarget(frames[i], i, target, tick);
-                }
-            }
-        }
-        else if (tissueState == TissueState.FOLLOW_TARGET)
-        {
-            for (int i = 0; i < frames.Length; i++)
-            {
-                UpdateBodyFrameFollowTarget(frames[i], i, target);
-            }
-        }
-        else if (tissueState == TissueState.BACK_TO_IDLE)
-        {
-            if (prevState != tissueState)
-            {
-                tick = 0;
-                prevState = tissueState;
-            }
-            else if (tick >= 1f)
-            {
-                prevState = tissueState;
-                tissueState = TissueState.IDLE;
-                tick = 0;
-            }
-            else
-            {
-                tick += Time.deltaTime;
-                for (int i = 0; i < frames.Length; i++)
-                {
-                    UpdateBodyFrameBackToIdle(frames[i], i, tick);
-                }
-            }
+            frames[i].acceleration = Vector3.zero;
         }
 
-        // for (int i = 0; i < frames.Length; i++)
-        // {
-        //     UpdateBodyFrame(frames[i], i, target);
-        // }
-
-        if (target != null)
+        for (int i = 0; i < frames.Length - 1; i++)
         {
-            Vector3 forward = target.position - frames[frames.Length - 1].transform.position;
-            if (forward != Vector3.zero)
-            {
-                frames[frames.Length - 1].transform.forward = forward;
-            }
-            // set forward
-            for (int i = 0; i < frames.Length - 1; i++)
-            {
-                UpdateBodyFrameForward(frames[i], frames[i + 1], i, target);
-            }
-        }
-        else
-        {
-            frames[frames.Length - 1].transform.forward = frames[frames.Length - 2].transform.forward;
+            BodyFrameSpring.ComputeAcceleration(frames[i], frames[i + 1]);
         }
 
-        frames[0].transform.forward = this.transform.forward;
+        // update head acceleration
+        float dist = (target.position - frames[0].transform.position).magnitude;
+        if (dist < followThreshold + bodyLength)
+        {
+            BodyFrameSpring.ComputeAcceleration(frames[frames.Length - 1], target.position);
+        }
+
+        // we do not update the tail
+        for (int i = 1; i < frames.Length; i++)
+        {
+            frames[i].UpdateVelocity();
+        }
+
+        // update tail alignment first
+        Vector3 tailForward = frames[frames.Length - 1].transform.position - frames[0].transform.position;
+        if (tailForward != Vector3.zero) frames[0].transform.forward = tailForward;
+
+        // update head alignment
+        Vector3 headForward = target.position - frames[frames.Length - 1].transform.position;
+        if (headForward != Vector3.zero) frames[frames.Length - 1].transform.forward = headForward;
 
         for (int i = 1; i < frames.Length - 1; i++)
         {
-            frames[i].ComputeAlignment(frames[i + 1], frames[i - 1]);
+            frames[i].ComputeAlignment(frames[i - 1], frames[i + 1]);
         }
 
-        // handle the last one, head
+        // update head reference
         head = frames[frames.Length - 1].transform.position;
-        debugObj.transform.position = head;
+
         // set matrices
         for (int i = 0; i < frames.Length; i++)
         {
             frameMatrices[i] = frames[i].transform.localToWorldMatrix;
         }
         mat.SetMatrixArray(framesId, frameMatrices);
-    }
-
-    private void UpdateBodyFrameIdleToFollowTarget(BodyFrame frame, int index, Transform target, float lerpFactor)
-    {
-        if (target != null)
-        {
-            Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)index / numFrame) * originalBodyHeight);
-
-            float z = localPos.z;
-            z = (z + 1.5f) / 3f * bodyLength;
-            z += originalBodyHeight;
-            float y = Mathf.Sin(z + Time.time * speed) * wobble;
-
-            localPos.z = z;
-            localPos.y += y;
-
-            float dist = (transform.position - target.position).magnitude;
-            Vector3 localTarget = childTransform.InverseTransformPoint(target.position);
-            float weight = (float)index / numFrame / 1.5f * bodyLength / dist;
-            localPos = Vector3.Lerp(localPos, localTarget, weight);
-            Vector3 pos = childTransform.TransformPoint(localPos);
-
-            frame.transform.position = Vector3.Lerp(pos, target.position, lerpFactor);
-        }
-        else
-        {
-            prevState = tissueState;
-            tissueState = TissueState.BACK_TO_IDLE;
-        }
-    }
-
-    private void UpdateBodyFrameIdle(BodyFrame frame, int index)
-    {
-        bodyLength = mat.GetFloat("_BodyLength");
-        Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)index / numFrame) * originalBodyHeight);
-
-        if (target != null)
-        {
-            prevState = tissueState;
-            tissueState = TissueState.FOLLOW_TARGET;
-        }
-        else
-        {
-            float z = localPos.z;
-            z = (z + 1.5f) / 3f * bodyLength;
-            z += originalBodyHeight;
-            float y = Mathf.Sin(z + Time.time * speed) * wobble;
-
-            localPos.z = z;
-            localPos.y += y;
-
-            frame.transform.position = childTransform.TransformPoint(localPos);
-        }
-    }
-
-    private void UpdateBodyFrameFollowTarget(BodyFrame frame, int index, Transform target)
-    {
-        bodyLength = mat.GetFloat("_BodyLength");
-        Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)index / numFrame) * originalBodyHeight);
-
-        float z = localPos.z;
-        z = (z + 1.5f) / 3f * bodyLength;
-        z += originalBodyHeight;
-        localPos.z = z;
-        float y = Mathf.Sin(z + Time.time * speed) * wobble;
-        localPos.y += y;
-
-        if (target != null)
-        {
-            float dist = (transform.position - target.position).magnitude;
-            Vector3 localTarget = childTransform.InverseTransformPoint(target.position);
-            float weight = (float)index / numFrame / 1.5f * bodyLength / dist;
-            localPos = Vector3.Lerp(localPos, localTarget, weight);
-            frame.transform.position = childTransform.TransformPoint(localPos);
-        }
-        else
-        {
-            prevState = tissueState;
-            tissueState = TissueState.BACK_TO_IDLE;
-        }
-    }
-
-    private void UpdateBodyFrameBackToIdle(BodyFrame frame, int index, float lerpFactor)
-    {
-        Vector3 localTarget = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)index / numFrame) * originalBodyHeight);
-        float z = localTarget.z;
-        z = (z + 1.5f) / 3f * bodyLength;
-        z += originalBodyHeight;
-        float y = Mathf.Sin(z + Time.time * speed) * wobble;
-
-        localTarget.z = z;
-        localTarget.y += y;
-
-        Vector3 target = childTransform.TransformPoint(localTarget);
-        frame.transform.position = Vector3.Lerp(frame.transform.position, target, lerpFactor);
-    }
-
-    private void UpdateBodyFrameForward(BodyFrame currFrame, BodyFrame frontFrame, int index, Transform target)
-    {
-        Vector3 f = (frontFrame.transform.position - currFrame.transform.position).normalized;
-        float weight = (float)index / numFrame;
-        f = Vector3.Lerp(f, (target.position - currFrame.transform.position).normalized, weight);
-
-        if (f != Vector3.zero)
-        {
-            currFrame.transform.forward = f;
-        }
     }
 
     public void PointerDown(PointerEventData data)
@@ -396,7 +222,6 @@ public class BodyTissue : MonoBehaviour
 
     public void ConsumeOxygen()
     {
-        target = null;
         StartCoroutine(ConsumeOxygenCoroutine());
     }
 

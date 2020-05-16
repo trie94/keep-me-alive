@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class BodyFrame : MonoBehaviour
 {
-    public Vector3 force;
+    public Vector3 acceleration;
+    public Vector3 velocity;
+    public float mass = 1f;
 
     public void ComputeAlignment(BodyFrame front, BodyFrame back)
     {
@@ -12,8 +14,15 @@ public class BodyFrame : MonoBehaviour
         if (forward != Vector3.zero) transform.forward = forward;
     }
 
-    public void ComputeForce(Transform root, Transform target)
+    public void UpdateVelocity()
     {
-        Vector3 force = target.position - root.position;
+        velocity = acceleration * Time.deltaTime;
+        transform.position += velocity * Time.deltaTime;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + velocity);
     }
 }

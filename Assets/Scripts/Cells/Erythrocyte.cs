@@ -107,7 +107,11 @@ public class Erythrocyte : Cell
                 prevState = cellState;
                 cellState = ErythrocyteState.ExitBodyTissueArea;
                 oxygenReleaseTick = 0f;
-                targetBodyTissue = null;
+                if (targetBodyTissue != null)
+                {
+                    targetBodyTissue.IsOccupied = false;
+                    targetBodyTissue = null;
+                }
                 target = null;
             }
             else
@@ -125,7 +129,6 @@ public class Erythrocyte : Cell
                     else
                     {
                         targetBodyTissue.IsOccupied = true;
-                        targetBodyTissue.SetTarget(this.transform);
                         target = targetBodyTissue.Head;
                         prevState = cellState;
                     }
@@ -138,12 +141,11 @@ public class Erythrocyte : Cell
                     {
                         carrier.ReleaseOxygen(targetBodyTissue);
                         oxygenReleaseTick = 0f;
+                        targetBodyTissue.IsOccupied = false;
                         if (!targetBodyTissue.NeedOxygen())
                         {
                             // unoccupy the current target and find a new one
                             // if there's no bodytissue available, exit the room
-                            targetBodyTissue.IsOccupied = false;
-                            targetBodyTissue.SetTarget(null);
                             targetBodyTissue = BodyTissueGenerator.Instance.GetTargetBodyTissue();
                             if (targetBodyTissue == null)
                             {
@@ -155,7 +157,6 @@ public class Erythrocyte : Cell
                             else
                             {
                                 targetBodyTissue.IsOccupied = true;
-                                targetBodyTissue.SetTarget(this.transform);
                                 target = targetBodyTissue.Head;
                             }
                         }

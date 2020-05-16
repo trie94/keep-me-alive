@@ -6,8 +6,6 @@ using UnityEngine.EventSystems;
 // TODO - tissue type will be needed if planning to add different behaviors
 // based on the different tissues.
 // TODO - tissue needs state especially for animation..
-[System.Serializable]
-
 public class BodyTissue : MonoBehaviour
 {
     #region oxygen
@@ -66,7 +64,7 @@ public class BodyTissue : MonoBehaviour
     private float headOffset = 1.5f;
     private Matrix4x4[] frameMatrices;
     [SerializeField]
-    private GameObject targetObject;
+    private GameObject targetPrefab;
     private Transform target;
     [SerializeField]
     private bool debugSpringPhysics = false;
@@ -104,7 +102,7 @@ public class BodyTissue : MonoBehaviour
         frames = InitBodyFrames(numFrame);
         frameMatrices = new Matrix4x4[numFrame];
 
-        GameObject t = Instantiate(targetObject);
+        GameObject t = Instantiate(targetPrefab);
         t.transform.position = childTransform.TransformPoint(new Vector3(0, 0, followThreshold + bodyLength));
         t.transform.forward = transform.forward;
         target = t.transform;
@@ -238,10 +236,5 @@ public class BodyTissue : MonoBehaviour
         oxygenTick = 0f;
         mat.SetFloat(eatingProgressId, 0f);
         BodyTissueGenerator.Instance.AddBodyTissueToAvailableList(this);
-    }
-
-    public void SetTarget(Transform target)
-    {
-        this.target = target;
     }
 }

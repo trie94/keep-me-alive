@@ -32,7 +32,7 @@ public class BodyTissue : MonoBehaviour
     #endregion
 
     private bool isOccupied;
-    public bool IsOccupied { get { return isOccupied; } set { isOccupied = value; } }
+    public bool IsOccupied { get { return isOccupied; } }
     private Vector3 head;
     public Vector3 Head { get { return head; } }
 
@@ -61,11 +61,10 @@ public class BodyTissue : MonoBehaviour
     private int numFrame = 10;
     // tail to head
     private BodyFrame[] frames;
-    private float headOffset = 1.5f;
     private Matrix4x4[] frameMatrices;
     [SerializeField]
-    private GameObject targetPrefab;
-    private Transform target;
+    private BodyTissueTarget targetPrefab;
+    private BodyTissueTarget target;
     [SerializeField]
     private bool debugSpringPhysics = false;
     private float followThreshold = 3f;
@@ -102,11 +101,9 @@ public class BodyTissue : MonoBehaviour
         frames = InitBodyFrames(numFrame);
         frameMatrices = new Matrix4x4[numFrame];
 
-        GameObject t = Instantiate(targetPrefab);
-        t.transform.position = childTransform.TransformPoint(new Vector3(0, 0, followThreshold + bodyLength));
-        t.transform.forward = transform.forward;
-        target = t.transform;
-        t.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
+        target = Instantiate(targetPrefab, childTransform.TransformPoint(new Vector3(0, 0, followThreshold + bodyLength * 2f)), Quaternion.identity);
+        target.transform.forward = transform.forward;
+        target.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
     }
 
     private void Update()
@@ -165,10 +162,10 @@ public class BodyTissue : MonoBehaviour
         }
 
         // update head acceleration
-        float dist = (target.position - frames[0].transform.position).magnitude;
+        float dist = (target.transform.position - frames[0].transform.position).magnitude;
         if (dist < followThreshold + bodyLength)
         {
-            BodyFrameSpring.ComputeAcceleration(frames[frames.Length - 1], target.position);
+            BodyFrameSpring.ComputeAcceleration(frames[frames.Length - 1], target.transform.position);
         }
 
         // we do not update the tail
@@ -182,7 +179,7 @@ public class BodyTissue : MonoBehaviour
         if (tailForward != Vector3.zero) frames[0].transform.forward = tailForward;
 
         // update head alignment
-        Vector3 headForward = target.position - frames[frames.Length - 1].transform.position;
+        Vector3 headForward = target.transform.position - frames[frames.Length - 1].transform.position;
         if (headForward != Vector3.zero) frames[frames.Length - 1].transform.forward = headForward;
 
         for (int i = 1; i < frames.Length - 1; i++)
@@ -207,13 +204,31 @@ public class BodyTissue : MonoBehaviour
         BodyTissueGenerator.Instance.RemoveBodyTissueToAvailableList(this);
     }
 
+    public void SetTarget(Transform targetToFollow)
+    {
+        target.targetToFollow = targetToFollow;
+    }
+
     public bool NeedOxygen()
     {
         return oxygenNumber < oxygenCapacity;
     }
 
+    public void Occupy(Cell cell)
+    {
+        isOccupied = true;
+        SetTarget(cell.transform);
+    }
+
+    public void UnOccupy()
+    {
+        isOccupied = false;
+        SetTarget(null);
+    }
+
     public void ReceiveOxygen()
     {
+        UnOccupy();
         oxygenNumber++;
         Debug.Assert(oxygenNumber <= oxygenCapacity);
     }

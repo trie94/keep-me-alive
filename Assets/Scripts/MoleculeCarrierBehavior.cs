@@ -63,8 +63,8 @@ public class MoleculeCarrierBehavior : MonoBehaviour
         o.hopOnHolder = null;
         o.carrier = null;
         o.targetBodyTissue = bodyTissue;
-        bodyTissue.ReceiveOxygen();
         bodyTissue.SetTarget(o.transform);
+        bodyTissue.ReceiveOxygen();
         o.state = MoleculeState.Released;
     }
 

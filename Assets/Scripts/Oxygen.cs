@@ -172,11 +172,11 @@ public class Oxygen : Molecule
         }
         else if (state == MoleculeState.Released)
         {
-            float dist = Vector3.SqrMagnitude(transform.position - targetBodyTissue.Head);
-            if (dist < 0.2f)
-            {
-                state = MoleculeState.HitBodyTissue;
-            }
+            // float dist = Vector3.SqrMagnitude(transform.position - targetBodyTissue.Head);
+            // if (dist < 0.2f)
+            // {
+            state = MoleculeState.HitBodyTissue;
+            // }
         }
         else if (state == MoleculeState.HitBodyTissue)
         {

@@ -109,7 +109,7 @@ public class Erythrocyte : Cell
                 oxygenReleaseTick = 0f;
                 if (targetBodyTissue != null)
                 {
-                    targetBodyTissue.IsOccupied = false;
+                    targetBodyTissue.UnOccupy();
                     targetBodyTissue = null;
                 }
                 target = null;
@@ -128,7 +128,7 @@ public class Erythrocyte : Cell
                     }
                     else
                     {
-                        targetBodyTissue.IsOccupied = true;
+                        targetBodyTissue.Occupy(this);
                         target = targetBodyTissue.Head;
                         prevState = cellState;
                     }
@@ -137,11 +137,12 @@ public class Erythrocyte : Cell
                 {
                     Debug.Assert(targetBodyTissue != null);
                     velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
-                    if ((targetBodyTissue.Head - transform.position).sqrMagnitude < 3f)
+
+                    if ((targetBodyTissue.Head - transform.position).sqrMagnitude < 1f)
                     {
+                        targetBodyTissue.UnOccupy();
                         carrier.ReleaseOxygen(targetBodyTissue);
                         oxygenReleaseTick = 0f;
-                        targetBodyTissue.IsOccupied = false;
                         if (!targetBodyTissue.NeedOxygen())
                         {
                             // unoccupy the current target and find a new one
@@ -156,7 +157,7 @@ public class Erythrocyte : Cell
                             }
                             else
                             {
-                                targetBodyTissue.IsOccupied = true;
+                                targetBodyTissue.Occupy(this);
                                 target = targetBodyTissue.Head;
                             }
                         }

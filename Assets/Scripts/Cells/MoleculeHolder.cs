@@ -26,7 +26,7 @@ public class MoleculeHolder : MonoBehaviour
         // Get renderer and material from the parent
         Renderer[] rends = GetComponentsInParent<Renderer>();
         Renderer rend = null;
-        for (int i=0; i<rends.Length; i++)
+        for (int i = 0; i < rends.Length; i++)
         {
             if (rends[i] != GetComponent<Renderer>())
             {
@@ -64,7 +64,7 @@ public class MoleculeHolder : MonoBehaviour
         cellPrevPosition = cell.position;
     }
 
-    public void OnOccupied()
+    public void Occupy()
     {
         isOccupied = true;
         speed = Random.Range(0.5f, 1f);

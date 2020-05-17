@@ -31,16 +31,8 @@ public class BodyTissue : MonoBehaviour
     private float wobble;
     #endregion
 
-    private bool isOccupied;
-    public bool IsOccupied { get { return isOccupied; } }
     private Vector3 head;
     public Vector3 Head { get { return head; } }
-
-    [SerializeField]
-    private float uiRevealDist;
-    private float uiRevealDistSqrt;
-
-    private InteractableObject interactable;
 
     private Renderer rend;
     private Material mat;
@@ -52,8 +44,9 @@ public class BodyTissue : MonoBehaviour
 
     [SerializeField]
     private Transform childTransform;
-    private float oxygenFollowThreshold = 2f;
     private float originalBodyHeight = 3f; // original height is 3
+    private float attractRadius = 4f;
+    private float grabOxygenRadius = 1f;
 
     #region frames
     [SerializeField]
@@ -94,10 +87,6 @@ public class BodyTissue : MonoBehaviour
 
     private void Start()
     {
-        interactable = GetComponent<InteractableObject>();
-        interactable.RegisterCallback(EventTriggerType.PointerDown, PointerDown);
-        uiRevealDistSqrt = uiRevealDist * uiRevealDist;
-        // matrix
         frames = InitBodyFrames(numFrame);
         frameMatrices = new Matrix4x4[numFrame];
 
@@ -108,22 +97,46 @@ public class BodyTissue : MonoBehaviour
 
     private void Update()
     {
+        FindClosestOxygen();
         UpdateBodyFrames();
-        interactable.SetDifferentUiRevealPosition(head);
+    }
 
-        float distSqrt = Vector3.SqrMagnitude(PlayerBehavior.Instance.transform.position - head);
-        Vector3 direction = (PlayerBehavior.Instance.transform.position - head).normalized;
-        float dot = Vector3.Dot(direction, PlayerBehavior.Instance.transform.forward);
+    private void FindClosestOxygen()
+    {
+        if (NeedOxygen())
+        {
+            Oxygen closest = null;
+            float min = float.MaxValue;
+            for (int i = 0; i < OxygenController.Instance.oxygenList.Count; i++)
+            {
+                Oxygen curr = OxygenController.Instance.oxygenList[i];
+                Vector3 headToOxygen = curr.transform.position - head;
+                if (curr.state == MoleculeState.Released || curr.state == MoleculeState.HitBodyTissue || curr.state == MoleculeState.OxygenArea) continue;
 
-        if (PlayerBehavior.Instance.carrier.CanReleaseOxygen()
-            && !IsOccupied && NeedOxygen()
-            && distSqrt < uiRevealDistSqrt && dot < -0.5f)
-        {
-            interactable.IsInteractable = true;
-        }
-        else
-        {
-            interactable.IsInteractable = false;
+                if (headToOxygen.sqrMagnitude < min)
+                {
+                    closest = curr;
+                    min = headToOxygen.sqrMagnitude;
+                }
+            }
+
+            if (closest != null)
+            {
+                if (min < grabOxygenRadius * grabOxygenRadius)
+                {
+                    // check if it is already grabbed
+                    GrabOxygen(closest);
+                }
+
+                if (min < attractRadius * attractRadius)
+                {
+                    SetTarget(closest.transform);
+                }
+                else if (target.targetToFollow != null)
+                {
+                    SetTarget(null);
+                }
+            }
         }
     }
 
@@ -198,15 +211,10 @@ public class BodyTissue : MonoBehaviour
         mat.SetMatrixArray(framesId, frameMatrices);
     }
 
-    public void PointerDown(PointerEventData data)
-    {
-        PlayerBehavior.Instance.carrier.ReleaseOxygen(this);
-        BodyTissueGenerator.Instance.RemoveBodyTissueToAvailableList(this);
-    }
-
     public void SetTarget(Transform targetToFollow)
     {
         target.targetToFollow = targetToFollow;
+        Debug.Log("set target: " + targetToFollow);
     }
 
     public bool NeedOxygen()
@@ -214,27 +222,18 @@ public class BodyTissue : MonoBehaviour
         return oxygenNumber < oxygenCapacity;
     }
 
-    public void Occupy(Cell cell)
+    public void GrabOxygen(Oxygen oxygen)
     {
-        isOccupied = true;
-        SetTarget(cell.transform);
-    }
-
-    public void UnOccupy()
-    {
-        isOccupied = false;
-        SetTarget(null);
-    }
-
-    public void ReceiveOxygen()
-    {
-        UnOccupy();
+        Debug.Log("grab oxygen");
         oxygenNumber++;
+        oxygen.carrier.ReleaseOxygen(oxygen, this);
         Debug.Assert(oxygenNumber <= oxygenCapacity);
     }
 
     public void ConsumeOxygen()
     {
+        Debug.Log("nom nom oxygen");
+        SetTarget(null);
         StartCoroutine(ConsumeOxygenCoroutine());
     }
 
@@ -251,5 +250,14 @@ public class BodyTissue : MonoBehaviour
         oxygenTick = 0f;
         mat.SetFloat(eatingProgressId, 0f);
         BodyTissueGenerator.Instance.AddBodyTissueToAvailableList(this);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (target.targetToFollow)
+        {
+            Gizmos.color = Color.gray;
+            Gizmos.DrawLine(head, target.targetToFollow.position);
+        }
     }
 }

@@ -64,13 +64,6 @@ public class Oxygen : Molecule
     private float sqrRad;
     #endregion
 
-    #region Interactable
-    [SerializeField]
-    private float uiRevealDist;
-    private float uiRevealDistSqrt;
-    private InteractableObject interactable;
-    #endregion
-
     public CreatureTypes type = CreatureTypes.Oxygen;
     private Dictionary<CreatureTypes, List<Transform>> oxygenGroup;
 
@@ -92,13 +85,6 @@ public class Oxygen : Molecule
         sqrJoinOxygenGroupThreshold = joinOxygenGroupThreshold * joinOxygenGroupThreshold;
     }
 
-    private void Start()
-    {
-        interactable = GetComponent<InteractableObject>();
-        interactable.RegisterCallback(EventTriggerType.PointerDown, PointerDown);
-        uiRevealDistSqrt = uiRevealDist * uiRevealDist;
-    }
-
     private void Update()
     {
         UpdateState();
@@ -115,14 +101,13 @@ public class Oxygen : Molecule
                 - transform.position);
             if (sqrDist < 0.01f)
             {
-                hopOnHolder.OnOccupied();
                 state = MoleculeState.BeingCarried;
             }
         }
         else if (state == MoleculeState.BeingCarried)
         {
             oxygenGroup[type] = neighbors;
-            if (carrier.CanAbandonOxygen)
+            if (carrier.IsPlayer)
             {
                 float squareDistBetweenHolderAndOxygen = (hopOnHolder.attachPoint - transform.position).sqrMagnitude;
                 if (squareDistBetweenHolderAndOxygen > squareDetachDist)
@@ -160,7 +145,6 @@ public class Oxygen : Molecule
             else
             {
                 direction = Vector3.zero;
-                WaitForPlayerToGrab();
             }
         }
         else if (state == MoleculeState.OxygenArea)
@@ -172,11 +156,8 @@ public class Oxygen : Molecule
         }
         else if (state == MoleculeState.Released)
         {
-            // float dist = Vector3.SqrMagnitude(transform.position - targetBodyTissue.Head);
-            // if (dist < 0.2f)
-            // {
+            Debug.Log("oxygen released");
             state = MoleculeState.HitBodyTissue;
-            // }
         }
         else if (state == MoleculeState.HitBodyTissue)
         {
@@ -233,12 +214,14 @@ public class Oxygen : Molecule
 
     private void Reset()
     {
+        Debug.Log("reset oxygen");
         speed = Random.Range(0.5f, 0.7f);
         emotionPickInterval = Random.Range(5f, 10f);
         state = MoleculeState.OxygenArea;
         transform.position = OxygenController.Instance.GetRandomPositionInOxygenArea();
         transform.rotation = Random.rotation;
         OxygenController.Instance.oxygens.Push(this);
+        targetBodyTissue.SetTarget(null);
         targetBodyTissue = null;
     }
 
@@ -258,28 +241,5 @@ public class Oxygen : Molecule
         Vector2 xzDamp = Vector2.SmoothDamp(vz, targetVz, ref velocityVZ, smoothTimeVz);
         float yDamp = Mathf.SmoothDamp(transform.position.y, target.y, ref velocityY, smoothTimeY);
         return new Vector3(xzDamp.x, yDamp, xzDamp.y);
-    }
-
-    private void WaitForPlayerToGrab()
-    {
-        float distSqrt = Vector3.SqrMagnitude(PlayerBehavior.Instance.transform.position - transform.position);
-        Vector3 direction = (PlayerBehavior.Instance.transform.position - transform.position).normalized;
-        float dot = Vector3.Dot(direction, PlayerBehavior.Instance.transform.forward);
-
-        if (PlayerBehavior.Instance.carrier.CanGrab()
-            && distSqrt < uiRevealDistSqrt && dot < 0)
-        {
-            interactable.IsInteractable = true;
-        }
-        else
-        {
-            interactable.IsInteractable = false;
-        }
-    }
-
-    public void PointerDown(PointerEventData data)
-    {
-        PlayerBehavior.Instance.carrier.GrabOxygen(this);
-        interactable.IsInteractable = false;
     }
 }

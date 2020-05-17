@@ -14,7 +14,6 @@ public class BodyTissueTarget : MonoBehaviour
     private void Awake()
     {
         originalPosition = transform.position;
-        Debug.Log("original position: " + originalPosition);
         randomPickInterval = Random.Range(1f, 4f);
         randomPoint = GetRandomPoint();
     }

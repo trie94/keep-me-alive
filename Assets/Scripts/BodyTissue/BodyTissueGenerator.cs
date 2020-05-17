@@ -100,6 +100,11 @@ public class BodyTissueGenerator : MonoBehaviour
         return point;
     }
 
+    public Vector3 GetRandomPositionInTheBodyTissueArea()
+    {
+        return center.position + Random.insideUnitSphere * radius;
+    }
+
     public BodyTissue GetTargetBodyTissue()
     {
         if (availableBodyTissues.Count == 0) return null;

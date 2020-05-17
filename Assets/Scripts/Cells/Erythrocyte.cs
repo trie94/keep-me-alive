@@ -22,7 +22,7 @@ public class Erythrocyte : Cell
     private Vector3 velocity;
     public Vector3 Velocity { get { return velocity; } }
     private MoleculeCarrierBehavior carrier;
-    private BodyTissue targetBodyTissue;
+    public MoleculeCarrierBehavior Carrier { get { return carrier; } }
 
     public override void Awake()
     {
@@ -60,28 +60,15 @@ public class Erythrocyte : Cell
                 target = CellController.Instance.GetRandomPositionInOxygenArea();
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
+            if (!carrier.hasVacancy())
+            {
+                prevState = cellState;
+                cellState = ErythrocyteState.ExitOxygenArea;
+            }
 
             if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
             {
-                prevState = cellState;
-                cellState = ErythrocyteState.WaitOxygen;
-            }
-        }
-        else if (cellState == ErythrocyteState.WaitOxygen)
-        {
-            velocity = behaviors[(int)cellState].CalculateVelocity(
-                this, creatureGroups, Path.Instance.OxygenZone.transform.position);
-            if (carrier.CanGrab())
-            {
-                carrier.GrabOxygens();
-            }
-            else
-            {
-                if (carrier.IsReadyToGo())
-                {
-                    prevState = cellState;
-                    cellState = ErythrocyteState.ExitOxygenArea;
-                }
+                target = CellController.Instance.GetRandomPositionInOxygenArea();
             }
         }
         else if (cellState == ErythrocyteState.ExitOxygenArea)
@@ -94,6 +81,7 @@ public class Erythrocyte : Cell
             }
 
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
+
             if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
             {
                 prevState = cellState;
@@ -102,66 +90,25 @@ public class Erythrocyte : Cell
         }
         else if (cellState == ErythrocyteState.BodyTissueArea)
         {
+            if (prevState != cellState)
+            {
+                target = BodyTissueGenerator.Instance.GetRandomPositionInTheBodyTissueArea();
+                prevState = cellState;
+            }
+            velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
+
             if (!carrier.CanReleaseOxygen())
             {
                 prevState = cellState;
                 cellState = ErythrocyteState.ExitBodyTissueArea;
                 oxygenReleaseTick = 0f;
-                if (targetBodyTissue != null)
-                {
-                    targetBodyTissue.UnOccupy();
-                    targetBodyTissue = null;
-                }
                 target = null;
             }
             else
             {
-                if (targetBodyTissue == null)
+                if ((transform.position - target.Value).sqrMagnitude < 1f)
                 {
-                    targetBodyTissue = BodyTissueGenerator.Instance.GetTargetBodyTissue();
-                    if (targetBodyTissue == null)
-                    {
-                        prevState = cellState;
-                        cellState = ErythrocyteState.ExitBodyTissueArea;
-                        oxygenReleaseTick = 0f;
-                        target = null;
-                    }
-                    else
-                    {
-                        targetBodyTissue.Occupy(this);
-                        target = targetBodyTissue.Head;
-                        prevState = cellState;
-                    }
-                }
-                else
-                {
-                    Debug.Assert(targetBodyTissue != null);
-                    velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
-
-                    if ((targetBodyTissue.Head - transform.position).sqrMagnitude < 1f)
-                    {
-                        targetBodyTissue.UnOccupy();
-                        carrier.ReleaseOxygen(targetBodyTissue);
-                        oxygenReleaseTick = 0f;
-                        if (!targetBodyTissue.NeedOxygen())
-                        {
-                            // unoccupy the current target and find a new one
-                            // if there's no bodytissue available, exit the room
-                            targetBodyTissue = BodyTissueGenerator.Instance.GetTargetBodyTissue();
-                            if (targetBodyTissue == null)
-                            {
-                                prevState = cellState;
-                                cellState = ErythrocyteState.ExitBodyTissueArea;
-                                oxygenReleaseTick = 0f;
-                                target = null;
-                            }
-                            else
-                            {
-                                targetBodyTissue.Occupy(this);
-                                target = targetBodyTissue.Head;
-                            }
-                        }
-                    }
+                    target = BodyTissueGenerator.Instance.GetRandomPositionInTheBodyTissueArea();
                 }
             }
         }

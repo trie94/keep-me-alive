@@ -69,4 +69,9 @@ public class CellController : MonoBehaviour
         return Path.Instance.OxygenZone.transform.position
                          + Random.insideUnitSphere * radius;
     }
+
+    public bool IsInOxygenArea(Transform transform)
+    {
+        return ((transform.position - Path.Instance.OxygenZone.transform.position).sqrMagnitude < Path.Instance.OxygenZone.Radius * Path.Instance.OxygenZone.Radius);
+    }
 }

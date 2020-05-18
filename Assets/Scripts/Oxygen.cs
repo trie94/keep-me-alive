@@ -30,7 +30,7 @@ public class Oxygen : Molecule
     public BodyTissue targetBodyTissue;
 
     private Vector3 direction;
-    private Vector2 velocityVZ;
+    private Vector2 velocityXZ;
     private float velocityY;
 
     private float speed;
@@ -223,7 +223,7 @@ public class Oxygen : Molecule
     {
         Vector2 vz = new Vector2(transform.position.x, transform.position.z);
         Vector2 targetVz = new Vector2(target.transform.position.x, target.transform.position.z);
-        Vector2 xzDamp = Vector2.SmoothDamp(vz, targetVz, ref velocityVZ, smoothTimeVz);
+        Vector2 xzDamp = Vector2.SmoothDamp(vz, targetVz, ref velocityXZ, smoothTimeVz);
         float yDamp = Mathf.SmoothDamp(transform.position.y, target.transform.position.y, ref velocityY, smoothTimeY);
         return new Vector3(xzDamp.x, yDamp, xzDamp.y);
     }
@@ -232,7 +232,7 @@ public class Oxygen : Molecule
     {
         Vector2 vz = new Vector2(transform.position.x, transform.position.z);
         Vector2 targetVz = new Vector2(target.x, target.z);
-        Vector2 xzDamp = Vector2.SmoothDamp(vz, targetVz, ref velocityVZ, smoothTimeVz);
+        Vector2 xzDamp = Vector2.SmoothDamp(vz, targetVz, ref velocityXZ, smoothTimeVz);
         float yDamp = Mathf.SmoothDamp(transform.position.y, target.y, ref velocityY, smoothTimeY);
         return new Vector3(xzDamp.x, yDamp, xzDamp.y);
     }

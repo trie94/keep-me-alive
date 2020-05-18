@@ -395,17 +395,17 @@ MonoBehaviour:
   timeInterval: 0.2
   behaviors:
   - {fileID: 11400000, guid: f14bed46c8d2e44df92c1a54e2fa7d32, type: 2}
-  - {fileID: 11400000, guid: abc8fdc7f6eb6423390579d16df7ad52, type: 2}
   - {fileID: 11400000, guid: 2a2f89c04c541494887e7a6d62d32956, type: 2}
   - {fileID: 11400000, guid: 08ed00fdc87064d189698208e184ae54, type: 2}
   - {fileID: 11400000, guid: 9f2bb948cf1204210b8b1e5df0282eaf, type: 2}
-  - {fileID: 11400000, guid: a0fa33a8adbf34459bd4a8d33edadb14, type: 2}
+  - {fileID: 11400000, guid: 08ed00fdc87064d189698208e184ae54, type: 2}
   progress: 0
   speed: 0
   currSeg:
     start: {fileID: 0}
     end: {fileID: 0}
     weight: 0
+  bodyTissueAttractRadius: 8.43
   neighborRadius: 2.1
   avoidanceRadius: 0.8
   germDetectionRadius: 1

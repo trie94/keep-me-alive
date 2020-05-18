@@ -34,7 +34,7 @@ public class Path : MonoBehaviour
     private List<Segment> oxygenExitSegments;
     public List<Segment> OxygenExitSegments { get { return oxygenExitSegments; } }
     private List<Segment> heartExitSegments;
-    public List<Segment> HeartExitSegments { get {return heartExitSegments; } }
+    public List<Segment> BodyTissueExitSegments { get { return heartExitSegments; } }
 
     private const float HIGH = 10f;
     private const float MID = 5f;
@@ -56,7 +56,7 @@ public class Path : MonoBehaviour
 
     private void Awake()
     {
-        for (int i=0; i<segments.Count; i++)
+        for (int i = 0; i < segments.Count; i++)
         {
             var currSeg = segments[i];
             currSeg.Direction = (currSeg.end.transform.position - currSeg.start.transform.position).normalized;

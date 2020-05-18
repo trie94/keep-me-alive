@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cell/Attract")]
 public class Attract : CellMovement
 {
-    public CreatureTypes type = CreatureTypes.Cell;
+    public CreatureTypes type;
     public override Vector3 CalculateVelocity(Cell creature, Dictionary<CreatureTypes, List<Transform>> groups, Vector3? target)
     {
         List<Transform> neighbors = groups[type];

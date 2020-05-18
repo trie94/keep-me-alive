@@ -10,10 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9c8b6f6bf9034ee4b907a3d711d28f7, type: 3}
-  m_Name: EnterOxygenComposite
+  m_Name: BodyTissueAreaComposite
   m_EditorClassIdentifier: 
   behaviors:
-  - {fileID: 11400000, guid: 0de1f3b4628df4531a9842190bd51ec7, type: 2}
+  - {fileID: 11400000, guid: 5e927d975314b48fc8d2a37d8cf7d208, type: 2}
+  - {fileID: 11400000, guid: bf75a16a152fb49628aaa2835b3afd53, type: 2}
+  - {fileID: 11400000, guid: 21cafea936e7b4fb3b214d509697bcb3, type: 2}
   weights:
-  - 1
-  debug: {x: 0.99001056, y: -0.00868763, z: 0.14072534}
+  - 5
+  - 0
+  - 0
+  debugVelocity: {x: 0.6737111, y: -0.70757824, z: 0.21318145}

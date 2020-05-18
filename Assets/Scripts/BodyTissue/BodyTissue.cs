@@ -25,14 +25,13 @@ public class BodyTissue : MonoBehaviour
     #endregion
 
     #region visual
-    private float bodyLength;
     private float bodyThickness;
     private float speed;
     private float wobble;
     #endregion
 
-    private Vector3 head;
-    public Vector3 Head { get { return head; } }
+    private Transform head;
+    public Transform Head { get { return head; } }
 
     private Renderer rend;
     private Material mat;
@@ -72,12 +71,10 @@ public class BodyTissue : MonoBehaviour
         thicknessId = Shader.PropertyToID("_BodyThickness");
         framesId = Shader.PropertyToID("_Frames");
 
-        bodyLength = Random.Range(5f, 12f);
         bodyThickness = Random.Range(1f, 2f);
         speed = Random.Range(4f, 7f);
         wobble = Random.Range(0.1f, 0.5f);
 
-        mat.SetFloat(lengthId, bodyLength);
         mat.SetFloat(thicknessId, bodyThickness);
         mat.SetFloat(eatingProgressId, 0f);
 
@@ -87,18 +84,17 @@ public class BodyTissue : MonoBehaviour
 
     private void Start()
     {
-        frames = InitBodyFrames(numFrame);
-        frameMatrices = new Matrix4x4[numFrame];
-
-        target = Instantiate(targetPrefab, childTransform.TransformPoint(new Vector3(0, 0, followThreshold + bodyLength * 2f)), Quaternion.identity);
+        target = Instantiate(targetPrefab, Path.Instance.BodyTissueZone.transform.position, Quaternion.identity);
         target.transform.forward = transform.forward;
         target.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
+        frames = InitBodyFrames(numFrame);
+        frameMatrices = new Matrix4x4[numFrame];
     }
 
     private void Update()
     {
-        FindClosestOxygen();
         UpdateBodyFrames();
+        FindClosestOxygen();
     }
 
     private void FindClosestOxygen()
@@ -110,8 +106,8 @@ public class BodyTissue : MonoBehaviour
             for (int i = 0; i < OxygenController.Instance.oxygenList.Count; i++)
             {
                 Oxygen curr = OxygenController.Instance.oxygenList[i];
-                Vector3 headToOxygen = curr.transform.position - head;
-                if (curr.state == MoleculeState.Released || curr.state == MoleculeState.HitBodyTissue || curr.state == MoleculeState.OxygenArea) continue;
+                Vector3 headToOxygen = curr.transform.position - head.position;
+                if (curr.state == MoleculeState.Released || curr.state == MoleculeState.OxygenArea) continue;
 
                 if (headToOxygen.sqrMagnitude < min)
                 {
@@ -145,19 +141,15 @@ public class BodyTissue : MonoBehaviour
         BodyFrame[] frames = new BodyFrame[numFrame];
         for (int i = 0; i < numFrame; i++)
         {
-            // compute position
-            Vector3 localPos = new Vector3(0, 0, -originalBodyHeight / 2f + ((float)i / numFrame) * originalBodyHeight);
-            float z = localPos.z;
-            z = (z + 1.5f) / 3f * bodyLength;
-            z += originalBodyHeight;
-            localPos.z = z;
+            Vector3 position = transform.position + transform.forward * (float)i * BodyFrameSpring.restDistance;
 
-            BodyFrame frameObject = Instantiate(framePrefab, childTransform.TransformPoint(localPos), Quaternion.identity);
+            BodyFrame frameObject = Instantiate(framePrefab, position, Quaternion.identity);
             frameObject.transform.parent = this.transform;
             frameObject.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
             frames[i] = frameObject;
         }
-        head = frames[frames.Length - 1].transform.position;
+        head = frames[frames.Length - 1].transform;
+        target.transform.position = head.position + transform.forward * BodyFrameSpring.restDistance;
         return frames;
     }
 
@@ -175,8 +167,8 @@ public class BodyTissue : MonoBehaviour
         }
 
         // update head acceleration
-        float dist = (target.transform.position - frames[0].transform.position).magnitude;
-        if (dist < followThreshold + bodyLength)
+        float dist = (target.transform.position - head.position).magnitude;
+        if (dist < followThreshold)
         {
             BodyFrameSpring.ComputeAcceleration(frames[frames.Length - 1], target.transform.position);
         }
@@ -201,7 +193,7 @@ public class BodyTissue : MonoBehaviour
         }
 
         // update head reference
-        head = frames[frames.Length - 1].transform.position;
+        head = frames[frames.Length - 1].transform;
 
         // set matrices
         for (int i = 0; i < frames.Length; i++)
@@ -214,7 +206,6 @@ public class BodyTissue : MonoBehaviour
     public void SetTarget(Transform targetToFollow)
     {
         target.targetToFollow = targetToFollow;
-        Debug.Log("set target: " + targetToFollow);
     }
 
     public bool NeedOxygen()
@@ -224,7 +215,6 @@ public class BodyTissue : MonoBehaviour
 
     public void GrabOxygen(Oxygen oxygen)
     {
-        Debug.Log("grab oxygen");
         oxygenNumber++;
         oxygen.carrier.ReleaseOxygen(oxygen, this);
         Debug.Assert(oxygenNumber <= oxygenCapacity);
@@ -232,7 +222,6 @@ public class BodyTissue : MonoBehaviour
 
     public void ConsumeOxygen()
     {
-        Debug.Log("nom nom oxygen");
         SetTarget(null);
         StartCoroutine(ConsumeOxygenCoroutine());
     }
@@ -249,7 +238,6 @@ public class BodyTissue : MonoBehaviour
         oxygenNumber--;
         oxygenTick = 0f;
         mat.SetFloat(eatingProgressId, 0f);
-        BodyTissueGenerator.Instance.AddBodyTissueToAvailableList(this);
     }
 
     private void OnDrawGizmos()
@@ -257,7 +245,7 @@ public class BodyTissue : MonoBehaviour
         if (target.targetToFollow)
         {
             Gizmos.color = Color.gray;
-            Gizmos.DrawLine(head, target.targetToFollow.position);
+            Gizmos.DrawLine(head.position, target.targetToFollow.position);
         }
     }
 }

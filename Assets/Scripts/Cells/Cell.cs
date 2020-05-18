@@ -47,7 +47,8 @@ public abstract class Cell : MonoBehaviour
     private float squareMaxSpeed;
     public float squareAvoidanceRadius;
     private float squareNeighborRadius;
-    private float squareGermDetectionRadius;
+    private float squareGermDetectRadius;
+    private float squareOxygenDetectRadius;
     #endregion
 
     protected CreatureTypes type = CreatureTypes.Cell;
@@ -59,7 +60,7 @@ public abstract class Cell : MonoBehaviour
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
         emotionPickInterval = Random.Range(5f, 10f);
-        speed = Random.Range(0.1f, 0.3f);
+        speed = Random.Range(0.2f, 0.45f);
 
         // init neighbor groups
         creatureGroups = new Dictionary<CreatureTypes, List<Transform>>();
@@ -70,7 +71,7 @@ public abstract class Cell : MonoBehaviour
         squareMaxSpeed = maxSpeed * maxSpeed;
         squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
         squareNeighborRadius = neighborRadius * neighborRadius;
-        squareGermDetectionRadius = germDetectionRadius * germDetectionRadius;
+        squareGermDetectRadius = germDetectionRadius * germDetectionRadius;
     }
 
     public virtual void Start()
@@ -109,7 +110,10 @@ public abstract class Cell : MonoBehaviour
     {
         currVelocity = velocity;
         transform.position += currVelocity * Time.deltaTime * speed;
-        if (currVelocity != Vector3.zero) transform.forward = currVelocity;
+        if (currVelocity != Vector3.zero)
+        {
+            transform.forward = currVelocity;
+        }
     }
 
     protected void PlayFaceAnim()
@@ -167,11 +171,44 @@ public abstract class Cell : MonoBehaviour
         for (int i = 0; i < worms.Count; i++)
         {
             var currWorm = worms[i];
-            if (Vector3.SqrMagnitude(currWorm.transform.position - transform.position) <= squareGermDetectionRadius)
+            if (Vector3.SqrMagnitude(currWorm.transform.position - transform.position) <= squareGermDetectRadius)
             {
                 neighbors.Add(currWorm.transform);
             }
         }
+        return neighbors;
+    }
+
+    protected List<Transform> GetAvailableOxygen()
+    {
+        List<Transform> neighbors = new List<Transform>();
+        var oxygens = OxygenController.Instance.oxygenList;
+        for (int i = 0; i < oxygens.Count; i++)
+        {
+            var currOxygen = oxygens[i];
+            if (currOxygen.carrier != null) continue;
+            neighbors.Add(currOxygen.transform);
+        }
+        return neighbors;
+    }
+
+    protected List<Transform> GetHungryBodyTissues(int groupIndex)
+    {
+        List<Transform> neighbors = new List<Transform>();
+        var bodyTissues = BodyTissueGenerator.Instance.bodyTissueGroups[groupIndex].BodyTissues;
+        for (int i = 0; i < bodyTissues.Count; i++)
+        {
+            var currBodyTissue = bodyTissues[i];
+            if (!currBodyTissue.NeedOxygen()) continue;
+            neighbors.Add(currBodyTissue.Head);
+        }
+
+        if (neighbors.Count == 0)
+        {
+            groupIndex = (groupIndex + 1) % BodyTissueGenerator.Instance.bodyTissueGroups.Count;
+            return GetHungryBodyTissues(groupIndex);
+        }
+
         return neighbors;
     }
 

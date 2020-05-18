@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public enum ErythrocyteState
 {
-    InVein, EnterOxygenArea, WaitOxygen, ExitOxygenArea, BodyTissueArea, ExitBodyTissueArea
+    InVein, CollectOxygenInOxygenArea, ExitOxygenArea, BodyTissueArea, ExitBodyTissueArea
 }
 
 public class Erythrocyte : Cell
@@ -23,6 +23,7 @@ public class Erythrocyte : Cell
     public Vector3 Velocity { get { return velocity; } }
     private MoleculeCarrierBehavior carrier;
     public MoleculeCarrierBehavior Carrier { get { return carrier; } }
+    private Segment nextSeg;
 
     public override void Awake()
     {
@@ -41,34 +42,38 @@ public class Erythrocyte : Cell
     {
         creatureGroups[CreatureTypes.Cell] = GetCellNeighbors();
         creatureGroups[CreatureTypes.Germ] = GetGermNeighbors();
-
+        creatureGroups[CreatureTypes.Oxygen] = GetAvailableOxygen();
         velocity = Vector3.zero;
 
         if (cellState == ErythrocyteState.InVein)
         {
             if (prevState != cellState)
             {
-                currSeg = GetNextSegment();
+                prevState = cellState;
+                if (nextSeg != null)
+                {
+                    currSeg = nextSeg;
+                }
+                else
+                {
+                    currSeg = GetNextSegment();
+                }
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups);
         }
-        else if (cellState == ErythrocyteState.EnterOxygenArea)
+        else if (cellState == ErythrocyteState.CollectOxygenInOxygenArea)
         {
             if (target == null || prevState != cellState)
             {
                 prevState = cellState;
-                target = CellController.Instance.GetRandomPositionInOxygenArea();
+                target = Path.Instance.OxygenZone.transform.position;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
+
             if (!carrier.hasVacancy())
             {
                 prevState = cellState;
                 cellState = ErythrocyteState.ExitOxygenArea;
-            }
-
-            if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
-            {
-                target = CellController.Instance.GetRandomPositionInOxygenArea();
             }
         }
         else if (cellState == ErythrocyteState.ExitOxygenArea)
@@ -77,7 +82,8 @@ public class Erythrocyte : Cell
             {
                 prevState = cellState;
                 int targetIndex = Random.Range(0, Path.Instance.OxygenExitSegments.Count);
-                target = Path.Instance.OxygenExitSegments[targetIndex].start.transform.position;
+                nextSeg = Path.Instance.OxygenExitSegments[targetIndex];
+                target = nextSeg.start.transform.position;
             }
 
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
@@ -92,8 +98,9 @@ public class Erythrocyte : Cell
         {
             if (prevState != cellState)
             {
-                target = BodyTissueGenerator.Instance.GetRandomPositionInTheBodyTissueArea();
+                target = BodyTissueGenerator.Instance.center.position;
                 prevState = cellState;
+                creatureGroups[CreatureTypes.BodyTissue] = GetHungryBodyTissues(Random.Range(0, BodyTissueGenerator.Instance.bodyTissueGroups.Count));
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
 
@@ -104,21 +111,15 @@ public class Erythrocyte : Cell
                 oxygenReleaseTick = 0f;
                 target = null;
             }
-            else
-            {
-                if ((transform.position - target.Value).sqrMagnitude < 1f)
-                {
-                    target = BodyTissueGenerator.Instance.GetRandomPositionInTheBodyTissueArea();
-                }
-            }
         }
         else if (cellState == ErythrocyteState.ExitBodyTissueArea)
         {
             if (target == null || prevState != cellState)
             {
                 prevState = cellState;
-                int targetIndex = Random.Range(0, Path.Instance.HeartExitSegments.Count);
-                target = Path.Instance.HeartExitSegments[targetIndex].start.transform.position;
+                int targetIndex = Random.Range(0, Path.Instance.BodyTissueExitSegments.Count);
+                nextSeg = Path.Instance.BodyTissueExitSegments[targetIndex];
+                target = nextSeg.start.transform.position;
             }
             velocity = behaviors[(int)cellState].CalculateVelocity(this, creatureGroups, target);
             if (Vector3.SqrMagnitude(target.Value - transform.position) < 0.5f)
@@ -143,18 +144,27 @@ public class Erythrocyte : Cell
 
     public override void UpdateCellState()
     {
-        prevState = cellState;
-        var startNode = currSeg.start.type;
-        if (startNode == NodeType.BodyTissueEntrance)
+        var endNode = currSeg.end.type;
+
+        if (endNode == NodeType.BodyTissue)
         {
-            cellState = ErythrocyteState.BodyTissueArea;
+            if ((Path.Instance.BodyTissueZone.transform.position - transform.position).sqrMagnitude < Path.Instance.BodyTissueZone.Radius * Path.Instance.BodyTissueZone.Radius)
+            {
+                prevState = cellState;
+                cellState = ErythrocyteState.BodyTissueArea;
+            }
         }
-        else if (startNode == NodeType.OxygenEntrance)
+        else if (endNode == NodeType.Oxygen)
         {
-            cellState = ErythrocyteState.EnterOxygenArea;
+            if ((Path.Instance.OxygenZone.transform.position - transform.position).sqrMagnitude < Path.Instance.OxygenZone.Radius * Path.Instance.OxygenZone.Radius)
+            {
+                prevState = cellState;
+                cellState = ErythrocyteState.CollectOxygenInOxygenArea;
+            }
         }
         else
         {
+            prevState = cellState;
             cellState = ErythrocyteState.InVein;
         }
     }

@@ -128,4 +128,4 @@ MonoBehaviour:
     type: 3}
   targetPrefab: {fileID: -7581413756415213977, guid: d6575012dd809420fb69929200f96b60,
     type: 3}
-  debugSpringPhysics: 0
+  debugSpringPhysics: 1

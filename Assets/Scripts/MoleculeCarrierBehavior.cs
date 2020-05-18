@@ -12,7 +12,7 @@ public class MoleculeCarrierBehavior : MonoBehaviour
     public MoleculeHolder[] Holders { get { return holders; } }
     private bool isPlayer = false;
     public bool IsPlayer { get { return isPlayer; } }
-    private float grabDist = 4f;
+    private float grabDist = 2f;
 
     private void Awake()
     {
@@ -87,7 +87,6 @@ public class MoleculeCarrierBehavior : MonoBehaviour
 
     public void ReleaseOxygen(Oxygen o, BodyTissue bodyTissue)
     {
-        Debug.Log("release oxygen");
         o.state = MoleculeState.Released;
         o.targetBodyTissue = bodyTissue;
         moleculeNumber--;

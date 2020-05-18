@@ -10,12 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9c8b6f6bf9034ee4b907a3d711d28f7, type: 3}
-  m_Name: WaitOxygenComposite
+  m_Name: OxygenAreaComposite
   m_EditorClassIdentifier: 
   behaviors:
-  - {fileID: 11400000, guid: 505450913a9004f578d414223469eddf, type: 2}
+  - {fileID: 11400000, guid: bc78ee7bfbc4c4b2db60641f6b7e838b, type: 2}
   - {fileID: 11400000, guid: 21cafea936e7b4fb3b214d509697bcb3, type: 2}
+  - {fileID: 11400000, guid: 0de1f3b4628df4531a9842190bd51ec7, type: 2}
   weights:
-  - 1
+  - 5
   - 2
-  debug: {x: 0, y: 0, z: 0}
+  - 2
+  debugVelocity: {x: -0.69189453, y: 0.06803328, z: -0.6580038}

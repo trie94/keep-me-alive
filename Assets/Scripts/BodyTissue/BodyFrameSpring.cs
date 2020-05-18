@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class BodyFrameSpring : MonoBehaviour
 {
-    public static float springStrength = 1000f;
+    private static float springStrength = 1000f;
     public static float restDistance = 0.5f;
-    public static float damp = 1f;
-    public static float distanceThreshold = 1.5f;
 
     public static void ComputeAcceleration(BodyFrame frame1, BodyFrame frame2)
     {
-        //    F = -k(|x|-d)(x/|x|) - bv            
+        //    F = -k(|x|-d)(x/|x|) - bv       
         float distanceBetween = (frame1.transform.position - frame2.transform.position).magnitude;
 
         Vector3 frame1To2 = (frame2.transform.position - frame1.transform.position).normalized;
@@ -29,7 +27,6 @@ public class BodyFrameSpring : MonoBehaviour
 
         Vector3 frameToTarget = (target - frame.transform.position).normalized;
         Vector3 f1 = springStrength * (distanceBetween - restDistance) * (frameToTarget);
-        Vector3 f2 = springStrength * (distanceBetween - restDistance) * (-frameToTarget);
 
         frame.acceleration += f1 / frame.mass;
     }

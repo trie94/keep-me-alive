@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9c8b6f6bf9034ee4b907a3d711d28f7, type: 3}
-  m_Name: ExitOxygenComposite
+  m_Name: ExitAreaComposite
   m_EditorClassIdentifier: 
   behaviors:
   - {fileID: 11400000, guid: 0de1f3b4628df4531a9842190bd51ec7, type: 2}
   weights:
   - 1
+  debugVelocity: {x: 0.0019932883, y: 0.020419246, z: -0.58211553}

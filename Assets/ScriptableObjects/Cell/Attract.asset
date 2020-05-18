@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98c693d8897e1422e8d6f373e092108e, type: 3}
   m_Name: Attract
   m_EditorClassIdentifier: 
+  type: 0

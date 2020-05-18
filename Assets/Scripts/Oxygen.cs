@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public enum MoleculeState
 {
-    OxygenArea, HopOnCell, BeingCarried, Released, HitBodyTissue, FallFromCell, Abandoned
+    OxygenArea, HopOnCell, BeingCarried, Released, FallFromCell, Abandoned
 }
 
 [System.Serializable]
@@ -156,11 +156,6 @@ public class Oxygen : Molecule
         }
         else if (state == MoleculeState.Released)
         {
-            Debug.Log("oxygen released");
-            state = MoleculeState.HitBodyTissue;
-        }
-        else if (state == MoleculeState.HitBodyTissue)
-        {
             targetBodyTissue.ConsumeOxygen();
             Reset();
         }
@@ -214,7 +209,6 @@ public class Oxygen : Molecule
 
     private void Reset()
     {
-        Debug.Log("reset oxygen");
         speed = Random.Range(0.5f, 0.7f);
         emotionPickInterval = Random.Range(5f, 10f);
         state = MoleculeState.OxygenArea;

@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class BodyFrame : MonoBehaviour
 {
-    public Vector3 acceleration;
-    public Vector3 velocity;
+    public Vector3 acceleration = Vector3.zero;
+    private Vector3 currVelocity = Vector3.zero;
+    private Vector3 velocity = Vector3.zero;
     public float mass = 1f;
 
     public void ComputeAlignment(BodyFrame front, BodyFrame back)
@@ -18,6 +19,7 @@ public class BodyFrame : MonoBehaviour
     {
         velocity = acceleration * Time.deltaTime;
         transform.position += velocity * Time.deltaTime;
+        currVelocity = velocity;
     }
 
     private void OnDrawGizmos()

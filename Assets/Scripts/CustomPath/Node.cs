@@ -54,7 +54,7 @@ public class Node : MonoBehaviour
     }
 
     private void ColorWeight()
-    {  
+    {
         Renderer rend = GetComponent<Renderer>();
         if (Path.Instance.debugMode)
         {
@@ -69,7 +69,7 @@ public class Node : MonoBehaviour
 
     private float GetWeigthOpac(NodeWeight nodeWeight)
     {
-        switch(nodeWeight)
+        switch (nodeWeight)
         {
             case NodeWeight.High:
                 return 1f;

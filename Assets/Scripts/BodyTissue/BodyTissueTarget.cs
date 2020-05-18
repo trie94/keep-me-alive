@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class BodyTissueTarget : MonoBehaviour
 {
-    private Vector3 originalPosition;
+    public Vector3 originalPosition;
     private float movementRadius = 5f;
     private float tick = 0f;
     private float randomPickInterval = 5f;
     public Transform targetToFollow;
     private Vector3 randomPoint;
 
-    private void Awake()
+    private void Start()
     {
         originalPosition = transform.position;
         randomPickInterval = Random.Range(1f, 4f);
@@ -22,7 +22,7 @@ public class BodyTissueTarget : MonoBehaviour
     {
         if (targetToFollow)
         {
-            transform.position = Vector3.Lerp(transform.position, targetToFollow.position, 0.05f);
+            transform.position = Vector3.MoveTowards(transform.position, targetToFollow.position, 0.1f);
         }
         else
         {
@@ -33,7 +33,7 @@ public class BodyTissueTarget : MonoBehaviour
                 randomPoint = GetRandomPoint();
                 tick = 0f;
             }
-            transform.position = Vector3.Lerp(transform.position, randomPoint, 0.01f);
+            transform.position = Vector3.MoveTowards(transform.position, randomPoint, 0.05f);
             tick += Time.deltaTime;
         }
     }

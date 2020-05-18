@@ -5,7 +5,6 @@ using UnityEngine;
 public class BodyFrame : MonoBehaviour
 {
     public Vector3 acceleration = Vector3.zero;
-    private Vector3 currVelocity = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
     public float mass = 1f;
 
@@ -17,9 +16,9 @@ public class BodyFrame : MonoBehaviour
 
     public void UpdateVelocity()
     {
-        velocity = acceleration * Time.deltaTime;
-        transform.position += velocity * Time.deltaTime;
-        currVelocity = velocity;
+        float dt = Mathf.Min(Time.deltaTime, 1 / 60f);
+        velocity = acceleration * dt;
+        transform.position += velocity * dt;
     }
 
     private void OnDrawGizmos()

@@ -41,9 +41,6 @@ public class BodyTissue : MonoBehaviour
     private int eatingProgressId;
     private int framesId;
 
-    [SerializeField]
-    private Transform childTransform;
-    private float originalBodyHeight = 3f; // original height is 3
     private float attractRadius = 4f;
     private float grabOxygenRadius = 1f;
 
@@ -80,15 +77,13 @@ public class BodyTissue : MonoBehaviour
 
         Mesh mesh = GetComponentInChildren<MeshFilter>().mesh;
         mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 100f);
+
+        frameMatrices = new Matrix4x4[numFrame];
     }
 
     private void Start()
     {
-        target = Instantiate(targetPrefab);
-        target.transform.forward = transform.forward;
-        target.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
-        frames = InitBodyFrames(numFrame);
-        frameMatrices = new Matrix4x4[numFrame];
+        frames = InitBodyFramesAndTarget(numFrame);
     }
 
     private void Update()
@@ -136,7 +131,7 @@ public class BodyTissue : MonoBehaviour
         }
     }
 
-    private BodyFrame[] InitBodyFrames(int numFrame)
+    private BodyFrame[] InitBodyFramesAndTarget(int numFrame)
     {
         BodyFrame[] frames = new BodyFrame[numFrame];
         for (int i = 0; i < numFrame; i++)
@@ -144,12 +139,18 @@ public class BodyTissue : MonoBehaviour
             Vector3 position = transform.position + transform.forward * (float)i * BodyFrameSpring.restDistance;
 
             BodyFrame frameObject = Instantiate(framePrefab, position, Quaternion.identity);
+            frameObject.transform.forward = this.transform.forward;
             frameObject.transform.parent = this.transform;
             frameObject.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
             frames[i] = frameObject;
         }
         head = frames[frames.Length - 1].transform;
-        target.transform.position = head.position + transform.forward * BodyFrameSpring.restDistance;
+
+        Vector3 targetInitPos = head.position + transform.forward * BodyFrameSpring.restDistance;
+        target = Instantiate(targetPrefab, targetInitPos, Quaternion.identity);
+        target.transform.forward = transform.forward;
+        target.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
+
         return frames;
     }
 

@@ -84,7 +84,7 @@ public class BodyTissue : MonoBehaviour
 
     private void Start()
     {
-        target = Instantiate(targetPrefab, Path.Instance.BodyTissueZone.transform.position, Quaternion.identity);
+        target = Instantiate(targetPrefab);
         target.transform.forward = transform.forward;
         target.GetComponent<MeshRenderer>().enabled = debugSpringPhysics;
         frames = InitBodyFrames(numFrame);

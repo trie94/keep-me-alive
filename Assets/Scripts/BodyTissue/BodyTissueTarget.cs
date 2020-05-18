@@ -5,6 +5,7 @@ using UnityEngine;
 public class BodyTissueTarget : MonoBehaviour
 {
     public Vector3 originalPosition;
+
     private float movementRadius = 5f;
     private float tick = 0f;
     private float randomPickInterval = 5f;
@@ -15,7 +16,7 @@ public class BodyTissueTarget : MonoBehaviour
     {
         originalPosition = transform.position;
         randomPickInterval = Random.Range(1f, 4f);
-        randomPoint = GetRandomPoint();
+        randomPoint = originalPosition;
     }
 
     private void Update()

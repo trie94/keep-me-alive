@@ -13,18 +13,26 @@ public class PathMeshBuilder : MonoBehaviour
     private GameObject tunnel;
     private List<Vector3> debugVertices = new List<Vector3>();
     private CatmullRomCurve curve;
+    [SerializeField]
+    private List<Transform> nodes;
 
     private void Awake()
     {
         tunnel = Instantiate(tunnelPrefab);
+        BuildCurveAndMesh();
     }
 
     private void Update()
     {
+        BuildCurveAndMesh();
+    }
+
+    private void BuildCurveAndMesh()
+    {
         List<Vector3> points = new List<Vector3>();
-        for (int i = 0; i < Path.Instance.nodes.Count; i++)
+        for (int i = 0; i < nodes.Count; i++)
         {
-            points.Add(Path.Instance.nodes[i].transform.position);
+            points.Add(nodes[i].transform.position);
         }
         curve = new CatmullRomCurve(points, true);
         var vertices = new List<Vector3>();
@@ -63,7 +71,7 @@ public class PathMeshBuilder : MonoBehaviour
             }
         }
         var mesh = new Mesh();
-        tunnel.GetComponent<MeshFilter>().mesh = mesh;
+        tunnel.GetComponentInChildren<MeshFilter>().mesh = mesh;
         mesh.vertices = vertices.ToArray();
         mesh.normals = normals.ToArray();
         mesh.tangents = tangents.ToArray();
@@ -111,7 +119,7 @@ public class PathMeshBuilder : MonoBehaviour
         int lineSteps = 20;
         for (int i = 1; i <= lineSteps; i++)
         {
-            Gizmos.DrawSphere(lineStart, 0.2f);
+            // Gizmos.DrawSphere(lineStart, 0.2f);
             Vector3 lineEnd = curve.GetPointAt(i / (float)lineSteps);
             Gizmos.DrawLine(lineStart, lineEnd);
             lineStart = lineEnd;

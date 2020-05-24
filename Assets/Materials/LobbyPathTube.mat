@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PathTube
-  m_Shader: {fileID: 4800000, guid: 543eba7b1ffa34801887e18586be086d, type: 3}
+  m_Name: LobbyPathTube
+  m_Shader: {fileID: 4800000, guid: 7ec23b0109e2649f6846e26a5491eae1, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0

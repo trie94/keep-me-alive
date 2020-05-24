@@ -7,6 +7,7 @@ public class SmearEffect : MonoBehaviour
     private Material smearMat = null;
     private Renderer rend;
     private Vector3 prevPosition;
+    public Vector3 PrevPosition { set { prevPosition = value; } get { return prevPosition; } }
     private int velocityId;
     private int positionId;
 

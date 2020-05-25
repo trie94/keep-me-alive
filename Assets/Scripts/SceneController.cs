@@ -36,5 +36,7 @@ public class SceneController : MonoBehaviour
         {
             yield return null;
         }
+
+        TransitionManager.Instance.RevealGame();
     }
 }

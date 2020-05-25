@@ -9,7 +9,7 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"= "Transparent+10" }
+        Tags { "RenderType"="Transparent" "Queue"= "Transparent" }
         Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
         Cull Front

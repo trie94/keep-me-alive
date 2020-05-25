@@ -14,6 +14,8 @@
         _Offset("Head Offset", Range(-1, 1)) = 0.0
 
         _FogColor("FogColor", color) = (0.9294118,0.4901961,0.4392157,1)
+
+        _Alpha("Alpha", float) = 1
     }
     SubShader
     {
@@ -63,6 +65,8 @@
             fixed _NoiseHeight;
             fixed _Offset;
 
+            fixed _Alpha;
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -106,6 +110,8 @@
                     UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
                     col.rgb = lerp(_FogColor, col.rgb, saturate(unityFogFactor*0.6));
                 #endif
+
+                col.a = _Alpha;
                 return col;
             }
             ENDCG

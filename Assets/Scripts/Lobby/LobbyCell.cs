@@ -26,6 +26,7 @@ public class LobbyCell : MonoBehaviour
     [SerializeField]
     private CellEmotion cellEmotion;
     private Renderer rend;
+    private int alphaId;
     private int faceID;
     [SerializeField]
     private float timeInterval;
@@ -36,6 +37,7 @@ public class LobbyCell : MonoBehaviour
     private float emotionPickInterval;
     private float pickTick = 0f;
     #endregion
+    private float alpha = 1f;
 
     private Transform mainCam;
     private void Awake()
@@ -44,6 +46,7 @@ public class LobbyCell : MonoBehaviour
         mainCam = Camera.main.transform;
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
+        alphaId = Shader.PropertyToID("_Alpha");
         emotionPickInterval = Random.Range(5f, 10f);
         speed = Random.Range(0.2f, 0.45f);
 
@@ -78,7 +81,9 @@ public class LobbyCell : MonoBehaviour
         }
         else if (cellState == LobbyCellState.SELECTED)
         {
-            transform.position = Vector3.Lerp(transform.position, LobbyGameController.Instance.gameStartPosition.position, Time.deltaTime * 0.75f);
+            float distFactor = (LobbyGameController.Instance.gameStartPosition.position).sqrMagnitude;
+            transform.position = Vector3.Lerp(transform.position, LobbyGameController.Instance.gameStartPosition.position, Time.deltaTime * 5f / distFactor);
+
             LobbyGameController.Instance.MoveCameraFollowCell();
 
             Vector3 forward = LobbyGameController.Instance.gameStartPosition.position - transform.position;
@@ -89,14 +94,27 @@ public class LobbyCell : MonoBehaviour
                 LobbyGameController.Instance.LoadGame();
                 cellState = LobbyCellState.START_GAME;
             }
+
+            if (alpha > 0)
+            {
+                alpha -= Time.deltaTime * 5f / distFactor;
+                if (rend) rend.material.SetFloat(alphaId, alpha);
+            }
+        }
+        else if (cellState == LobbyCellState.START_GAME)
+        {
+            Destroy(this);
         }
 
-        if (pickTick > emotionPickInterval)
+        if (cellState != LobbyCellState.START_GAME)
         {
-            PickNextEmotionAndReset();
+            if (pickTick > emotionPickInterval)
+            {
+                PickNextEmotionAndReset();
+            }
+            pickTick += Time.deltaTime;
+            PlayFaceAnim();
         }
-        pickTick += Time.deltaTime;
-        PlayFaceAnim();
     }
 
     private void Reset()

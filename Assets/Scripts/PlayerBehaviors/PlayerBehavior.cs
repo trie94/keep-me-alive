@@ -20,11 +20,14 @@ public partial class PlayerBehavior : MonoBehaviour
 
     private PlayerZoneState currZoneState;
     public MoleculeCarrierBehavior carrier;
+    public SmearEffect smearEffect;
 
     private void Awake()
     {
         instance = this;
         carrier = GetComponent<MoleculeCarrierBehavior>();
+        // remove weird artifact
+        smearEffect = GetComponent<SmearEffect>();
     }
 
     private void Start()

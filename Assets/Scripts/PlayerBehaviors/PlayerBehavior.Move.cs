@@ -28,7 +28,7 @@ public partial class PlayerBehavior : MonoBehaviour
     {
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
-        transform.position = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
+        transform.position = smearEffect.PrevPosition = Path.Instance.GetPoint(currSeg, Random.Range(0f, 1f));
         transform.forward = direction = current = currSeg.Direction;
         yaw = transform.rotation.eulerAngles.y;
         pitch = transform.rotation.eulerAngles.x;
@@ -129,7 +129,7 @@ public partial class PlayerBehavior : MonoBehaviour
         }
 
         // next tubes
-        for (int i=0; i < node.nextSegments.Count; i++)
+        for (int i = 0; i < node.nextSegments.Count; i++)
         {
             if (IsInSegment(node.nextSegments[i], position)) return true;
         }

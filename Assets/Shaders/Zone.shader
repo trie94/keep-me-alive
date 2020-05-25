@@ -10,8 +10,8 @@
         _Ramp ("Toon Ramp (RGB)", 2D) = "white" {}
         
         _Tiling ("Tiling", Range(0, 20)) = 1
-		_WarpScale ("Warp Scale", Range(0, 1)) = 0
-		_WarpTiling ("Warp Tiling", Range(0, 10)) = 1
+        _WarpScale ("Warp Scale", Range(0, 1)) = 0
+        _WarpTiling ("Warp Tiling", Range(0, 10)) = 1
         _DistanceBetweenLines ("Distance Between Lines", Range(0, 1)) = 0.5
 
         _PulseFreq ("Pulse Freq", Range(0, 10)) = 0.5
@@ -25,7 +25,7 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"= "Transparent+10" }
+        Tags { "RenderType"="Transparent" "Queue"= "Transparent" }
         Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
         Cull Front
@@ -67,15 +67,15 @@
             float4 _MainTex_ST;
 
             fixed4 _Color1;
-			fixed4 _Color2;
+            fixed4 _Color2;
             fixed4 _PulseColor;
             fixed4 _FogColor;
 
             sampler2D _Ramp;
 
-			int _Tiling;
-			float _WarpScale;
-			float _WarpTiling;
+            int _Tiling;
+            float _WarpScale;
+            float _WarpTiling;
             float _DistanceBetweenLines;
             float _PulseFreq;
             float _PulseBrightness;
@@ -141,7 +141,7 @@
 
                 float pos = uv.y * _Tiling;
                 pos += sin(snoise(uv.xxy * _WarpTiling)) * _WarpScale;
-	            fixed value = floor(frac(pos) + _DistanceBetweenLines);
+                fixed value = floor(frac(pos) + _DistanceBetweenLines);
 
                 float pulseDir = dot(_PulseDirection, normalize(i.worldPos.xyz - _WorldSpaceCameraPos));
                 float pulse = pow(saturate(sin(pulseDir - _Time.y * _PulseFreq) * _PulseBrightness), _PulseSpeed);

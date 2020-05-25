@@ -30,6 +30,9 @@ public class LobbyGameController : MonoBehaviour
     private Vector3 offset;
     #endregion
 
+    [SerializeField]
+    private LobbyTransition transition;
+
     private int currentIndex = 0;
     private LobbyCell currentCell = null;
 
@@ -129,6 +132,7 @@ public class LobbyGameController : MonoBehaviour
     public void LoadGame()
     {
         SceneController.Instance.LoadGameScene();
+        transition.ConcealLobby();
     }
 
     public void SelectCell()

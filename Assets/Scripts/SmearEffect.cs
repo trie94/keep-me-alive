@@ -15,7 +15,6 @@ public class SmearEffect : MonoBehaviour
     {
         rend = GetComponent<Renderer>();
         smearMat = rend.material;
-        prevPosition = transform.position;
         velocityId = Shader.PropertyToID("_Velocity");
         positionId = Shader.PropertyToID("_Position");
     }

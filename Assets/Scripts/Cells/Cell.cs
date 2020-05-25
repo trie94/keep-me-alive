@@ -50,7 +50,7 @@ public abstract class Cell : MonoBehaviour
     private float squareGermDetectRadius;
     private float squareOxygenDetectRadius;
     #endregion
-
+    private SmearEffect smearEffect;
     protected CreatureTypes type = CreatureTypes.Cell;
     protected CellType cellType;
     protected Dictionary<CreatureTypes, List<Transform>> creatureGroups;
@@ -61,7 +61,7 @@ public abstract class Cell : MonoBehaviour
         faceID = Shader.PropertyToID("_Face");
         emotionPickInterval = Random.Range(5f, 10f);
         speed = Random.Range(0.2f, 0.45f);
-
+        smearEffect = GetComponent<SmearEffect>();
         // init neighbor groups
         creatureGroups = new Dictionary<CreatureTypes, List<Transform>>();
         creatureGroups.Add(CreatureTypes.Cell, null);
@@ -80,7 +80,7 @@ public abstract class Cell : MonoBehaviour
         int segIndex = Random.Range(0, Path.Instance.segments.Count);
         currSeg = Path.Instance.segments[segIndex];
         progress = Random.Range(0f, 1f);
-        transform.position = Path.Instance.GetPoint(currSeg, progress);
+        transform.position = smearEffect.PrevPosition = Path.Instance.GetPoint(currSeg, progress);
         if (currSeg.Direction != Vector3.zero)
         {
             transform.forward = currSeg.Direction;

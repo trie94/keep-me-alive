@@ -12,12 +12,14 @@ public class LobbyCell : MonoBehaviour
     [SerializeField]
     private int maxLimbNum = 10;
     private List<GameObject> limbs;
-    private float speed;
+    public float speed { get; set; }
     private Vector3 endPosition;
     private SmearEffect smearEffect;
+    public bool idle { get; set; }
 
     private void Awake()
     {
+        idle = true;
         smearEffect = GetComponentInChildren<SmearEffect>();
         if (celltype == CellType.Platelet)
         {
@@ -29,11 +31,18 @@ public class LobbyCell : MonoBehaviour
 
     private void Update()
     {
-        transform.position = Vector3.Lerp(transform.position, endPosition, Time.deltaTime * speed);
-
-        if ((LobbyGameController.Instance.pathEnd.position - transform.position).sqrMagnitude < 0.5f)
+        if (idle)
         {
-            Reset();
+            transform.position = Vector3.Lerp(transform.position, endPosition, Time.deltaTime * speed);
+
+            if ((LobbyGameController.Instance.pathEnd.position - transform.position).sqrMagnitude < 0.5f)
+            {
+                Reset();
+            }
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, LobbyGameController.Instance.characterSelectionBase.position, Time.deltaTime * 2f);
         }
     }
 
@@ -42,7 +51,7 @@ public class LobbyCell : MonoBehaviour
         endPosition = LobbyGameController.Instance.GetEndPosition();
         // remove weird artifact
         transform.position = smearEffect.PrevPosition = LobbyGameController.Instance.GetStartPosition();
-        speed = Random.Range(0.05f, 0.2f);
+        speed = Random.Range(0.05f, 0.1f);
     }
 
     private void InitLimbs()

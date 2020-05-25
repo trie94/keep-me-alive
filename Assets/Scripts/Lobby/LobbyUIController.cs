@@ -10,6 +10,7 @@ public enum LobbyViews
 
 public class LobbyUIController : MonoBehaviour
 {
+    #region buttons
     [SerializeField]
     private GameObject title;
     [SerializeField]
@@ -28,13 +29,10 @@ public class LobbyUIController : MonoBehaviour
     private GameObject titleMenuButtons;
     [SerializeField]
     private GameObject characterSelectionMenuButtons;
-
-    #region camera position
     [SerializeField]
-    private List<Transform> cameraPosTransfroms;
-    private List<Vector3> cameraPositions;
-    private CatmullRomCurve curve;
-    private GameObject cam;
+    private Button characterSelectLeftArrow;
+    [SerializeField]
+    private Button characterSelectRightArrow;
     #endregion
 
     private LobbyViews currentView = LobbyViews.TITLE;
@@ -55,7 +53,6 @@ public class LobbyUIController : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        SetUpCameraPositions();
         InitButtons();
         currentView = LobbyViews.TITLE;
         ToggleView();
@@ -66,78 +63,47 @@ public class LobbyUIController : MonoBehaviour
         RemoveListeners();
     }
 
-    public void OnClickStart()
+    public void ToggleSelectCharacter(bool toggle)
+    {
+        selectButton.gameObject.SetActive(toggle);
+    }
+
+    private void OnClickStart()
     {
         // show character selection scene
-        MoveCameraBetween();
+        LobbyGameController.Instance.MoveCameraBetween(currentView);
+        LobbyGameController.Instance.GetCorrectCellCharacter(0);
         currentView = LobbyViews.CHARACTER_SELECTION;
         ToggleView();
     }
 
-    public void OnClickSettings()
+    private void OnClickSettings()
     {
         currentView = LobbyViews.SETTINGS;
         ToggleView();
     }
 
-    public void OnClickCredits()
+    private void OnClickCredits()
     {
         currentView = LobbyViews.CREDITS;
         ToggleView();
     }
 
-    public void OnClickBackButton()
+    private void OnClickBackButton()
     {
-        MoveCameraBetween();
+        LobbyGameController.Instance.MoveCameraBetween(currentView);
         currentView = LobbyViews.TITLE;
         ToggleView();
     }
 
-    public void onClickExit()
+    private void OnClickCharacterSelectLeftButton()
     {
-        Application.Quit();
+        LobbyGameController.Instance.GetCorrectCellCharacter(-1);
     }
 
-    private void SetUpCameraPositions()
+    private void OnClickCharacterSelectRightButton()
     {
-        cameraPositions = new List<Vector3>();
-        for (int i = 0; i < cameraPosTransfroms.Count; i++)
-        {
-            cameraPositions.Add(cameraPosTransfroms[i].position);
-        }
-        curve = new CatmullRomCurve(cameraPositions);
-        cam = Camera.main.gameObject;
-    }
-
-    private void MoveCameraBetween()
-    {
-        StartCoroutine(moveCamera());
-    }
-
-    private IEnumerator moveCamera()
-    {
-        float tick = 0;
-        float totalDuration = 1f;
-        float speed = 2f;
-
-        if (currentView == LobbyViews.TITLE)
-        {
-            while (tick < totalDuration)
-            {
-                cam.transform.position = curve.GetPointAt(tick);
-                tick += Time.deltaTime * speed;
-                yield return null;
-            }
-        }
-        else if (currentView == LobbyViews.CHARACTER_SELECTION)
-        {
-            while (tick < totalDuration)
-            {
-                cam.transform.position = curve.GetPointAt(totalDuration - tick);
-                tick += Time.deltaTime * speed;
-                yield return null;
-            }
-        }
+        LobbyGameController.Instance.GetCorrectCellCharacter(1);
     }
 
     private void OnClickSelectCharacter()
@@ -153,6 +119,8 @@ public class LobbyUIController : MonoBehaviour
         creditsButton.onClick.AddListener(() => OnClickCredits());
         backButton.onClick.AddListener(() => OnClickBackButton());
         selectButton.onClick.AddListener(() => OnClickSelectCharacter());
+        characterSelectLeftArrow.onClick.AddListener(() => OnClickCharacterSelectLeftButton());
+        characterSelectRightArrow.onClick.AddListener(() => OnClickCharacterSelectRightButton());
     }
 
     private void RemoveListeners()
@@ -162,6 +130,8 @@ public class LobbyUIController : MonoBehaviour
         if (creditsButton != null) creditsButton.onClick.RemoveListener(() => OnClickCredits());
         if (backButton != null) backButton.onClick.RemoveListener(() => OnClickBackButton());
         if (selectButton != null) selectButton.onClick.RemoveListener(() => OnClickSelectCharacter());
+        if (characterSelectLeftArrow != null) characterSelectLeftArrow.onClick.RemoveListener(() => OnClickCharacterSelectLeftButton());
+        if (characterSelectRightArrow != null) characterSelectRightArrow.onClick.RemoveListener(() => OnClickCharacterSelectRightButton());
     }
 
     private void ToggleView()
@@ -173,6 +143,7 @@ public class LobbyUIController : MonoBehaviour
                 titleMenuButtons.SetActive(true);
                 backButton.gameObject.SetActive(false);
                 characterSelectionMenuButtons.SetActive(false);
+                selectButton.gameObject.SetActive(false);
                 break;
 
             case LobbyViews.CHARACTER_SELECTION:
@@ -195,25 +166,6 @@ public class LobbyUIController : MonoBehaviour
                 backButton.gameObject.SetActive(true);
                 characterSelectionMenuButtons.SetActive(false);
                 break;
-        }
-    }
-
-    private void OnDrawGizmos()
-    {
-        DrawGizmo();
-    }
-
-    private void DrawGizmo()
-    {
-        if (curve == null) return;
-        Gizmos.color = Color.white;
-        Vector3 lineStart = curve.GetPointAt(0f);
-        int lineSteps = 20;
-        for (int i = 1; i <= lineSteps; i++)
-        {
-            Vector3 lineEnd = curve.GetPointAt(i / (float)lineSteps);
-            Gizmos.DrawLine(lineStart, lineEnd);
-            lineStart = lineEnd;
         }
     }
 }

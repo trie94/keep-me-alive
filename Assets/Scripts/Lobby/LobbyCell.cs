@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum LobbyCellState
+{
+    IDLE, SELECTABLE, SELECTED, START_GAME
+}
+
 public class LobbyCell : MonoBehaviour
 {
     [SerializeField]
@@ -15,7 +20,7 @@ public class LobbyCell : MonoBehaviour
     public float speed { get; set; }
     private Vector3 endPosition;
     private SmearEffect smearEffect;
-    public bool idle { get; set; }
+    public LobbyCellState cellState { get; set; }
 
     #region emotion
     [SerializeField]
@@ -35,8 +40,7 @@ public class LobbyCell : MonoBehaviour
     private Transform mainCam;
     private void Awake()
     {
-        idle = true;
-
+        cellState = LobbyCellState.IDLE;
         mainCam = Camera.main.transform;
         rend = GetComponent<Renderer>();
         faceID = Shader.PropertyToID("_Face");
@@ -55,22 +59,36 @@ public class LobbyCell : MonoBehaviour
 
     private void Update()
     {
-        if (idle)
+        if (cellState == LobbyCellState.IDLE)
         {
             transform.position = Vector3.Lerp(transform.position, endPosition, Time.deltaTime * speed);
             Vector3 forward = endPosition - transform.position;
             if (forward != Vector3.zero) transform.forward = Vector3.Lerp(transform.forward, forward, 0.1f);
 
-            if ((LobbyGameController.Instance.pathEnd.position - transform.position).sqrMagnitude < 0.5f)
+            if ((endPosition - transform.position).sqrMagnitude < 0.5f)
             {
                 Reset();
             }
         }
-        else
+        else if (cellState == LobbyCellState.SELECTABLE)
         {
             transform.position = Vector3.Lerp(transform.position, LobbyGameController.Instance.characterSelectionBase.position, Time.deltaTime * 2f);
             Vector3 forward = mainCam.position - transform.position;
             if (forward != Vector3.zero) transform.forward = Vector3.Lerp(transform.forward, forward, 0.1f);
+        }
+        else if (cellState == LobbyCellState.SELECTED)
+        {
+            transform.position = Vector3.Lerp(transform.position, LobbyGameController.Instance.gameStartPosition.position, Time.deltaTime * 0.75f);
+            LobbyGameController.Instance.MoveCameraFollowCell();
+
+            Vector3 forward = LobbyGameController.Instance.gameStartPosition.position - transform.position;
+            if (forward != Vector3.zero) transform.forward = Vector3.Lerp(transform.forward, forward, 0.1f);
+
+            if ((LobbyGameController.Instance.gameStartPosition.position - transform.position).sqrMagnitude < 0.25f)
+            {
+                LobbyGameController.Instance.LoadGame();
+                cellState = LobbyCellState.START_GAME;
+            }
         }
 
         if (pickTick > emotionPickInterval)

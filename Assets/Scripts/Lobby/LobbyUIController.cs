@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public enum LobbyViews
 {
-    TITLE, CHARACTER_SELECTION, SETTINGS, CREDITS
+    TITLE, CHARACTER_SELECTION, SETTINGS, CREDITS, START_GAME
 }
 
 public class LobbyUIController : MonoBehaviour
@@ -108,8 +108,11 @@ public class LobbyUIController : MonoBehaviour
 
     private void OnClickSelectCharacter()
     {
+        LobbyGameController.Instance.SelectCell();
+        currentView = LobbyViews.START_GAME;
+        ToggleView();
         // for now we just load the scene
-        SceneController.Instance.LoadGameScene();
+        // SceneController.Instance.LoadGameScene();
     }
 
     private void InitButtons()
@@ -165,6 +168,14 @@ public class LobbyUIController : MonoBehaviour
                 titleMenuButtons.SetActive(false);
                 backButton.gameObject.SetActive(true);
                 characterSelectionMenuButtons.SetActive(false);
+                break;
+
+            case LobbyViews.START_GAME:
+                title.gameObject.SetActive(false);
+                titleMenuButtons.SetActive(false);
+                backButton.gameObject.SetActive(false);
+                characterSelectionMenuButtons.SetActive(false);
+                selectButton.gameObject.SetActive(false);
                 break;
         }
     }

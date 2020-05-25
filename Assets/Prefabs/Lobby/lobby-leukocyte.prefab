@@ -109,3 +109,5 @@ MonoBehaviour:
   limbPrefab: {fileID: 7946225896251300908, guid: a2888dd0d261346e081ff94b1efa028d,
     type: 3}
   maxLimbNum: 10
+  cellEmotion: {fileID: 11400000, guid: 71463cb99e88b42c99359c6e391baa92, type: 2}
+  timeInterval: 0.2

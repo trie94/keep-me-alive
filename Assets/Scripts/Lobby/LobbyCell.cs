@@ -17,9 +17,32 @@ public class LobbyCell : MonoBehaviour
     private SmearEffect smearEffect;
     public bool idle { get; set; }
 
+    #region emotion
+    [SerializeField]
+    private CellEmotion cellEmotion;
+    private Renderer rend;
+    private int faceID;
+    [SerializeField]
+    private float timeInterval;
+    private float tick = 0f;
+    private int frameIndex = 0;
+    private Emotions currEmotion = Emotions.Neutral;
+    private Texture2D[] currEmotionTextures;
+    private float emotionPickInterval;
+    private float pickTick = 0f;
+    #endregion
+
+    private Transform mainCam;
     private void Awake()
     {
         idle = true;
+
+        mainCam = Camera.main.transform;
+        rend = GetComponent<Renderer>();
+        faceID = Shader.PropertyToID("_Face");
+        emotionPickInterval = Random.Range(5f, 10f);
+        speed = Random.Range(0.2f, 0.45f);
+
         smearEffect = GetComponentInChildren<SmearEffect>();
         if (celltype == CellType.Platelet)
         {
@@ -27,6 +50,7 @@ public class LobbyCell : MonoBehaviour
             InitLimbs();
         }
         Reset();
+        PickNextEmotionAndReset();
     }
 
     private void Update()
@@ -34,6 +58,8 @@ public class LobbyCell : MonoBehaviour
         if (idle)
         {
             transform.position = Vector3.Lerp(transform.position, endPosition, Time.deltaTime * speed);
+            Vector3 forward = endPosition - transform.position;
+            if (forward != Vector3.zero) transform.forward = Vector3.Lerp(transform.forward, forward, 0.1f);
 
             if ((LobbyGameController.Instance.pathEnd.position - transform.position).sqrMagnitude < 0.5f)
             {
@@ -43,7 +69,16 @@ public class LobbyCell : MonoBehaviour
         else
         {
             transform.position = Vector3.Lerp(transform.position, LobbyGameController.Instance.characterSelectionBase.position, Time.deltaTime * 2f);
+            Vector3 forward = mainCam.position - transform.position;
+            if (forward != Vector3.zero) transform.forward = Vector3.Lerp(transform.forward, forward, 0.1f);
         }
+
+        if (pickTick > emotionPickInterval)
+        {
+            PickNextEmotionAndReset();
+        }
+        pickTick += Time.deltaTime;
+        PlayFaceAnim();
     }
 
     private void Reset()
@@ -52,6 +87,34 @@ public class LobbyCell : MonoBehaviour
         // remove weird artifact
         transform.position = smearEffect.PrevPosition = LobbyGameController.Instance.GetStartPosition();
         speed = Random.Range(0.05f, 0.1f);
+    }
+
+    private void PlayFaceAnim()
+    {
+        if (tick > timeInterval)
+        {
+            rend.material.SetTexture(faceID, currEmotionTextures[frameIndex]);
+            frameIndex = (frameIndex + 1) % currEmotionTextures.Length;
+            tick = 0;
+        }
+        tick += Time.deltaTime;
+    }
+
+    private void PickNextEmotionAndReset()
+    {
+        var emotions = System.Enum.GetValues(typeof(Emotions));
+        var nextEmotion = (Emotions)emotions.GetValue(Random.Range(0, emotions.Length));
+
+        while (currEmotion == nextEmotion)
+        {
+            nextEmotion = (Emotions)emotions.GetValue(Random.Range(0, emotions.Length));
+        }
+
+        frameIndex = 0;
+        pickTick = 0f;
+        emotionPickInterval = Random.Range(5f, 10f);
+        currEmotion = nextEmotion;
+        currEmotionTextures = cellEmotion.MapEnumWithTexture(currEmotion);
     }
 
     private void InitLimbs()

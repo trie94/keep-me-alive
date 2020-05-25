@@ -60,7 +60,7 @@ public class LobbyGameController : MonoBehaviour
         Debug.Log(currentIndex);
         // need to switch cells fast
         threeCellTypes[currentIndex].idle = true;
-        threeCellTypes[currentIndex].speed = 0.5f;
+        threeCellTypes[currentIndex].speed = 0.25f;
 
         currentIndex = (currentIndex + step) % threeCellTypes.Length;
         if (currentIndex < 0) currentIndex = threeCellTypes.Length - 1;

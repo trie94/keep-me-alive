@@ -47,7 +47,7 @@ public class Oxygen : Molecule
     [Range(0.1f, 0.7f)]
     public float dampThreshold = 0.3f;
     // if the oxygen goes beyond this radius, it gets detached from the cell
-    private float detachDist = 0.28f;
+    private float detachDist = 0.25f;
     private float squareDetachDist;
     private float abandonDist = 3.0f;
     private float squareAbandonDist;

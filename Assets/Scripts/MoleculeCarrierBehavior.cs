@@ -30,7 +30,7 @@ public class MoleculeCarrierBehavior : MonoBehaviour
 
     private void Update()
     {
-        if (CellController.Instance.IsInOxygenArea(this.transform) && hasVacancy())
+        if (!CellController.Instance.IsInBodyTissueArea(this.transform) && hasVacancy())
         {
             FindClosestOxygen();
         }

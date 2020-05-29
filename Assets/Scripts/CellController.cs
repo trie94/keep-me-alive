@@ -74,4 +74,9 @@ public class CellController : MonoBehaviour
     {
         return ((transform.position - Path.Instance.OxygenZone.transform.position).sqrMagnitude < Path.Instance.OxygenZone.Radius * Path.Instance.OxygenZone.Radius);
     }
+
+    public bool IsInBodyTissueArea(Transform transform)
+    {
+        return ((transform.position - Path.Instance.BodyTissueZone.transform.position).sqrMagnitude < Path.Instance.BodyTissueZone.Radius * Path.Instance.BodyTissueZone.Radius);
+    }
 }

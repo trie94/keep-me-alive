@@ -156,7 +156,7 @@ public class Oxygen : Molecule
         }
         else if (state == MoleculeState.Released)
         {
-            targetBodyTissue.ConsumeOxygen();
+            targetBodyTissue.EatOxygen();
             Reset();
         }
     }

@@ -54,6 +54,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -123,6 +124,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carbonDioxideSpawnInterval: 10
+  headColor: {r: 1, g: 0.654902, b: 0.654902, a: 1}
+  paleColor: {r: 0.773, g: 0.8, b: 1, a: 1}
   framePrefab: {fileID: -2732523184330893317, guid: ca7ce384225c84f6288d84e2efbbf631,
     type: 3}
   targetPrefab: {fileID: -7581413756415213977, guid: d6575012dd809420fb69929200f96b60,

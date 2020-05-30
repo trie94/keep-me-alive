@@ -69,7 +69,6 @@ public class LobbyGameController : MonoBehaviour
 
     public void GetCorrectCellCharacter(int step)
     {
-        Debug.Log(currentIndex);
         currentCell = threeCellTypes[currentIndex];
         // need to switch cells fast
         currentCell.cellState = LobbyCellState.IDLE;

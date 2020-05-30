@@ -66,8 +66,7 @@ public class CellController : MonoBehaviour
 
     public Vector3 GetRandomPositionInOxygenArea()
     {
-        return Path.Instance.OxygenZone.transform.position
-                         + Random.insideUnitSphere * radius;
+        return Path.Instance.OxygenZone.transform.position + Random.insideUnitSphere * radius;
     }
 
     public bool IsInOxygenArea(Transform transform)
